@@ -1,0 +1,48 @@
+
+online: false
+
+logging.config: classpath:log-dev.xml
+
+server.port: 8787
+
+spring.application.name: web
+
+register.center: http://127.0.0.1:6060/eureka/
+eureka:
+  client:
+    # 开启健康检查(需要 spring-boot-starter-actuator 包)
+    healthcheck.enabled: true
+    # 客户端间隔多久去拉取服务注册信息, 默认为 30 秒
+    registry-fetch-interval-seconds: 10
+    serviceUrl.defaultZone: ${register.center}
+  instance:
+    # 客户端发送心跳给注册中心的频率, 默认 30 秒
+    lease-renewal-interval-in-seconds: 5
+    # 服务端在收到最后一个心跳后的等待时间. 超出将摘除该实例, 默认 90 秒, 此值至少要大于 lease-renewal-interval-in-seconds
+    lease-expiration-duration-in-seconds: 15
+
+#feign.hystrix.enabled: true
+
+## 路由
+#zuul:
+#  routes:
+#    # 公共模块
+#    common:
+#      path: /common/**
+#      serviceId: common
+#      stripPrefix: false
+#    # 用户模块
+#    user:
+#      path: /user/**
+#      serviceId: user
+#      stripPrefix: false
+#    # 商品模块
+#    product:
+#      path: /product/**
+#      serviceId: product
+#      stripPrefix: false
+#    # 交易模块
+#    trade:
+#      path: /trade/**
+#      serviceId: trade
+#      stripPrefix: false
