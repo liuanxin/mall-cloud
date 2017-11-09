@@ -7,7 +7,7 @@ server.port: 8787
 
 spring.application.name: web
 
-register.center: http://prod1:6060/eureka/,http://prod2:6060/eureka/,http://prod3:6060/eureka/
+register.center: http://prod1:8761/eureka/,http://prod2:8761/eureka/,http://prod3:8761/eureka/
 eureka:
   client:
     healthcheck.enabled: true

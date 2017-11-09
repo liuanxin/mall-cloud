@@ -66,7 +66,11 @@ public final class LogUtil {
         String headParam;
 
         private String paramInfo() {
-            return String.format("%s (%s/%s) (%s %s) param(%s)", ip, id, name, method, url, param);
+            if (U.isBlank(id) && U.isBlank(name)) {
+                return String.format("%s (%s %s) param(%s)", ip, method, url, param);
+            } else {
+                return String.format("%s (%s/%s) (%s %s) param(%s)", ip, id, name, method, url, param);
+            }
         }
         private String headParamInfo() {
             return String.format("header(%s)", headParam);

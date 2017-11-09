@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <property name="LOG_PATTERN" value="%d [${PID:- } %t\\(%logger\\) : %p] %class{30}#%method\\(%file:%line\\)%n%m%n%n"/>
-    <property name="FILE_PATH" value="/data/lawyer/logs/service-ice-prod"/>
+    <property name="LOG_PATTERN" value="[%X{receiveTime}%d] [${PID:- } %t\\(%logger\\) : %p] [%X{requestInfo} %X{headInfo}] %class{30}#%method\\(%file:%line\\)%n%m%n%n"/>
+    <property name="FILE_PATH" value="${user.home}/logs/web-publish-prod"/>
 
     <appender name="PROJECT" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${FILE_PATH}.log</file>
@@ -9,6 +9,7 @@
             <fileNamePattern>${FILE_PATH}-%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>60</maxHistory>
         </rollingPolicy>
+
         <encoder>
             <pattern>${LOG_PATTERN}</pattern>
         </encoder>
@@ -20,13 +21,14 @@
         <appender-ref ref ="PROJECT"/>
     </appender>
 
-    <logger name="freemarker" level="warn"/>
-    <logger name="org.apache" level="warn"/>
-    <logger name="com.github" level="warn"/>
     <logger name="org.springframework" level="warn"/>
+    <logger name="org.hibernate" level="warn"/>
+    <logger name="com.netflix" level="warn"/>
+    <logger name="org.apache" level="warn"/>
+    <logger name="freemarker" level="warn"/>
+    <logger name="com.sun" level="warn"/>
 
-    <root level ="info">
-        <appender-ref ref ="ASYNC"/>
+    <root level="info">
+        <appender-ref ref="ASYNC"/>
     </root>
-
 </configuration>

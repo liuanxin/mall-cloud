@@ -47,4 +47,3 @@
         <appender-ref ref="PROJECT"/>
     </root>
 </configuration>
-

@@ -2,6 +2,7 @@ package com.github.user.client;
 
 import com.github.user.service.UserInterface;
 import com.github.user.config.UserConst;
+import com.github.user.hystrix.UserFallback;
 import org.springframework.cloud.netflix.feign.FeignClient;
 
 /**
@@ -9,6 +10,6 @@ import org.springframework.cloud.netflix.feign.FeignClient;
  * 
  * @author https://github.com/liuanxin
  */
-@FeignClient(value = UserConst.MODULE_NAME)
+@FeignClient(value = UserConst.MODULE_NAME, fallback = UserFallback.class)
 public interface UserClient extends UserInterface {
 }

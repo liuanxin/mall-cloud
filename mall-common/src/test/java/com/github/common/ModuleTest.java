@@ -12,7 +12,7 @@ import java.util.List;
 public class ModuleTest {
 
     /** true 生成断路器 */
-    static boolean fallback = false;
+    static boolean fallback = true;
 
     /** 包名 */
     static String PACKAGE = "com.github";
@@ -165,6 +165,7 @@ class Client {
             "\n" +
             "import " + ModuleTest.PACKAGE + ".common.page.PageInfo;\n" +
             "import " + ModuleTest.PACKAGE + ".common.page.Pages;\n" +
+            "import " + ModuleTest.PACKAGE + ".common.util.LogUtil;\n" +
             "import " + ModuleTest.PACKAGE + ".%s.client.%sClient;\n" +
             "import org.springframework.stereotype.Component;\n" +
             "\n" +
@@ -178,6 +179,9 @@ class Client {
             "\n" +
             "    @Override\n" +
             "    public PageInfo demo(String xx, Integer page, Integer limit) {\n" +
+            "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
+            "            LogUtil.ROOT_LOG.debug(\"调用断路器\");\n" +
+            "        }\n" +
             "        return Pages.returnList(null);\n" +
             "    }\n" +
             "}\n";
@@ -254,7 +258,7 @@ class Model {
     private static String CONST = "package " + ModuleTest.PACKAGE + ".%s.config;\n"+
             "\n"+
             "/**\n" +
-            " * %s相关的常数设置类\n" +
+            " * %s模块相关的常数设置类\n" +
             " * \n" +
             " * @author https://github.com/liuanxin\n" +
             " */\n" +
@@ -262,16 +266,17 @@ class Model {
             "\n"+
             "    /** 当前模块名. 要与 application.yml 中的一致 */\n"+
             "    public static final String MODULE_NAME = \"%s\";\n"+
-            "\n" +
-            "    public static final String %s_DEMO = \"/%s-demo\";\n" +
+            //"\n" +
+            //"    public static final String %s_DEMO = \"/%s-demo\";\n" +
             "}\n";
 
     private static String INTERFACE = "package " + ModuleTest.PACKAGE + ".%s.service;\n" +
             "\n" +
             "import " + ModuleTest.PACKAGE + ".common.page.PageInfo;\n" +
-            "import " + ModuleTest.PACKAGE + ".%s.config.%sConst;\n" +
-            "import org.springframework.web.bind.annotation.RequestMapping;\n" +
-            "import org.springframework.web.bind.annotation.RequestMethod;\n" +
+            //"import " + ModuleTest.PACKAGE + ".%s.config.%sConst;\n" +
+            //"import org.springframework.web.bind.annotation.RequestMapping;\n" +
+            //"import org.springframework.web.bind.annotation.RequestMethod;\n" +
+            "import org.springframework.web.bind.annotation.GetMapping;\n" +
             "import org.springframework.web.bind.annotation.RequestParam;\n" +
             "\n" +
             "/**\n" +
@@ -289,8 +294,8 @@ class Model {
             "     * @param limit 每页行数\n" +
             "     * @return 分页信息\n" +
             "     */\n" +
-            "    @RequestMapping(value = %sConst.%s_DEMO, method = RequestMethod.GET)\n" +
-            "    PageInfo demo(@RequestParam(value = \"phone\", required = false) String xx,\n" +
+            "    @GetMapping(\"/%s-demo\")\n" + // value = %sConst.%s_DEMO, method = RequestMethod.GET)
+            "    PageInfo demo(@RequestParam(value = \"xx\", required = false) String xx,\n" +
             "                  @RequestParam(value = \"page\", required = false) Integer page,\n" +
             "                  @RequestParam(value = \"limit\", required = false) Integer limit);\n" +
             "}\n";
@@ -341,10 +346,14 @@ class Model {
         model_interface.mkdirs();
         new File(modelSourcePath, "enums").mkdirs();
         new File(modelSourcePath, "model").mkdirs();
-        String constModel = String.format(CONST, parentPackageName, comment, clazzName, packageName, clazzName.toUpperCase(), parentPackageName);
+        String constModel = String.format(CONST, parentPackageName, comment, clazzName,
+                packageName, parentPackageName);//clazzName.toUpperCase(), parentPackageName);
         ModuleTest.writeFile(new File(model_config, clazzName + "Const.java"), constModel);
 
-        String interfaceModel = String.format(INTERFACE, parentPackageName, parentPackageName, clazzName, comment, clazzName, clazzName, clazzName.toUpperCase());
+        // String interfaceModel = String.format(INTERFACE, parentPackageName, parentPackageName, clazzName,
+        //        comment, clazzName, parentPackageName);//clazzName, clazzName.toUpperCase());
+
+        String interfaceModel = String.format(INTERFACE, parentPackageName, comment, clazzName, parentPackageName);
         ModuleTest.writeFile(new File(model_interface, clazzName + "Interface.java"), interfaceModel);
     }
 }
@@ -670,6 +679,7 @@ class Server {
             "\n" +
             "import " + ModuleTest.PACKAGE + ".common.page.PageInfo;\n" +
             "import " + ModuleTest.PACKAGE + ".common.page.Pages;\n" +
+            "import " + ModuleTest.PACKAGE + ".common.util.LogUtil;\n" +
             "import org.springframework.web.bind.annotation.RestController;\n" +
             "\n" +
             "/**\n" +
@@ -682,6 +692,9 @@ class Server {
             "    \n" +
             "    @Override\n" +
             "    public PageInfo demo(String xx, Integer page, Integer limit) {\n" +
+            "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
+            "            LogUtil.ROOT_LOG.debug(\"调用实现类\");\n" +
+            "        }\n" +
             "        return Pages.returnList(null);\n" +
             "    }\n" +
             "}\n";
@@ -742,7 +755,8 @@ class Server {
             "      cachePrepStmts: true\n" +
             "      useServerPrepStmts: true\n" +
             "\n" +
-            "register.center: http://test1:" + ModuleTest.REGISTER_CENTER_PORT + "/eureka/,http://test2:" + ModuleTest.REGISTER_CENTER_PORT + "/eureka/,http://test3:" + ModuleTest.REGISTER_CENTER_PORT + "/eureka/\n" +
+            "register.center: http://test1:" + ModuleTest.REGISTER_CENTER_PORT + "/eureka/,http://test2:" +
+            ModuleTest.REGISTER_CENTER_PORT + "/eureka/,http://test3:" + ModuleTest.REGISTER_CENTER_PORT + "/eureka/\n" +
             "eureka:\n" +
             "  client:\n" +
             "    healthcheck.enabled: true\n" +
@@ -774,7 +788,8 @@ class Server {
             "      cachePrepStmts: true\n" +
             "      useServerPrepStmts: true\n" +
             "\n" +
-            "register.center: http://prod1:" + ModuleTest.REGISTER_CENTER_PORT + "/eureka/,http://prod2:" + ModuleTest.REGISTER_CENTER_PORT + "/eureka/,http://prod3:" + ModuleTest.REGISTER_CENTER_PORT + "/eureka/\n" +
+            "register.center: http://prod1:" + ModuleTest.REGISTER_CENTER_PORT + "/eureka/,http://prod2:" +
+            ModuleTest.REGISTER_CENTER_PORT + "/eureka/,http://prod3:" + ModuleTest.REGISTER_CENTER_PORT + "/eureka/\n" +
             "eureka:\n" +
             "  client:\n" +
             "    healthcheck.enabled: true\n" +
@@ -1065,9 +1080,11 @@ class Server {
 
         String applicationYml = String.format(APPLICATION_YML, port, packageName);
         ModuleTest.writeFile(new File(resourcePath, "application.yml"), applicationYml);
-        String applicationTestYml = String.format(APPLICATION_TEST_YML, port, packageName, packageName, packageName, packageName);
+        String applicationTestYml = String.format(APPLICATION_TEST_YML, port,
+                packageName, packageName, packageName, packageName);
         ModuleTest.writeFile(new File(resourcePath, "application-test.yml"), applicationTestYml);
-        String applicationProdYml = String.format(APPLICATION_PROD_YML, port, packageName, packageName, packageName, packageName);
+        String applicationProdYml = String.format(APPLICATION_PROD_YML, port,
+                packageName, packageName, packageName, packageName);
         ModuleTest.writeFile(new File(resourcePath, "application-prod.yml"), applicationProdYml);
 
         ModuleTest.writeFile(new File(resourcePath, "config.properties"), CONFIG);

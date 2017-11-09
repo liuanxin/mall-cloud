@@ -7,7 +7,7 @@ server.port: 8787
 
 spring.application.name: web
 
-register.center: http://test1:6060/eureka/
+register.center: http://test1:8761/eureka/
 eureka:
   client:
     healthcheck.enabled: true
@@ -16,3 +16,5 @@ eureka:
   instance:
     lease-renewal-interval-in-seconds: 5
     lease-expiration-duration-in-seconds: 15
+
+feign.hystrix.enabled: true

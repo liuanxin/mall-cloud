@@ -21,12 +21,12 @@ public class ShowSqlInterceptor implements StatementInterceptor {
         if (U.isBlank(sql) && statement != null) {
             sql = statement.toString();
             if (U.isNotBlank(sql) && sql.indexOf(':') > 0) {
-                sql = SqlFormat.format(sql.substring(sql.indexOf(':') + 1).trim());
+                sql = sql.substring(sql.indexOf(':') + 1).trim();
             }
         }
         if (U.isNotBlank(sql)) {
             if (LogUtil.SQL_LOG.isDebugEnabled() && !"SELECT 1".equalsIgnoreCase(sql)) {
-                LogUtil.SQL_LOG.debug("{}", sql);
+                LogUtil.SQL_LOG.debug("{}", SqlFormat.format(sql));
             }
         }
         return null;
