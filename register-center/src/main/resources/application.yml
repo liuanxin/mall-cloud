@@ -10,8 +10,6 @@ eureka:
   instance:
     # 注册到服务器的是 ip 地址, 不要用主机名
     prefer-ip-address: true
-    # 用 (ip:port) 的形式, 不要用 (主机名:应用名:端口) 的形式
-    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
     # 客户端发送心跳给注册中心的频率, 默认 30 秒
     lease-renewal-interval-in-seconds: 20
     # 服务端在收到最后一个心跳后的等待时间. 超出将移除该实例, 默认 90 秒, 此值至少要大于 lease-renewal-interval-in-seconds
