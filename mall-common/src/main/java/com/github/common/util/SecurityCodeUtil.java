@@ -154,7 +154,7 @@ public final class SecurityCodeUtil {
         return new Code(sbd.toString(), buffImg);
     }
 
-    public static int toInt(String str) {
+    private static int toInt(String str) {
         if (str == null) {
             return 0;
         }

@@ -1,10 +1,7 @@
 package com.github.common;
 
 import com.github.common.date.DateUtil;
-import com.github.common.util.LogUtil;
-import com.github.common.util.RequestUtils;
-import com.github.common.util.A;
-import com.github.common.util.U;
+import com.github.common.util.*;
 import freemarker.ext.beans.BeansWrapper;
 import freemarker.ext.beans.BeansWrapperBuilder;
 import freemarker.template.Configuration;
@@ -27,7 +24,7 @@ public class RenderViewResolver extends FreeMarkerViewResolver {
 
     /** 一些全局的工具类 */
     private static final Class[] CLASSES = new Class[] {
-            A.class, U.class, DateUtil.class, RequestUtils.class
+            A.class, U.class, DateUtil.class, RequestUtils.class, Render.class
     };
 
     /** 构造器只加载一次 */
@@ -70,7 +67,7 @@ public class RenderViewResolver extends FreeMarkerViewResolver {
      * <pre>
      * 把枚举放入渲染的上下文中. 只加载一次
      *
-     * 假定要渲染的地方上下文中有一个 user 对象, 并且里面有 gender 这个枚举. GenderEnum 可以直接拿过来用:
+     * 假定要渲染的页面上下文中有一个 user 对象, 并且里面有 gender 这个枚举. GenderEnum 可以直接拿过来用:
      * &lt;#list GenderEnum?values as gender&gt;
      *   &lt;label>
      *     &lt;input type="radio" value="${gender.code}"&lt;#if user.gender == gender> checked="checked"&lt;/#if>>
@@ -112,5 +109,4 @@ public class RenderViewResolver extends FreeMarkerViewResolver {
     public static String getVersion() {
         return version;
     }
-
 }
