@@ -21,7 +21,10 @@ public class DateUtil {
     public static String nowTime() {
         return now(DateFormatType.YYYY_MM_DD_HH_MM_SS);
     }
-
+    /** 返回 yyyy-MM-dd HH:mm:ss SSS 格式的当前时间 */
+    public static String detailNowTime() {
+        return now(DateFormatType.YYYY_MM_DD_HH_MM_SS_SSS);
+    }
     /** 获取当前时间日期的字符串 */
     public static String now(DateFormatType dateFormatType) {
         return format(now(), dateFormatType);
@@ -77,19 +80,6 @@ public class DateUtil {
         return null;
     }
 
-    public static void main(String[] args) throws Exception {
-        String d = new Date().toString();
-        System.out.println(d);
-
-        Date date = parse(d);
-        System.out.println(formatFull(date));
-
-        String source = "Fri Sep 29 11:02:51 CST 2017";
-        String pattern = "EEE MMM dd HH:mm:ss zzz yyyy";
-        System.out.println(new SimpleDateFormat(pattern, Locale.ENGLISH).parse(source));
-        System.out.println(DateTimeFormat.forPattern(pattern).parseDateTime(source).toDate());
-    }
-
     /** 获取一个日期所在天的最开始的时间(00:00:00 000), 对日期查询尤其有用 */
     public static Date getDayStart(Date date) {
         if (U.isBlank(date)) {
@@ -120,7 +110,7 @@ public class DateUtil {
     }
 
     /**
-     * 取得指定日期指定天后的日期
+     * 取得指定日期 N 天后的日期
      *
      * @param day 正数表示多少天后, 负数表示多少天前
      */
@@ -128,7 +118,7 @@ public class DateUtil {
         return new DateTime(date).plusDays(day).toDate();
     }
     /**
-     * 取得指定日期指定个月后的日期
+     * 取得指定日期 N 个月后的日期
      *
      * @param month 正数表示多少月后, 负数表示多少月前
      */
@@ -136,7 +126,7 @@ public class DateUtil {
         return new DateTime(date).plusMonths(month).toDate();
     }
     /**
-     * 取得指定日期指定天后的日期
+     * 取得指定日期 N 天后的日期
      *
      * @param year 正数表示多少年后, 负数表示多少年前
      */
@@ -144,7 +134,7 @@ public class DateUtil {
         return new DateTime(date).plusYears(year).toDate();
     }
     /**
-     * 取得指定日期指定分钟后的日期
+     * 取得指定日期 N 分钟后的日期
      *
      * @param minute 正数表示多少分钟后, 负数表示多少分钟前
      */
@@ -152,7 +142,7 @@ public class DateUtil {
         return new DateTime(date).plusMinutes(minute).toDate();
     }
     /**
-     * 取得指定日期指定小时后的日期
+     * 取得指定日期 N 小时后的日期
      *
      * @param hour 正数表示多少小时后, 负数表示多少小时前
      */
@@ -160,7 +150,7 @@ public class DateUtil {
         return new DateTime(date).plusHours(hour).toDate();
     }
     /**
-     * 取得指定日期指定秒后的日期
+     * 取得指定日期 N 秒后的日期
      *
      * @param second 正数表示多少秒后, 负数表示多少秒前
      */
@@ -168,7 +158,7 @@ public class DateUtil {
         return new DateTime(date).plusSeconds(second).toDate();
     }
     /**
-     * 取得指定日期指定周后的日期
+     * 取得指定日期 N 周后的日期
      *
      * @param week 正数表示多少周后, 负数表示多少周前
      */
@@ -194,7 +184,6 @@ public class DateUtil {
         if (U.isBlank(start) || U.isBlank(end)) {
             return 0;
         }
-
         return Days.daysBetween(getDateTimeStart(start), getDateTimeStart(end)).getDays();
     }
 }
