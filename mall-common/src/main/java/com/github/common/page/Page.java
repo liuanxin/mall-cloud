@@ -7,15 +7,15 @@ import org.apache.commons.lang3.math.NumberUtils;
 
 /**
  * <pre>
- * 此实体类在 service 和 service 中用到分页时使用.
+ * 此实体类在 Controller 和 service 中用到分页时使用.
  *
- * &#064;service --> 接收请求中带过来的参数时使用 Page 进行接收
+ * &#064;Controller --> request 请求中带过来的参数使用 Page 进行接收(如果前端不传, 此处接收则程序会使用默认值)
  * public JsonResult xx(xxx, Page page) {
  *     PageInfo pageInfo = xxxService.page(xxx, page);
  *     return success("xxx", (page.isWasMobile() ? pageInfo.getList() : pageInfo));
  * }
  *
- * &#064;service --> 调用方法使用 Page 进行传递, 返回时使用 PageInfo
+ * &#064;service --> 调用方法使用 Page 进行传递, 返回 PageInfo
  * public PageInfo page(xxx, Page page) {
  *     PageBounds pageBounds = Pages.param(page);
  *     List&lt;XXX> xxxList = xxxMapper.selectByExample(xxxxx, pageBounds);
