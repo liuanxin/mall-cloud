@@ -4,10 +4,12 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import com.github.common.util.U;
 import org.apache.commons.lang3.math.NumberUtils;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.regex.Pattern;
 
-public class Money {
+public class Money implements Serializable {
+    private static final long serialVersionUID = 0L;
 
     /*
      * 运算全部基于到分的 long 来做, 它的性能比 BigDecimal 要好很多, 只有在 除法 的地方会出现精度问题需要小心处理

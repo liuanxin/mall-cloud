@@ -33,6 +33,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PageInfo<T> implements Serializable {
+    private static final long serialVersionUID = 0L;
 
     private Integer total;
     private List<T> list;

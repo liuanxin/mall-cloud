@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang3.math.NumberUtils;
 
+import java.io.Serializable;
+
 /**
  * <pre>
  * 此实体类在 Controller 和 Service 中用到分页时使用.
@@ -28,7 +30,8 @@ import org.apache.commons.lang3.math.NumberUtils;
 @Setter
 @Getter
 @NoArgsConstructor
-public class Page {
+public class Page implements Serializable {
+    private static final long serialVersionUID = 0L;
 
     /** 分页默认页 */
     public static final int DEFAULT_PAGE_NO = 1;
