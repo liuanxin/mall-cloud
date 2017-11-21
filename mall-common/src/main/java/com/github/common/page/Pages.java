@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * <pre>
- * 此实体类只在 <span style="color:red">service</span> 中用到分页时使用.
+ * 此实体类只在 <span style="color:red">Service</span> 中用到分页时使用.
  *
  * &#064;Controller --> request 请求中带过来的参数使用 Page 进行接收(如果前端不传, 此处接收则程序会使用默认值)
  * public JsonResult xx(xxx, Page page) {
@@ -16,14 +16,14 @@ import java.util.List;
  *     return success("xxx", (page.isWasMobile() ? pageInfo.getList() : pageInfo));
  * }
  *
- * &#064;service --> 调用方法使用 Page 进行传递, 返回 PageInfo
+ * &#064;Service --> 调用方法使用 Page 进行传递, 返回 PageInfo
  * public PageInfo page(xxx, Page page) {
  *     PageBounds pageBounds = Pages.param(page);
  *     List&lt;XXX> xxxList = xxxMapper.selectByExample(xxxxx, pageBounds);
  *     return Pages.returnList(xxxList);
  * }
  *
- * <span style="color:red">controller 中不要使用此类</span>, mybatis 的分页插件只需要在服务端引入.
+ * <span style="color:red">Controller 中不要使用此类</span>, mybatis 的分页插件只需要在服务端引入.
  * </pre>
  */
 public final class Pages {
