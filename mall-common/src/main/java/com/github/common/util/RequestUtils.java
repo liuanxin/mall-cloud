@@ -96,7 +96,11 @@ public final class RequestUtils {
      */
     public static String formatParam() {
         // return getRequest().getQueryString(); // 没有时将会返回 null
-        return U.formatParam(getRequest().getParameterMap());
+
+        HttpServletRequest request = getRequest();
+        String contentType = request.getContentType();
+        boolean upload = U.isNotBlank(contentType) && contentType.startsWith("multipart/");
+        return upload ? "uploading file" : U.formatParam(request.getParameterMap());
     }
 
     /** 返回 url 并且拼上参数, 非 get 请求将忽略参数 */
