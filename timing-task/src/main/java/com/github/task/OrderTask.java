@@ -17,19 +17,18 @@ public class OrderTask {
     @Scheduled(cron = "0 */1 * * * *")
     public void cancelOrder() {
         LogUtil.recordTime();
-
-        int cancelCount = 0;
         try {
-            // cancelCount = orderService.yyy();
-        } catch (Exception e) {
-            if (LogUtil.ROOT_LOG.isErrorEnabled()) {
-                LogUtil.ROOT_LOG.error("取消订单时异常", e);
-            }
+            cancelOrder();
+        } finally {
+            LogUtil.unbind();
         }
+    }
+    private void cancel() {
+        int cancelCount = 0;
 
+        // cancelCount = orderService.yyy();
         if (LogUtil.ROOT_LOG.isInfoEnabled()) {
-            LogUtil.ROOT_LOG.info("取消订单操作完成. 共取消 {} 笔订单", cancelCount);
+            LogUtil.ROOT_LOG.info("共取消 {} 笔订单", cancelCount);
         }
-        LogUtil.unbind();
     }
 }

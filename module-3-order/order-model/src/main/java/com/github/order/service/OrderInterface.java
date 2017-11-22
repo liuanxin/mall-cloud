@@ -1,6 +1,7 @@
 package com.github.order.service;
 
 import com.github.common.page.PageInfo;
+import com.github.order.config.OrderConst;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -19,7 +20,7 @@ public interface OrderInterface {
      * @param limit 每页行数
      * @return 分页信息
      */
-    @GetMapping("/order-demo")
+    @GetMapping(OrderConst.ORDER_DEMO)
     PageInfo demo(@RequestParam(value = "xx", required = false) String xx,
                   @RequestParam(value = "page", required = false) Integer page,
                   @RequestParam(value = "limit", required = false) Integer limit);

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <property name="LOG_PATTERN" value="[%X{receiveTime}%d] [${PID:- } %t\\(%logger\\) : %p] [%X{requestInfo} %X{headInfo}] %class{30}#%method\\(%file:%line\\)%n%m%n%n"/>
     <property name="FILE_PATH" value="${user.home}/logs/order-test"/>
     <property name="SQL_PATTERN" value="%d [${PID:- } %t\\(%logger\\) : %p]%n%class.%method\\(%file:%line\\)%n%m%n%n"/>
+    <property name="LOG_PATTERN" value="[%X{receiveTime}%d] [${PID:- } %t\\(%logger\\) : %p] %X{requestInfo} %class{30}#%method\\(%file:%line\\)%n%m%n%n"/>
 
     <appender name="PROJECT" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${FILE_PATH}.log</file>
@@ -20,7 +20,7 @@
         </encoder>
     </appender>
 
-    <logger name="com.github.order.repository" level="warn"/>
+    <logger name="com.xxx.order.repository" level="warn"/>
     <logger name="org.springframework" level="warn"/>
     <logger name="org.hibernate" level="warn"/>
     <logger name="com.netflix" level="warn"/>

@@ -9,4 +9,6 @@ public final class UserConst {
 
     /** 当前模块名. 要与 application.yml 中的一致 */
     public static final String MODULE_NAME = "user";
+
+    public static final String USER_DEMO = MODULE_NAME + "/demo";
 }

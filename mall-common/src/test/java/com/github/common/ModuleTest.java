@@ -19,8 +19,9 @@ public class ModuleTest {
     /** 注册中心的端口 */
     static String REGISTER_CENTER_PORT = "8761";
     // static String PARENT = "/home/tony/project/mall-cloud/";
-    static String PARENT = ModuleTest.class.getClassLoader().getResource("").getFile() + "../../../";
+    private static String PARENT = ModuleTest.class.getClassLoader().getResource("").getFile() + "../../../";
     static String PACKAGE_PATH = PACKAGE.replaceAll("\\.", "/");
+    static String AUTHOR = " * @author https://github.com/liuanxin\n";
 
     static String capitalize(String name) {
         StringBuilder sbd = new StringBuilder();
@@ -155,7 +156,7 @@ class Client {
             "/**\n" +
             " * %s相关的调用接口\n" +
             " * \n" +
-            " * @author https://github.com/liuanxin\n" +
+            ModuleTest.AUTHOR +
             " */\n" +
             "@FeignClient(value = %sConst.MODULE_NAME" + (ModuleTest.fallback ? ", fallback = %sFallback.class" : "") + ")\n" +
             "public interface %sClient extends %sInterface {\n" +
@@ -172,7 +173,7 @@ class Client {
             "/**\n" +
             " * %s相关的断路器\n" +
             " * \n" +
-            " * @author https://github.com/liuanxin\n" +
+            ModuleTest.AUTHOR +
             " */\n" +
             "@Component\n" +
             "public class %sFallback implements %sClient {\n" +
@@ -239,11 +240,11 @@ class Client {
                     parentPackageName, clazzName, comment, clazzName, clazzName,
                     clazzName, clazzName);
 
-            File model_hystrix = new File(modelSourcePath, "hystrix");
-            model_hystrix.mkdirs();
+            File modelHystrix = new File(modelSourcePath, "hystrix");
+            modelHystrix.mkdirs();
             String interfaceModel = String.format(FALLBACK, parentPackageName,
                     parentPackageName, clazzName, comment, clazzName, clazzName);
-            ModuleTest.writeFile(new File(model_hystrix, clazzName + "Fallback.java"), interfaceModel);
+            ModuleTest.writeFile(new File(modelHystrix, clazzName + "Fallback.java"), interfaceModel);
         } else {
             constModel = String.format(CLIENT, parentPackageName,
                     parentPackageName, clazzName, parentPackageName, clazzName,
@@ -260,29 +261,27 @@ class Model {
             "/**\n" +
             " * %s模块相关的常数设置类\n" +
             " * \n" +
-            " * @author https://github.com/liuanxin\n" +
+            ModuleTest.AUTHOR +
             " */\n" +
             "public final class %sConst {\n"+
             "\n"+
             "    /** 当前模块名. 要与 application.yml 中的一致 */\n"+
             "    public static final String MODULE_NAME = \"%s\";\n"+
-            //"\n" +
-            //"    public static final String %s_DEMO = \"/%s-demo\";\n" +
+            "\n" +
+            "    public static final String %s_DEMO = MODULE_NAME + \"/demo\";\n" +
             "}\n";
 
     private static String INTERFACE = "package " + ModuleTest.PACKAGE + ".%s.service;\n" +
             "\n" +
             "import " + ModuleTest.PACKAGE + ".common.page.PageInfo;\n" +
-            //"import " + ModuleTest.PACKAGE + ".%s.config.%sConst;\n" +
-            //"import org.springframework.web.bind.annotation.RequestMapping;\n" +
-            //"import org.springframework.web.bind.annotation.RequestMethod;\n" +
+            "import " + ModuleTest.PACKAGE + ".%s.config.%sConst;\n" +
             "import org.springframework.web.bind.annotation.GetMapping;\n" +
             "import org.springframework.web.bind.annotation.RequestParam;\n" +
             "\n" +
             "/**\n" +
             " * %s相关的接口\n" +
             " * \n" +
-            " * @author https://github.com/liuanxin\n" +
+            ModuleTest.AUTHOR +
             " */\n" +
             "public interface %sInterface {\n" +
             "    \n" +
@@ -294,7 +293,7 @@ class Model {
             "     * @param limit 每页行数\n" +
             "     * @return 分页信息\n" +
             "     */\n" +
-            "    @GetMapping(\"/%s-demo\")\n" + // value = %sConst.%s_DEMO, method = RequestMethod.GET)
+            "    @GetMapping(%sConst.%s_DEMO)\n" +
             "    PageInfo demo(@RequestParam(value = \"xx\", required = false) String xx,\n" +
             "                  @RequestParam(value = \"page\", required = false) Integer page,\n" +
             "                  @RequestParam(value = \"limit\", required = false) Integer limit);\n" +
@@ -331,29 +330,27 @@ class Model {
 
     static void generateModel(String moduleName, String packageName, String model,
                               String module, String comment) throws IOException {
-        String parentPackageName = packageName.replace("-", ".");
-        String clazzName = ModuleTest.capitalize(parentPackageName);
+        packageName = packageName.replace("-", ".");
+        String clazzName = ModuleTest.capitalize(packageName);
 
         File modelPath = new File(module + "/" + model + "/src/main/java");
         modelPath.mkdirs();
         String modelPom = String.format(POM, moduleName, model, comment);
         ModuleTest.writeFile(new File(module + "/" + model, "pom.xml"), modelPom);
 
-        File modelSourcePath = new File(modelPath, ModuleTest.PACKAGE_PATH + "/" + parentPackageName.replaceAll("\\.", "/"));
+        File modelSourcePath = new File(modelPath, ModuleTest.PACKAGE_PATH + "/" + packageName.replaceAll("\\.", "/"));
         File model_config = new File(modelSourcePath, "config");
         File model_interface = new File(modelSourcePath, "service");
         model_config.mkdirs();
         model_interface.mkdirs();
         new File(modelSourcePath, "enums").mkdirs();
         new File(modelSourcePath, "model").mkdirs();
-        String constModel = String.format(CONST, parentPackageName, comment, clazzName,
-                packageName, parentPackageName);//clazzName.toUpperCase(), parentPackageName);
+        String constModel = String.format(CONST, packageName, comment, clazzName,
+                packageName, clazzName.toUpperCase());
         ModuleTest.writeFile(new File(model_config, clazzName + "Const.java"), constModel);
 
-        // String interfaceModel = String.format(INTERFACE, parentPackageName, parentPackageName, clazzName,
-        //        comment, clazzName, parentPackageName);//clazzName, clazzName.toUpperCase());
-
-        String interfaceModel = String.format(INTERFACE, parentPackageName, comment, clazzName, parentPackageName);
+        String interfaceModel = String.format(INTERFACE, packageName, packageName, clazzName,
+                comment, clazzName, clazzName, clazzName.toUpperCase());
         ModuleTest.writeFile(new File(model_interface, clazzName + "Interface.java"), interfaceModel);
     }
 }
@@ -371,7 +368,9 @@ class Server {
             "import org.springframework.cloud.client.discovery.EnableDiscoveryClient;\n" +
             "import org.springframework.context.ApplicationContext;\n" +
             "\n" +
-            "/** @author https://github.com/liuanxin */\n" +
+            "/**\n" +
+            ModuleTest.AUTHOR +
+            " */\n" +
             "@SpringBootApplication\n" +
             "@EnableDiscoveryClient\n" +
             "public class %sApplication extends SpringBootServletInitializer {\n" +
@@ -410,7 +409,7 @@ class Server {
             "/**\n" +
             " * %s模块的配置数据. 主要是 mybatis 的多配置目录和类型处理器\n" +
             " *\n" +
-            " * @author https://github.com/liuanxin\n" +
+            ModuleTest.AUTHOR +
             " */\n" +
             "public final class %sConfigData {\n" +
             "\n" +
@@ -457,7 +456,7 @@ class Server {
             " * @see org.mybatis.spring.mapper.MapperScannerConfigurer#postProcessBeanDefinitionRegistry\n" +
             " * @see org.mybatis.spring.mapper.ClassPathMapperScanner\n" +
             " *\n" +
-            " * @author https://github.com/liuanxin\n" +
+            ModuleTest.AUTHOR +
             " */\n" +
             "@Configuration\n" +
             "@MapperScan(basePackages = Const.BASE_PACKAGE)\n" +
@@ -524,7 +523,7 @@ class Server {
             " * @see org.springframework.boot.autoconfigure.web.ErrorProperties\n" +
             " * @see org.springframework.boot.autoconfigure.web.ErrorMvcAutoConfiguration\n" +
             " *\n" +
-            " * @author https://github.com/liuanxin\n" +
+            ModuleTest.AUTHOR +
             " */\n" +
             "@ControllerAdvice\n" +
             "public class %sGlobalException {\n" +
@@ -597,7 +596,7 @@ class Server {
             "/**\n" +
             " * %s模块的 web 拦截器\n" +
             " *\n" +
-            " * @author https://github.com/liuanxin\n" +
+            ModuleTest.AUTHOR +
             " */\n" +
             "public class %sInterceptor implements HandlerInterceptor {\n" +
             "\n" +
@@ -607,7 +606,7 @@ class Server {
             "    @Override\n" +
             "    public boolean preHandle(HttpServletRequest request, HttpServletResponse response,\n" +
             "                             Object handler) throws Exception {\n" +
-            "        LogUtil.bind(RequestUtils.logContextInfo());\n" +
+            "        LogUtil.bind(RequestUtils.logContextInfo(online));\n" +
             "        return true;\n" +
             "    }\n" +
             "\n" +
@@ -644,7 +643,7 @@ class Server {
             "/**\n" +
             " * %s模块的配置数据. 主要是 mybatis 的多配置目录和类型处理器\n" +
             " *\n" +
-            " * @author https://github.com/liuanxin\n" +
+            ModuleTest.AUTHOR +
             " */\n" +
             "@Configuration\n" +
             "public class %sWebAdapter extends WebMvcConfigurerAdapter {\n" +
@@ -685,7 +684,7 @@ class Server {
             "/**\n" +
             " * %s模块的接口实现类\n" +
             " *\n" +
-            " * @author https://github.com/liuanxin\n" +
+            ModuleTest.AUTHOR +
             " */\n" +
             "@RestController\n" +
             "public class %sService implements %sInterface {\n" +
@@ -805,13 +804,12 @@ class Server {
 
     private static String LOG_XML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
             "<configuration>\n" +
-            "\n" +
             "    <include resource=\"org/springframework/boot/logging/logback/defaults.xml\" />\n" +
-            "    <property name=\"CONSOLE_LOG_PATTERN\" value=\"[%X{receiveTime}%d] [${PID:- } %t\\\\(%logger\\\\) : %p]%n[%X{requestInfo} %X{headInfo}]%n%class.%method\\\\(%file:%line\\\\)%n%m%n%n\"/>\n" +
+            "    <property name=\"CONSOLE_LOG_PATTERN\" value=\"[%X{receiveTime}%d] [${PID:- } %t\\\\(%logger\\\\) : %p]%n%X{requestInfo}%class.%method\\\\(%file:%line\\\\)%n%m%n%n\"/>\n" +
             "    <include resource=\"org/springframework/boot/logging/logback/console-appender.xml\" />\n" +
             "    <property name=\"SQL_PATTERN\" value=\"%d [${PID:- } %t\\\\(%logger\\\\) : %p]%n%class.%method\\\\(%file:%line\\\\)%n%m%n%n\"/>\n" +
             "\n" +
-            "    <logger name=\"" + ModuleTest.PACKAGE + ".~MODULE_NAME~.repository\" level=\"warn\"/>\n" +
+            "    <logger name=\"com.xxx.~MODULE_NAME~.repository\" level=\"warn\"/>\n" +
             "    <logger name=\"org.springframework\" level=\"warn\"/>\n" +
             "    <logger name=\"org.hibernate\" level=\"warn\"/>\n" +
             "    <logger name=\"com.netflix\" level=\"warn\"/>\n" +
@@ -835,11 +833,12 @@ class Server {
             "        <appender-ref ref=\"CONSOLE\"/>\n" +
             "    </root>\n" +
             "</configuration>\n";
+
     private static String LOG_TEST_XML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
             "<configuration>\n" +
-            "    <property name=\"LOG_PATTERN\" value=\"[%X{receiveTime}%d] [${PID:- } %t\\\\(%logger\\\\) : %p] [%X{requestInfo} %X{headInfo}] %class{30}#%method\\\\(%file:%line\\\\)%n%m%n%n\"/>\n" +
             "    <property name=\"FILE_PATH\" value=\"${user.home}/logs/~MODULE_NAME~-test\"/>\n" +
             "    <property name=\"SQL_PATTERN\" value=\"%d [${PID:- } %t\\\\(%logger\\\\) : %p]%n%class.%method\\\\(%file:%line\\\\)%n%m%n%n\"/>\n" +
+            "    <property name=\"LOG_PATTERN\" value=\"[%X{receiveTime}%d] [${PID:- } %t\\\\(%logger\\\\) : %p] %X{requestInfo} %class{30}#%method\\\\(%file:%line\\\\)%n%m%n%n\"/>\n" +
             "\n" +
             "    <appender name=\"PROJECT\" class=\"ch.qos.logback.core.rolling.RollingFileAppender\">\n" +
             "        <file>${FILE_PATH}.log</file>\n" +
@@ -857,7 +856,7 @@ class Server {
             "        </encoder>\n" +
             "    </appender>\n" +
             "\n" +
-            "    <logger name=\"" + ModuleTest.PACKAGE + ".~MODULE_NAME~.repository\" level=\"warn\"/>\n" +
+            "    <logger name=\"com.xxx.~MODULE_NAME~.repository\" level=\"warn\"/>\n" +
             "    <logger name=\"org.springframework\" level=\"warn\"/>\n" +
             "    <logger name=\"org.hibernate\" level=\"warn\"/>\n" +
             "    <logger name=\"com.netflix\" level=\"warn\"/>\n" +
@@ -886,10 +885,11 @@ class Server {
             "        <appender-ref ref=\"PROJECT\"/>\n" +
             "    </root>\n" +
             "</configuration>\n";
+
     private static String LOG_PROD_XML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
             "<configuration>\n" +
-            "    <property name=\"LOG_PATTERN\" value=\"[%X{receiveTime}%d] [${PID:- } %t\\\\(%logger\\\\) : %p] [%X{requestInfo} %X{headInfo}] %class{30}#%method\\\\(%file:%line\\\\)%n%m%n%n\"/>\n" +
             "    <property name=\"FILE_PATH\" value=\"${user.home}/logs/~MODULE_NAME~-prod\"/>\n" +
+            "    <property name=\"LOG_PATTERN\" value=\"[%X{receiveTime}%d] [${PID:- } %t\\\\(%logger\\\\) : %p] %X{requestInfo} %class{30}#%method\\\\(%file:%line\\\\)%n%m%n%n\"/>\n" +
             "\n" +
             "    <appender name=\"PROJECT\" class=\"ch.qos.logback.core.rolling.RollingFileAppender\">\n" +
             "        <file>${FILE_PATH}.log</file>\n" +
@@ -909,7 +909,7 @@ class Server {
             "        <appender-ref ref =\"PROJECT\"/>\n" +
             "    </appender>\n" +
             "    \n" +
-            "    <logger name=\"" + ModuleTest.PACKAGE + ".~MODULE_NAME~.repository\" level=\"warn\"/>\n" +
+            "    <logger name=\"com.xxx.~MODULE_NAME~.repository\" level=\"warn\"/>\n" +
             "    <logger name=\"org.springframework\" level=\"warn\"/>\n" +
             "    <logger name=\"org.hibernate\" level=\"warn\"/>\n" +
             "    <logger name=\"com.netflix\" level=\"warn\"/>\n" +
@@ -1022,7 +1022,7 @@ class Server {
             "/**\n" +
             " * %s模块生成 enumHandle 的工具类\n" +
             " *\n" +
-            " * @author https://github.com/liuanxin\n" +
+            ModuleTest.AUTHOR +
             " */\n" +
             "public class %sGenerateEnumHandler {\n" +
             "\n" +

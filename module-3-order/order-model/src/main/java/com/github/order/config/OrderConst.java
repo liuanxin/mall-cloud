@@ -9,4 +9,6 @@ public final class OrderConst {
 
     /** 当前模块名. 要与 application.yml 中的一致 */
     public static final String MODULE_NAME = "order";
+
+    public static final String ORDER_DEMO = MODULE_NAME + "/demo";
 }

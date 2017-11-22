@@ -49,7 +49,7 @@ public class WebInterceptor implements HandlerInterceptor {
 
     private void bindParam() {
         // 打印日志上下文中的数据
-        LogUtil.RequestLogContext logContextInfo = RequestUtils.logContextInfo()
+        LogUtil.RequestLogContext logContextInfo = RequestUtils.logContextInfo(online)
                 .setId(String.valueOf(WebSessionUtil.getUserId()))
                 .setName(WebSessionUtil.getUserName());
         LogUtil.bind(logContextInfo);

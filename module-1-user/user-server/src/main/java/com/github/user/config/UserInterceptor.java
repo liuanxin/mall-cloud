@@ -22,7 +22,7 @@ public class UserInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
                              Object handler) throws Exception {
-        LogUtil.bind(RequestUtils.logContextInfo());
+        LogUtil.bind(RequestUtils.logContextInfo(online));
         return true;
     }
 

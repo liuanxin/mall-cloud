@@ -206,10 +206,12 @@ public final class RequestUtils {
     }
 
     /** 基于请求上下文生成一个日志需要的上下文信息对象 */
-    public static LogUtil.RequestLogContext logContextInfo() {
+    public static LogUtil.RequestLogContext logContextInfo(boolean online) {
         HttpServletRequest request = getRequest();
 
-        return new LogUtil.RequestLogContext().setIp(getRealIp())
+        return new LogUtil.RequestLogContext()
+                .setOnline(online)
+                .setIp(getRealIp())
                 .setMethod(request.getMethod())
                 .setUrl(request.getRequestURL().toString())
                 .setParam(formatParam())
