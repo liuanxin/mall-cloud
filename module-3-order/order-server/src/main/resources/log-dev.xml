@@ -3,9 +3,8 @@
     <include resource="org/springframework/boot/logging/logback/defaults.xml" />
     <property name="CONSOLE_LOG_PATTERN" value="[%X{receiveTime}%d] [${PID:- } %t\\(%logger\\) : %p]%n%X{requestInfo}%class.%method\\(%file:%line\\)%n%m%n%n"/>
     <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
-    <property name="SQL_PATTERN" value="%d [${PID:- } %t\\(%logger\\) : %p]%n%class.%method\\(%file:%line\\)%n%m%n%n"/>
 
-    <logger name="com.xxx.order.repository" level="warn"/>
+    <logger name="com.github.order.repository" level="warn"/>
     <logger name="org.springframework" level="warn"/>
     <logger name="org.hibernate" level="warn"/>
     <logger name="com.netflix" level="warn"/>
@@ -14,16 +13,6 @@
     <logger name="com.zaxxer" level="warn"/>
     <logger name="org.apache" level="warn"/>
     <logger name="org.jboss" level="warn"/>
-
-    <appender name="SQL" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>${SQL_PATTERN}</pattern>
-            <charset>utf8</charset>
-        </encoder>
-    </appender>
-    <logger name="sqlLog" level="debug" additivity="false">
-        <appender-ref ref="SQL" />
-    </logger>
 
     <root level="debug">
         <appender-ref ref="CONSOLE"/>

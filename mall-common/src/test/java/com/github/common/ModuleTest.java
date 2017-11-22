@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.github.common.ModuleTest.PACKAGE;
+
 public class ModuleTest {
 
     /** true 生成断路器 */
@@ -124,7 +126,7 @@ class Parent {
                 "         xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\">\n" +
                 "    <parent>\n" +
                 "        <artifactId>mall-cloud</artifactId>\n" +
-                "        <groupId>" + ModuleTest.PACKAGE + "</groupId>\n" +
+                "        <groupId>" + PACKAGE + "</groupId>\n" +
                 "        <version>1.0-SNAPSHOT</version>\n" +
                 "    </parent>\n" +
                 "    <modelVersion>4.0.0</modelVersion>\n" +
@@ -146,11 +148,11 @@ class Parent {
 
 
 class Client {
-    private static String CLIENT = "package " + ModuleTest.PACKAGE + ".%s.client;\n"+
+    private static String CLIENT = "package " + PACKAGE + ".%s.client;\n"+
             "\n"+
-            "import " + ModuleTest.PACKAGE + ".%s.service.%sInterface;\n" +
-            "import " + ModuleTest.PACKAGE + ".%s.config.%sConst;\n" +
-            (ModuleTest.fallback ? "import " + ModuleTest.PACKAGE + ".%s.hystrix.%sFallback;\n" : "") +
+            "import " + PACKAGE + ".%s.service.%sInterface;\n" +
+            "import " + PACKAGE + ".%s.config.%sConst;\n" +
+            (ModuleTest.fallback ? "import " + PACKAGE + ".%s.hystrix.%sFallback;\n" : "") +
             "import org.springframework.cloud.netflix.feign.FeignClient;\n" +
             "\n" +
             "/**\n" +
@@ -162,12 +164,12 @@ class Client {
             "public interface %sClient extends %sInterface {\n" +
             "}\n";
 
-    private static String FALLBACK = "package " + ModuleTest.PACKAGE + ".%s.hystrix;\n" +
+    private static String FALLBACK = "package " + PACKAGE + ".%s.hystrix;\n" +
             "\n" +
-            "import " + ModuleTest.PACKAGE + ".common.page.PageInfo;\n" +
-            "import " + ModuleTest.PACKAGE + ".common.page.Pages;\n" +
-            "import " + ModuleTest.PACKAGE + ".common.util.LogUtil;\n" +
-            "import " + ModuleTest.PACKAGE + ".%s.client.%sClient;\n" +
+            "import " + PACKAGE + ".common.page.PageInfo;\n" +
+            "import " + PACKAGE + ".common.page.Pages;\n" +
+            "import " + PACKAGE + ".common.util.LogUtil;\n" +
+            "import " + PACKAGE + ".%s.client.%sClient;\n" +
             "import org.springframework.stereotype.Component;\n" +
             "\n" +
             "/**\n" +
@@ -193,7 +195,7 @@ class Client {
             "         xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\">\n" +
             "    <parent>\n" +
             "        <artifactId>%s</artifactId>\n" +
-            "        <groupId>" + ModuleTest.PACKAGE + "</groupId>\n" +
+            "        <groupId>" + PACKAGE + "</groupId>\n" +
             "        <version>1.0-SNAPSHOT</version>\n" +
             "    </parent>\n" +
             "    <modelVersion>4.0.0</modelVersion>\n" +
@@ -256,7 +258,7 @@ class Client {
 
 
 class Model {
-    private static String CONST = "package " + ModuleTest.PACKAGE + ".%s.config;\n"+
+    private static String CONST = "package " + PACKAGE + ".%s.config;\n"+
             "\n"+
             "/**\n" +
             " * %s模块相关的常数设置类\n" +
@@ -271,10 +273,10 @@ class Model {
             "    public static final String %s_DEMO = MODULE_NAME + \"/demo\";\n" +
             "}\n";
 
-    private static String INTERFACE = "package " + ModuleTest.PACKAGE + ".%s.service;\n" +
+    private static String INTERFACE = "package " + PACKAGE + ".%s.service;\n" +
             "\n" +
-            "import " + ModuleTest.PACKAGE + ".common.page.PageInfo;\n" +
-            "import " + ModuleTest.PACKAGE + ".%s.config.%sConst;\n" +
+            "import " + PACKAGE + ".common.page.PageInfo;\n" +
+            "import " + PACKAGE + ".%s.config.%sConst;\n" +
             "import org.springframework.web.bind.annotation.GetMapping;\n" +
             "import org.springframework.web.bind.annotation.RequestParam;\n" +
             "\n" +
@@ -305,7 +307,7 @@ class Model {
             "         xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\">\n" +
             "    <parent>\n" +
             "        <artifactId>%s</artifactId>\n" +
-            "        <groupId>" + ModuleTest.PACKAGE + "</groupId>\n" +
+            "        <groupId>" + PACKAGE + "</groupId>\n" +
             "        <version>1.0-SNAPSHOT</version>\n" +
             "    </parent>\n" +
             "    <modelVersion>4.0.0</modelVersion>\n" +
@@ -357,10 +359,10 @@ class Model {
 
 
 class Server {
-    private static String APPLICATION = "package " + ModuleTest.PACKAGE + ";\n" +
+    private static String APPLICATION = "package " + PACKAGE + ";\n" +
             "\n" +
-            "import " + ModuleTest.PACKAGE + ".common.util.A;\n" +
-            "import " + ModuleTest.PACKAGE + ".common.util.LogUtil;\n" +
+            "import " + PACKAGE + ".common.util.A;\n" +
+            "import " + PACKAGE + ".common.util.LogUtil;\n" +
             "import org.springframework.boot.SpringApplication;\n" +
             "import org.springframework.boot.autoconfigure.SpringBootApplication;\n" +
             "import org.springframework.boot.builder.SpringApplicationBuilder;\n" +
@@ -391,16 +393,16 @@ class Server {
             "    }\n" +
             "}\n";
 
-    private static String CONFIG_DATA = "package " + ModuleTest.PACKAGE + ".%s.config;\n" +
+    private static String CONFIG_DATA = "package " + PACKAGE + ".%s.config;\n" +
             "\n" +
             "import com.google.common.collect.Lists;\n" +
-            "import " + ModuleTest.PACKAGE + ".common.Const;\n" +
-            "import " + ModuleTest.PACKAGE + ".common.resource.CollectHandlerUtil;\n" +
-            "import " + ModuleTest.PACKAGE + ".common.resource.CollectResourceUtil;\n" +
-            "import " + ModuleTest.PACKAGE + ".common.resource.LoaderHandler;\n" +
-            "import " + ModuleTest.PACKAGE + ".common.resource.LoaderResource;\n" +
-            "import " + ModuleTest.PACKAGE + ".global.config.GlobalConst;\n" +
-            "import " + ModuleTest.PACKAGE + ".%s.config.%sConst;\n" +
+            "import " + PACKAGE + ".common.Const;\n" +
+            "import " + PACKAGE + ".common.resource.CollectHandlerUtil;\n" +
+            "import " + PACKAGE + ".common.resource.CollectResourceUtil;\n" +
+            "import " + PACKAGE + ".common.resource.LoaderHandler;\n" +
+            "import " + PACKAGE + ".common.resource.LoaderResource;\n" +
+            "import " + PACKAGE + ".global.config.GlobalConst;\n" +
+            "import " + PACKAGE + ".%s.config.%sConst;\n" +
             "import org.apache.ibatis.type.TypeHandler;\n" +
             "import org.springframework.core.io.Resource;\n" +
             "\n" +
@@ -434,10 +436,10 @@ class Server {
             "    public static final TypeHandler[] HANDLER_ARRAY = CollectHandlerUtil.handler(HANDLERS);\n" +
             "}\n";
 
-    private static String DATA_SOURCE = "package " + ModuleTest.PACKAGE + ".%s.config;\n" +
+    private static String DATA_SOURCE = "package " + PACKAGE + ".%s.config;\n" +
             "\n" +
             "import com.github.liuanxin.page.PageInterceptor;\n" +
-            "import " + ModuleTest.PACKAGE + ".common.Const;\n" +
+            "import " + PACKAGE + ".common.Const;\n" +
             "import org.apache.ibatis.plugin.Interceptor;\n" +
             "import org.apache.ibatis.session.SqlSessionFactory;\n" +
             "import org.mybatis.spring.SqlSessionFactoryBean;\n" +
@@ -497,15 +499,15 @@ class Server {
             "    */\n" +
             "}\n";
 
-    private static String EXCEPTION = "package " + ModuleTest.PACKAGE + ".%s.config;\n" +
+    private static String EXCEPTION = "package " + PACKAGE + ".%s.config;\n" +
             "\n" +
-            "import " + ModuleTest.PACKAGE + ".common.exception.NotLoginException;\n" +
-            "import " + ModuleTest.PACKAGE + ".common.exception.ServiceException;\n" +
-            "import " + ModuleTest.PACKAGE + ".common.json.JsonResult;\n" +
-            "import " + ModuleTest.PACKAGE + ".common.util.A;\n" +
-            "import " + ModuleTest.PACKAGE + ".common.util.LogUtil;\n" +
-            "import " + ModuleTest.PACKAGE + ".common.util.RequestUtils;\n" +
-            "import " + ModuleTest.PACKAGE + ".common.util.U;\n" +
+            "import " + PACKAGE + ".common.exception.NotLoginException;\n" +
+            "import " + PACKAGE + ".common.exception.ServiceException;\n" +
+            "import " + PACKAGE + ".common.json.JsonResult;\n" +
+            "import " + PACKAGE + ".common.util.A;\n" +
+            "import " + PACKAGE + ".common.util.LogUtil;\n" +
+            "import " + PACKAGE + ".common.util.RequestUtils;\n" +
+            "import " + PACKAGE + ".common.util.U;\n" +
             "import org.springframework.beans.factory.annotation.Value;\n" +
             "import org.springframework.web.HttpRequestMethodNotSupportedException;\n" +
             "import org.springframework.web.bind.annotation.ControllerAdvice;\n" +
@@ -582,10 +584,10 @@ class Server {
             "    }\n" +
             "}\n";
 
-    private static String INTERCEPTOR = "package " + ModuleTest.PACKAGE + ".%s.config;\n" +
+    private static String INTERCEPTOR = "package " + PACKAGE + ".%s.config;\n" +
             "\n" +
-            "import " + ModuleTest.PACKAGE + ".common.util.LogUtil;\n" +
-            "import " + ModuleTest.PACKAGE + ".common.util.RequestUtils;\n" +
+            "import " + PACKAGE + ".common.util.LogUtil;\n" +
+            "import " + PACKAGE + ".common.util.RequestUtils;\n" +
             "import org.springframework.beans.factory.annotation.Value;\n" +
             "import org.springframework.web.servlet.HandlerInterceptor;\n" +
             "import org.springframework.web.servlet.ModelAndView;\n" +
@@ -626,11 +628,11 @@ class Server {
             "    }\n" +
             "}\n";
 
-    private static String WEB_ADAPTER = "package " + ModuleTest.PACKAGE + ".%s.config;\n" +
+    private static String WEB_ADAPTER = "package " + PACKAGE + ".%s.config;\n" +
             "\n" +
-            "import " + ModuleTest.PACKAGE + ".common.Const;\n" +
-            "import " + ModuleTest.PACKAGE + ".common.converter.*;\n" +
-            "import " + ModuleTest.PACKAGE + ".common.mvc.SpringMvc;\n" +
+            "import " + PACKAGE + ".common.Const;\n" +
+            "import " + PACKAGE + ".common.converter.*;\n" +
+            "import " + PACKAGE + ".common.mvc.SpringMvc;\n" +
             "import org.springframework.context.annotation.Configuration;\n" +
             "import org.springframework.format.FormatterRegistry;\n" +
             "import org.springframework.http.converter.HttpMessageConverter;\n" +
@@ -674,11 +676,11 @@ class Server {
             "    }\n" +
             "}\n";
 
-    private static String SERVICE = "package " + ModuleTest.PACKAGE + ".%s.service;\n" +
+    private static String SERVICE = "package " + PACKAGE + ".%s.service;\n" +
             "\n" +
-            "import " + ModuleTest.PACKAGE + ".common.page.PageInfo;\n" +
-            "import " + ModuleTest.PACKAGE + ".common.page.Pages;\n" +
-            "import " + ModuleTest.PACKAGE + ".common.util.LogUtil;\n" +
+            "import " + PACKAGE + ".common.page.PageInfo;\n" +
+            "import " + PACKAGE + ".common.page.Pages;\n" +
+            "import " + PACKAGE + ".common.util.LogUtil;\n" +
             "import org.springframework.web.bind.annotation.RestController;\n" +
             "\n" +
             "/**\n" +
@@ -709,7 +711,7 @@ class Server {
             "logging.config: classpath:log-dev.xml\n" +
             "\n" +
             "spring.datasource:\n" +
-            "  url: jdbc:mysql://127.0.0.1:3306/cloud?useSSL=false&useUnicode=true&characterEncoding=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&statementInterceptors=" + ModuleTest.PACKAGE + ".common.sql.ShowSqlInterceptor\n" +
+            "  url: jdbc:mysql://127.0.0.1:3306/cloud?useSSL=false&useUnicode=true&characterEncoding=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&statementInterceptors=" + PACKAGE + ".common.sql.ShowSqlInterceptor\n" +
             "  username: root\n" +
             "  password: root\n" +
             "  hikari:\n" +
@@ -742,7 +744,7 @@ class Server {
             "logging.config: classpath:log-test.xml\n" +
             "\n" +
             "spring.datasource:\n" +
-            "  url: jdbc:mysql://test_%s_db?useSSL=false&useUnicode=true&characterEncoding=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&statementInterceptors=" + ModuleTest.PACKAGE + ".common.sql.ShowSqlInterceptor\n" +
+            "  url: jdbc:mysql://test_%s_db?useSSL=false&useUnicode=true&characterEncoding=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&statementInterceptors=" + PACKAGE + ".common.sql.ShowSqlInterceptor\n" +
             "  username: test_%s_user\n" +
             "  password: test_%s_pass\n" +
             "  hikari:\n" +
@@ -807,9 +809,8 @@ class Server {
             "    <include resource=\"org/springframework/boot/logging/logback/defaults.xml\" />\n" +
             "    <property name=\"CONSOLE_LOG_PATTERN\" value=\"[%X{receiveTime}%d] [${PID:- } %t\\\\(%logger\\\\) : %p]%n%X{requestInfo}%class.%method\\\\(%file:%line\\\\)%n%m%n%n\"/>\n" +
             "    <include resource=\"org/springframework/boot/logging/logback/console-appender.xml\" />\n" +
-            "    <property name=\"SQL_PATTERN\" value=\"%d [${PID:- } %t\\\\(%logger\\\\) : %p]%n%class.%method\\\\(%file:%line\\\\)%n%m%n%n\"/>\n" +
             "\n" +
-            "    <logger name=\"com.xxx.~MODULE_NAME~.repository\" level=\"warn\"/>\n" +
+            "    <logger name=\"" + PACKAGE + ".~MODULE_NAME~.repository\" level=\"warn\"/>\n" +
             "    <logger name=\"org.springframework\" level=\"warn\"/>\n" +
             "    <logger name=\"org.hibernate\" level=\"warn\"/>\n" +
             "    <logger name=\"com.netflix\" level=\"warn\"/>\n" +
@@ -818,16 +819,6 @@ class Server {
             "    <logger name=\"com.zaxxer\" level=\"warn\"/>\n" +
             "    <logger name=\"org.apache\" level=\"warn\"/>\n" +
             "    <logger name=\"org.jboss\" level=\"warn\"/>\n" +
-            "\n" +
-            "    <appender name=\"SQL\" class=\"ch.qos.logback.core.ConsoleAppender\">\n" +
-            "        <encoder>\n" +
-            "            <pattern>${SQL_PATTERN}</pattern>\n" +
-            "            <charset>utf8</charset>\n" +
-            "        </encoder>\n" +
-            "    </appender>\n" +
-            "    <logger name=\"sqlLog\" level=\"debug\" additivity=\"false\">\n" +
-            "        <appender-ref ref=\"SQL\" />\n" +
-            "    </logger>\n" +
             "\n" +
             "    <root level=\"debug\">\n" +
             "        <appender-ref ref=\"CONSOLE\"/>\n" +
@@ -845,7 +836,7 @@ class Server {
             "        <!-- yyyy-MM-dd_HH 每小时建一个, yyyy-MM-dd_HH-mm 每分钟建一个 -->\n" +
             "        <rollingPolicy class=\"ch.qos.logback.core.rolling.TimeBasedRollingPolicy\">\n" +
             "            <fileNamePattern>${FILE_PATH}-%d{yyyy-MM-dd}.log</fileNamePattern>\n" +
-            "            <maxHistory>90</maxHistory>\n" +
+            "            <maxHistory>7</maxHistory>\n" +
             "        </rollingPolicy>\n" +
             "        <!-- 开启了下面的配置将会在文件达到 10MB 的时候才新建文件, 将会按上面的规则一天建一个  -->\n" +
             "        <!--<triggeringPolicy class=\"ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy\">\n" +
@@ -856,7 +847,21 @@ class Server {
             "        </encoder>\n" +
             "    </appender>\n" +
             "\n" +
-            "    <logger name=\"com.xxx.~MODULE_NAME~.repository\" level=\"warn\"/>\n" +
+            "    <appender name=\"SQL\" class=\"ch.qos.logback.core.rolling.RollingFileAppender\">\n" +
+            "        <file>${FILE_PATH}-sql.log</file>\n" +
+            "        <rollingPolicy class=\"ch.qos.logback.core.rolling.TimeBasedRollingPolicy\">\n" +
+            "            <fileNamePattern>${FILE_PATH}-sql-%d{yyyy-MM-dd}.log</fileNamePattern>\n" +
+            "            <maxHistory>7</maxHistory>\n" +
+            "        </rollingPolicy>\n" +
+            "        <encoder>\n" +
+            "            <pattern>${SQL_PATTERN}</pattern>\n" +
+            "        </encoder>\n" +
+            "    </appender>\n" +
+            "    <logger name=\"sqlLog\" level=\"debug\" additivity=\"false\">\n" +
+            "        <appender-ref ref=\"SQL\" />\n" +
+            "    </logger>\n" +
+            "\n" +
+            "    <logger name=\"" + PACKAGE + ".~MODULE_NAME~.repository\" level=\"warn\"/>\n" +
             "    <logger name=\"org.springframework\" level=\"warn\"/>\n" +
             "    <logger name=\"org.hibernate\" level=\"warn\"/>\n" +
             "    <logger name=\"com.netflix\" level=\"warn\"/>\n" +
@@ -865,21 +870,6 @@ class Server {
             "    <logger name=\"com.zaxxer\" level=\"warn\"/>\n" +
             "    <logger name=\"org.apache\" level=\"warn\"/>\n" +
             "    <logger name=\"org.jboss\" level=\"warn\"/>\n" +
-            "\n" +
-            "    <appender name=\"SQL\" class=\"ch.qos.logback.core.rolling.RollingFileAppender\">\n" +
-            "        <file>${FILE_PATH}-sql.log</file>\n" +
-            "        <rollingPolicy class=\"ch.qos.logback.core.rolling.TimeBasedRollingPolicy\">\n" +
-            "            <fileNamePattern>${FILE_PATH}-sql-%d{yyyy-MM-dd}.log</fileNamePattern>\n" +
-            "            <maxHistory>90</maxHistory>\n" +
-            "        </rollingPolicy>\n" +
-            "\n" +
-            "        <encoder>\n" +
-            "            <pattern>${SQL_PATTERN}</pattern>\n" +
-            "        </encoder>\n" +
-            "    </appender>\n" +
-            "    <logger name=\"sqlLog\" level=\"debug\" additivity=\"false\">\n" +
-            "        <appender-ref ref=\"SQL\" />\n" +
-            "    </logger>\n" +
             "\n" +
             "    <root level=\"debug\">\n" +
             "        <appender-ref ref=\"PROJECT\"/>\n" +
@@ -897,7 +887,6 @@ class Server {
             "            <fileNamePattern>${FILE_PATH}-%d{yyyy-MM-dd}.log</fileNamePattern>\n" +
             "            <maxHistory>60</maxHistory>\n" +
             "        </rollingPolicy>\n" +
-            "\n" +
             "        <encoder>\n" +
             "            <pattern>${LOG_PATTERN}</pattern>\n" +
             "        </encoder>\n" +
@@ -909,7 +898,7 @@ class Server {
             "        <appender-ref ref =\"PROJECT\"/>\n" +
             "    </appender>\n" +
             "    \n" +
-            "    <logger name=\"com.xxx.~MODULE_NAME~.repository\" level=\"warn\"/>\n" +
+            "    <logger name=\"" + PACKAGE + ".~MODULE_NAME~.repository\" level=\"warn\"/>\n" +
             "    <logger name=\"org.springframework\" level=\"warn\"/>\n" +
             "    <logger name=\"org.hibernate\" level=\"warn\"/>\n" +
             "    <logger name=\"com.netflix\" level=\"warn\"/>\n" +
@@ -931,7 +920,7 @@ class Server {
             "         xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\">\n" +
             "    <parent>\n" +
             "        <artifactId>%s</artifactId>\n" +
-            "        <groupId>" + ModuleTest.PACKAGE + "</groupId>\n" +
+            "        <groupId>" + PACKAGE + "</groupId>\n" +
             "        <version>1.0-SNAPSHOT</version>\n" +
             "    </parent>\n" +
             "    <modelVersion>4.0.0</modelVersion>\n" +
@@ -1012,11 +1001,11 @@ class Server {
             "</project>\n";
 
     
-    private static String TEST_ENUM_HANDLE = "package " + ModuleTest.PACKAGE + ".%s;\n" +
+    private static String TEST_ENUM_HANDLE = "package " + PACKAGE + ".%s;\n" +
             "\n" +
-            "import " + ModuleTest.PACKAGE + ".common.Const;\n" +
-            "import " + ModuleTest.PACKAGE + ".common.util.GenerateEnumHandler;\n" +
-            "import " + ModuleTest.PACKAGE + ".%s.config.%sConst;\n" +
+            "import " + PACKAGE + ".common.Const;\n" +
+            "import " + PACKAGE + ".common.util.GenerateEnumHandler;\n" +
+            "import " + PACKAGE + ".%s.config.%sConst;\n" +
             "import org.junit.Test;\n" +
             "\n" +
             "/**\n" +

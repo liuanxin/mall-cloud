@@ -9,7 +9,7 @@
         <!-- yyyy-MM-dd_HH 每小时建一个, yyyy-MM-dd_HH-mm 每分钟建一个 -->
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${FILE_PATH}-%d{yyyy-MM-dd}.log</fileNamePattern>
-            <maxHistory>90</maxHistory>
+            <maxHistory>7</maxHistory>
         </rollingPolicy>
         <!-- 开启了下面的配置将会在文件达到 10MB 的时候才新建文件, 将会按上面的规则一天建一个  -->
         <!--<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
@@ -20,7 +20,21 @@
         </encoder>
     </appender>
 
-    <logger name="com.xxx.order.repository" level="warn"/>
+    <appender name="SQL" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${FILE_PATH}-sql.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${FILE_PATH}-sql-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${SQL_PATTERN}</pattern>
+        </encoder>
+    </appender>
+    <logger name="sqlLog" level="debug" additivity="false">
+        <appender-ref ref="SQL" />
+    </logger>
+
+    <logger name="com.github.order.repository" level="warn"/>
     <logger name="org.springframework" level="warn"/>
     <logger name="org.hibernate" level="warn"/>
     <logger name="com.netflix" level="warn"/>
@@ -29,21 +43,6 @@
     <logger name="com.zaxxer" level="warn"/>
     <logger name="org.apache" level="warn"/>
     <logger name="org.jboss" level="warn"/>
-
-    <appender name="SQL" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${FILE_PATH}-sql.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${FILE_PATH}-sql-%d{yyyy-MM-dd}.log</fileNamePattern>
-            <maxHistory>90</maxHistory>
-        </rollingPolicy>
-
-        <encoder>
-            <pattern>${SQL_PATTERN}</pattern>
-        </encoder>
-    </appender>
-    <logger name="sqlLog" level="debug" additivity="false">
-        <appender-ref ref="SQL" />
-    </logger>
 
     <root level="debug">
         <appender-ref ref="PROJECT"/>

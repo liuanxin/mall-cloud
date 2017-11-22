@@ -9,7 +9,6 @@
             <fileNamePattern>${FILE_PATH}-%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>60</maxHistory>
         </rollingPolicy>
-
         <encoder>
             <pattern>${LOG_PATTERN}</pattern>
         </encoder>
@@ -21,7 +20,7 @@
         <appender-ref ref ="PROJECT"/>
     </appender>
     
-    <logger name="com.xxx.common.repository" level="warn"/>
+    <logger name="com.github.common.repository" level="warn"/>
     <logger name="org.springframework" level="warn"/>
     <logger name="org.hibernate" level="warn"/>
     <logger name="com.netflix" level="warn"/>
