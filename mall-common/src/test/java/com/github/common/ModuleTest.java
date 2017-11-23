@@ -761,11 +761,11 @@ class Server {
             "eureka:\n" +
             "  client:\n" +
             "    healthcheck.enabled: true\n" +
-            "    registry-fetch-interval-seconds: 15\n" +
+            "    registry-fetch-interval-seconds: 10\n" +
             "    serviceUrl.defaultZone: ${register.center}\n" +
             "  instance:\n" +
-            "    lease-renewal-interval-in-seconds: 15\n" +
-            "    lease-expiration-duration-in-seconds: 45\n";
+            "    lease-renewal-interval-in-seconds: 10\n" +
+            "    lease-expiration-duration-in-seconds: 30\n";
 
     private static String APPLICATION_PROD_YML = "\n" +
             "online: true\n" +

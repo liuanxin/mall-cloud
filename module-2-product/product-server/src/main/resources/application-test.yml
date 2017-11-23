@@ -24,8 +24,8 @@ register.center: http://test1:8761/eureka/,http://test2:8761/eureka/,http://test
 eureka:
   client:
     healthcheck.enabled: true
-    registry-fetch-interval-seconds: 15
+    registry-fetch-interval-seconds: 10
     serviceUrl.defaultZone: ${register.center}
   instance:
-    lease-renewal-interval-in-seconds: 15
-    lease-expiration-duration-in-seconds: 45
+    lease-renewal-interval-in-seconds: 10
+    lease-expiration-duration-in-seconds: 30
