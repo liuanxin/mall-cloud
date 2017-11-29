@@ -14,19 +14,19 @@ public class WebJsonpHandler extends AbstractJsonpResponseBodyAdvice {
      *         <td>返回</td>
      *     </tr>
      *     <tr>
-     *         <td>/user</td>
+     *         <td>/xxx</td>
      *         <td>{"id":1,"name":"张三"}</td>
      *     </tr>
      *     <tr>
-     *         <td>/user?jsonp=user</td>
+     *         <td>/xxx?jsonp=user</td>
      *         <td>user({"id":1,"name":"张三"});</td>
      *     </tr>
      *     <tr>
-     *         <td>/user?callback=user</td>
+     *         <td>/xxx?callback=user</td>
      *         <td>user({"id":1,"name":"张三"});</td>
      *     </tr>
      *     <tr>
-     *         <td>/user?callback=list</td>
+     *         <td>/xxx?callback=list</td>
      *         <td>list({"id":1,"name":"张三"});</td>
      *     </tr>
      * </table>

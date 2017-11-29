@@ -1,5 +1,6 @@
 package com.github.common.util;
 
+import com.github.common.date.DateUtil;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -7,9 +8,6 @@ import lombok.experimental.Accessors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /** 日志管理, 使用此 utils 获取 log, 不要在类中使用 LoggerFactory.getLogger 的方式! */
 public final class LogUtil {
@@ -36,7 +34,7 @@ public final class LogUtil {
     }
 
     public static void recordTime() {
-        MDC.put(RECEIVE_TIME, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss SSS").format(new Date()) + " -> ");
+        MDC.put(RECEIVE_TIME, DateUtil.detailNowTime() + " -> ");
     }
 
 
@@ -45,20 +43,20 @@ public final class LogUtil {
     @NoArgsConstructor
     @Accessors(chain = true)
     public static class RequestLogContext {
-        boolean online;
+        private boolean online;
 
-        String id;
-        String name;
+        private String id;
+        private String name;
         /** 访问 ip */
-        String ip;
+        private String ip;
         /** 访问方法 */
-        String method;
+        private String method;
         /** 访问地址 */
-        String url;
+        private String url;
         /** 请求 body 中的参数 */
-        String param;
+        private String param;
         /** 请求 header 中的参数 */
-        String headParam;
+        private String headParam;
 
         private String requestInfo() {
             StringBuilder sbd = new StringBuilder();
