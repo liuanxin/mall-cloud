@@ -35,6 +35,11 @@
         </dependency>
 
         <dependency>
+            <groupId>com.github.liuanxin</groupId>
+            <artifactId>api-info</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
             <scope>provided</scope>

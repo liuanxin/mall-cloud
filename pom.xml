@@ -55,13 +55,13 @@
         <guava.version>22.0</guava.version>
         <okhttp.version>2.7.5</okhttp.version>
         <poi-ooxml.version>3.15</poi-ooxml.version>
-        <spring.fox.version>2.7.0</spring.fox.version>
 
         <hikaricp.version>2.7.1</hikaricp.version>
         <mybatis.version>3.4.4</mybatis.version>
         <mybatis-spring.version>1.3.1</mybatis-spring.version>
-        <mybatis-page.version>1.2.0</mybatis-page.version>
-        <mybatis-redis-cache.version>1.0.1</mybatis-redis-cache.version>
+        <mybatis-page.version>1.2.3</mybatis-page.version>
+        <mybatis-redis-cache.version>1.2.2</mybatis-redis-cache.version>
+        <api-info.version>1.0.1</api-info.version>
     </properties>
 
     <dependencyManagement>
@@ -228,15 +228,11 @@
                 <artifactId>mybatis-redis-cache</artifactId>
                 <version>${mybatis-redis-cache.version}</version>
             </dependency>
+
             <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-swagger2</artifactId>
-                <version>${spring.fox.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-swagger-ui</artifactId>
-                <version>${spring.fox.version}</version>
+                <groupId>com.github.liuanxin</groupId>
+                <artifactId>api-info</artifactId>
+                <version>${api-info.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
