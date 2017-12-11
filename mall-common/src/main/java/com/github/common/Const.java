@@ -20,15 +20,6 @@ public final class Const {
     }
     // ========== load ==========
 
-    // ========== dubbo ==========
-    /** 全局的 dubbo 版本 */
-    public static final String DUBBO_VERSION = "1.0";
-    /** 全局的 dubbo 超时时间, 单位: 毫秒 */
-    public static final int DUBBO_TIMEOUT = 60000;
-    /** 全局的 dubbo 超时时间, 单位: 毫秒 */
-    public static final String DUBBO_FILTER = "-exception";
-    // ========== dubbo ==========
-
     /**
      * <pre>
      * 在 servlet 规范中有 forward 和 redirect 两种页面跳转.
