@@ -37,14 +37,16 @@ public class Page implements Serializable {
     public static final int DEFAULT_PAGE_NO = 1;
     /** 分页默认的每页条数 */
     public static final int DEFAULT_LIMIT = 15;
+    /** 最大分页条数 */
+    private static final int MAX_LIMIT = 1000;
     /** 前台传递过来的分页参数名 */
     public static final String GLOBAL_PAGE = "page";
     /** 前台传递过来的每页条数名 */
     public static final String GLOBAL_LIMIT = "limit";
 
-    /** 当前页数 */
+    /** 当前页数. 不传或传入 0, 或负数, 或非数字则默认是  DEFAULT_PAGE_NO */
     private int page;
-    /** 每页条数 */
+    /** 每页条数. 不传或传入 0, 或负数, 或非数字, 或大于 MAX_LIMIT 则默认是 DEFAULT_LIMIT */
     private int limit;
     /** 是否是移动端 */
     private boolean wasMobile = false;
