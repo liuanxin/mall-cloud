@@ -5,6 +5,9 @@ import com.github.common.json.JsonResult;
 import com.github.common.resource.CollectEnumUtil;
 import com.github.common.util.SecurityCodeUtil;
 import com.github.common.util.U;
+import com.github.liuanxin.api.annotation.ApiGroup;
+import com.github.liuanxin.api.annotation.ApiIgnore;
+import com.github.liuanxin.api.annotation.ApiMethod;
 import com.github.util.WebDataCollectUtil;
 import com.github.util.WebSessionUtil;
 import org.springframework.stereotype.Controller;
@@ -16,7 +19,7 @@ import java.io.IOException;
 
 import static com.github.common.json.JsonResult.success;
 
-
+@ApiIgnore
 @Controller
 public class WebIndexController {
 
@@ -31,6 +34,9 @@ public class WebIndexController {
         return success("版本号更改为: " + RenderViewResolver.changeVersion());
     }
 
+    @ApiGroup("common-公共模块")
+    @ApiMethod(title = "获取枚举信息", develop = "no body")
+    @ApiIgnore(false)
     @GetMapping("/enum")
     @ResponseBody
     public JsonResult enumList(String type) {

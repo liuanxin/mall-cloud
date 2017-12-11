@@ -2,7 +2,13 @@ package com.github.web;
 
 import com.github.common.json.JsonResult;
 import com.github.common.page.Page;
+import com.github.common.page.PageInfo;
+import com.github.dto.DemoDto;
+import com.github.liuanxin.api.annotation.ApiGroup;
+import com.github.liuanxin.api.annotation.ApiMethod;
+import com.github.liuanxin.api.annotation.ApiParam;
 import com.github.user.client.UserClient;
+import com.github.vo.DemoVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,17 +16,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/user")
-@SuppressWarnings("unchecked")
+@ApiGroup({"user-用户模块"})
 public class UserController {
 
     @Autowired
     private UserClient userClient;
 
-    @GetMapping("/check")
-    public JsonResult info(String phone, Page page) {
-//        Map map = JsonUtil.convert(page, Map.class);
-//        map.put("phone", phone);
-//        return userClient.demo(phone, page.getPage(), page.getLimit());
-        return JsonResult.success("xx", userClient.demo(phone, page.getPage(), page.getLimit()));
+    @GetMapping("/demo")
+    @ApiMethod(title = "示例", develop = "liuanxin")
+    public JsonResult<PageInfo<DemoVo>> demo(@ApiParam(desc = "用户名") String name,
+                                             DemoDto dto, Page page) {
+        userClient.demo(name, page.getPage(), page.getLimit());
+        return JsonResult.success("xx", null);
     }
 }

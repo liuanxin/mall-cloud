@@ -2,7 +2,7 @@ package com.github.common.json;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.github.common.exception.NotLoginException;
-import com.github.common.util.U;
+import com.github.liuanxin.api.annotation.ApiReturn;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -36,12 +36,15 @@ public class JsonResult<T> {
      *   返回 10 时导向登录页面引导用户登录.
      * </pre>
      */
-    private int code = Code.FAIL.flag;
+    @ApiReturn(desc = "返回码. 根据此值控制页面扭转: 0.显示 msg, 1.业务处理, 10.导向登录页")
+    private int code;
 
     /** 返回说明. 如: 用户名密码错误, 收货地址添加成功 等 */
-    private String msg = U.EMPTY;
+    @ApiReturn(desc = "返回说明. 如: 用户名密码错误, 收货地址添加成功 等")
+    private String msg;
 
     /** 返回的数据. 具体是返回实体 {"id":1} 还是列表 [{"id":1},{"id":2}] 依具体的业务而定 */
+    @ApiReturn(desc = "返回的数据. 实体 {\"id\":1} 还是列表 [{\"id\":1},{\"id\":2}] 依具体的业务而定")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private T data;
 

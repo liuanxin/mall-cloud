@@ -1,5 +1,7 @@
 package com.github.common.page;
 
+import com.github.liuanxin.api.annotation.ApiParam;
+import com.github.liuanxin.api.annotation.ApiParamIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -44,11 +46,16 @@ public class Page implements Serializable {
     /** 前台传递过来的每页条数名 */
     public static final String GLOBAL_LIMIT = "limit";
 
-    /** 当前页数. 不传或传入 0, 或负数, 或非数字则默认是  DEFAULT_PAGE_NO */
+    /** 当前页数. 不传或传入 0, 或负数, 或非数字则默认是 1 */
+    @ApiParam(desc = "当前页数. 不传或传入 0, 或负数, 或非数字则默认是 1")
     private int page;
-    /** 每页条数. 不传或传入 0, 或负数, 或非数字, 或大于 MAX_LIMIT 则默认是 DEFAULT_LIMIT */
+
+    /** 每页条数. 不传或传入 0, 或负数, 或非数字, 或大于 1000 则默认是 15 */
+    @ApiParam(desc = "每页条数. 不传或传入 0, 或负数, 或非数字, 或大于 " + MAX_LIMIT + " 则默认是 " + DEFAULT_LIMIT)
     private int limit;
+
     /** 是否是移动端 */
+    @ApiParamIgnore
     private boolean wasMobile = false;
 
     public Page(String page, String limit) {
