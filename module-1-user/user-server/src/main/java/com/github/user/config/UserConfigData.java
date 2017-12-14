@@ -18,7 +18,7 @@ import java.util.List;
  *
  * @author https://github.com/liuanxin
  */
-public final class UserConfigData {
+final class UserConfigData {
 
     private static final String[] RESOURCE_PATH = new String[] {
             UserConst.MODULE_NAME + "/*.xml",
@@ -36,7 +36,7 @@ public final class UserConfigData {
     }
 
     /** 要加载的 mybatis 的配置文件目录 */
-    public static final Resource[] RESOURCE_ARRAY = CollectResourceUtil.resource(RESOURCES);
+    static final Resource[] RESOURCE_ARRAY = CollectResourceUtil.resource(RESOURCES);
     /** 要加载的 mybatis 类型处理器的目录 */
-    public static final TypeHandler[] HANDLER_ARRAY = CollectHandlerUtil.handler(HANDLERS);
+    static final TypeHandler[] HANDLER_ARRAY = CollectHandlerUtil.handler(HANDLERS);
 }

@@ -71,6 +71,11 @@
             <groupId>com.github.liuanxin</groupId>
             <artifactId>mybatis-redis-cache</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.github.liuanxin</groupId>
+            <artifactId>api-info</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

@@ -7,7 +7,7 @@ import org.springframework.cloud.netflix.feign.FeignClient;
 
 /**
  * 用户相关的调用接口
- * 
+ *
  * @author https://github.com/liuanxin
  */
 @FeignClient(value = UserConst.MODULE_NAME, fallback = UserFallback.class)

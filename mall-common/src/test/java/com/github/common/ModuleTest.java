@@ -23,7 +23,7 @@ public class ModuleTest {
     // static String PARENT = "/home/tony/project/mall-cloud/";
     private static String PARENT = ModuleTest.class.getClassLoader().getResource("").getFile() + "../../../";
     static String PACKAGE_PATH = PACKAGE.replaceAll("\\.", "/");
-    static String AUTHOR = " * @author https://github.com/liuanxin\n";
+    static String AUTHOR = " *\n * @author https://github.com/liuanxin\n";
 
     static String capitalize(String name) {
         StringBuilder sbd = new StringBuilder();
@@ -157,7 +157,6 @@ class Client {
             "\n" +
             "/**\n" +
             " * %s相关的调用接口\n" +
-            " * \n" +
             ModuleTest.AUTHOR +
             " */\n" +
             "@FeignClient(value = %sConst.MODULE_NAME" + (ModuleTest.fallback ? ", fallback = %sFallback.class" : "") + ")\n" +
@@ -174,7 +173,6 @@ class Client {
             "\n" +
             "/**\n" +
             " * %s相关的断路器\n" +
-            " * \n" +
             ModuleTest.AUTHOR +
             " */\n" +
             "@Component\n" +
@@ -262,7 +260,6 @@ class Model {
             "\n"+
             "/**\n" +
             " * %s模块相关的常数设置类\n" +
-            " * \n" +
             ModuleTest.AUTHOR +
             " */\n" +
             "public final class %sConst {\n"+
@@ -270,6 +267,13 @@ class Model {
             "    /** 当前模块名. 要与 application.yml 中的一致 */\n"+
             "    public static final String MODULE_NAME = \"%s\";\n"+
             "\n" +
+            "    /** 当前模块说明. 当用在文档中时有用 */\n" +
+            "    public static final String MODULE_INFO = MODULE_NAME + \"-%s\";\n" +
+            "    /** 当前模块版本. 当用在文档中时有用 */\n" +
+            "    public static final String MODULE_VERSION = \"1.0\";\n" +
+            "\n\n" +
+            "    // ========== url 说明 ==========\n\n" +
+            "    /** 测试地址 */\n" +
             "    public static final String %s_DEMO = MODULE_NAME + \"/demo\";\n" +
             "}\n";
 
@@ -282,7 +286,6 @@ class Model {
             "\n" +
             "/**\n" +
             " * %s相关的接口\n" +
-            " * \n" +
             ModuleTest.AUTHOR +
             " */\n" +
             "public interface %sInterface {\n" +
@@ -348,7 +351,7 @@ class Model {
         new File(modelSourcePath, "enums").mkdirs();
         new File(modelSourcePath, "model").mkdirs();
         String constModel = String.format(CONST, packageName, comment, clazzName,
-                packageName, clazzName.toUpperCase());
+                packageName, comment, clazzName.toUpperCase());
         ModuleTest.writeFile(new File(model_config, clazzName + "Const.java"), constModel);
 
         String interfaceModel = String.format(INTERFACE, packageName, packageName, clazzName,
@@ -370,9 +373,6 @@ class Server {
             "import org.springframework.cloud.client.discovery.EnableDiscoveryClient;\n" +
             "import org.springframework.context.ApplicationContext;\n" +
             "\n" +
-            "/**\n" +
-            ModuleTest.AUTHOR +
-            " */\n" +
             "@SpringBootApplication\n" +
             "@EnableDiscoveryClient\n" +
             "public class %sApplication extends SpringBootServletInitializer {\n" +
@@ -393,6 +393,36 @@ class Server {
             "    }\n" +
             "}\n";
 
+    private static String MODULE_CONFIG = "package " + PACKAGE + ".%s.config;\n" +
+            "\n" +
+            "import " + PACKAGE + ".global.model.Develop;\n" +
+            "import com.github.liuanxin.api.annotation.EnableApiInfo;\n" +
+            "import com.github.liuanxin.api.model.DocumentCopyright;\n" +
+            "import org.springframework.beans.factory.annotation.Value;\n" +
+            "import org.springframework.context.annotation.Bean;\n" +
+            "import org.springframework.context.annotation.Configuration;\n" +
+            "\n" +
+            "/**\n" +
+            " * %s模块里需要放入 spring 上下文中的 bean\n" +
+            ModuleTest.AUTHOR +
+            " */\n" +
+            "@Configuration\n" +
+            "@EnableApiInfo\n" +
+            "public class %sConfig {\n" +
+            "\n" +
+            "    @Value(\"${online:false}\")\n" +
+            "    private boolean online;\n" +
+            "\n" +
+            "    @Bean\n" +
+            "    public DocumentCopyright urlCopyright() {\n" +
+            "        return new DocumentCopyright()\n" +
+            "                .setContact(Develop.CONTACT)\n" +
+            "                .setTeam(Develop.TEAM)\n" +
+            "                .setVersion(%sConst.MODULE_VERSION)\n" +
+            "                .setOnline(online);\n" +
+            "    }\n" +
+            "}\n";
+
     private static String CONFIG_DATA = "package " + PACKAGE + ".%s.config;\n" +
             "\n" +
             "import com.google.common.collect.Lists;\n" +
@@ -410,10 +440,9 @@ class Server {
             "\n" +
             "/**\n" +
             " * %s模块的配置数据. 主要是 mybatis 的多配置目录和类型处理器\n" +
-            " *\n" +
             ModuleTest.AUTHOR +
             " */\n" +
-            "public final class %sConfigData {\n" +
+            "final class %sConfigData {\n" +
             "\n" +
             "    private static final String[] RESOURCE_PATH = new String[] {\n" +
             "            %sConst.MODULE_NAME + \"/*.xml\",\n" +
@@ -431,9 +460,9 @@ class Server {
             "    }\n" +
             "\n" +
             "    /** 要加载的 mybatis 的配置文件目录 */\n" +
-            "    public static final Resource[] RESOURCE_ARRAY = CollectResourceUtil.resource(RESOURCES);\n" +
+            "    static final Resource[] RESOURCE_ARRAY = CollectResourceUtil.resource(RESOURCES);\n" +
             "    /** 要加载的 mybatis 类型处理器的目录 */\n" +
-            "    public static final TypeHandler[] HANDLER_ARRAY = CollectHandlerUtil.handler(HANDLERS);\n" +
+            "    static final TypeHandler[] HANDLER_ARRAY = CollectHandlerUtil.handler(HANDLERS);\n" +
             "}\n";
 
     private static String DATA_SOURCE = "package " + PACKAGE + ".%s.config;\n" +
@@ -457,7 +486,6 @@ class Server {
             " * @see org.mybatis.spring.annotation.MapperScannerRegistrar#registerBeanDefinitions\n" +
             " * @see org.mybatis.spring.mapper.MapperScannerConfigurer#postProcessBeanDefinitionRegistry\n" +
             " * @see org.mybatis.spring.mapper.ClassPathMapperScanner\n" +
-            " *\n" +
             ModuleTest.AUTHOR +
             " */\n" +
             "@Configuration\n" +
@@ -524,7 +552,6 @@ class Server {
             " * @see org.springframework.boot.autoconfigure.web.ErrorController\n" +
             " * @see org.springframework.boot.autoconfigure.web.ErrorProperties\n" +
             " * @see org.springframework.boot.autoconfigure.web.ErrorMvcAutoConfiguration\n" +
-            " *\n" +
             ModuleTest.AUTHOR +
             " */\n" +
             "@ControllerAdvice\n" +
@@ -597,7 +624,6 @@ class Server {
             "\n" +
             "/**\n" +
             " * %s模块的 web 拦截器\n" +
-            " *\n" +
             ModuleTest.AUTHOR +
             " */\n" +
             "public class %sInterceptor implements HandlerInterceptor {\n" +
@@ -644,7 +670,6 @@ class Server {
             "\n" +
             "/**\n" +
             " * %s模块的配置数据. 主要是 mybatis 的多配置目录和类型处理器\n" +
-            " *\n" +
             ModuleTest.AUTHOR +
             " */\n" +
             "@Configuration\n" +
@@ -681,18 +706,26 @@ class Server {
             "import " + PACKAGE + ".common.page.PageInfo;\n" +
             "import " + PACKAGE + ".common.page.Pages;\n" +
             "import " + PACKAGE + ".common.util.LogUtil;\n" +
+            "import " + PACKAGE + ".global.model.Develop;\n" +
+            "import com.github.liuanxin.api.annotation.ApiGroup;\n" +
+            "import com.github.liuanxin.api.annotation.ApiMethod;\n" +
+            "import com.github.liuanxin.api.annotation.ApiParam;\n" +
+            "import " + PACKAGE + ".%s.config.%sConst;\n" +
             "import org.springframework.web.bind.annotation.RestController;\n" +
             "\n" +
             "/**\n" +
             " * %s模块的接口实现类\n" +
-            " *\n" +
             ModuleTest.AUTHOR +
             " */\n" +
+            "@ApiGroup({ %sConst.MODULE_INFO })\n" +
             "@RestController\n" +
             "public class %sService implements %sInterface {\n" +
             "    \n" +
+            "    @ApiMethod(title = \"%s测试接口\", develop = Develop.%s)\n" +
             "    @Override\n" +
-            "    public PageInfo demo(String xx, Integer page, Integer limit) {\n" +
+            "    public PageInfo demo(String xx, \n" +
+            "                         @ApiParam(desc = \"当前页数\") Integer page,\n" +
+            "                         @ApiParam(desc = \"每页条数\") Integer limit) {\n" +
             "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
             "            LogUtil.ROOT_LOG.debug(\"调用实现类\");\n" +
             "        }\n" +
@@ -987,6 +1020,11 @@ class Server {
             "            <groupId>com.github.liuanxin</groupId>\n" +
             "            <artifactId>mybatis-redis-cache</artifactId>\n" +
             "        </dependency>\n" +
+            "\n" +
+            "        <dependency>\n" +
+            "            <groupId>com.github.liuanxin</groupId>\n" +
+            "            <artifactId>api-info</artifactId>\n" +
+            "        </dependency>\n" +
             "    </dependencies>\n" +
             "\n" +
             "    <build>\n" +
@@ -1010,7 +1048,6 @@ class Server {
             "\n" +
             "/**\n" +
             " * %s模块生成 enumHandle 的工具类\n" +
-            " *\n" +
             ModuleTest.AUTHOR +
             " */\n" +
             "public class %sGenerateEnumHandler {\n" +
@@ -1044,6 +1081,9 @@ class Server {
         String application = String.format(APPLICATION, clazzName, clazzName, clazzName);
         ModuleTest.writeFile(new File(packagePath, clazzName + "Application.java"), application);
 
+        String moduleConfig = String.format(MODULE_CONFIG, parentPackageName, comment, clazzName, clazzName);
+        ModuleTest.writeFile(new File(configPath, clazzName + "Config.java"), moduleConfig);
+
         String configData = String.format(CONFIG_DATA, parentPackageName, parentPackageName, clazzName, comment,
                 clazzName, clazzName, clazzName, clazzName, clazzName, clazzName);
         ModuleTest.writeFile(new File(configPath, clazzName + "ConfigData.java"), configData);
@@ -1060,7 +1100,8 @@ class Server {
         String war = String.format(WEB_ADAPTER, parentPackageName, comment, clazzName, clazzName);
         ModuleTest.writeFile(new File(configPath, clazzName + "WebAdapter.java"), war);
 
-        String service = String.format(SERVICE, parentPackageName, comment, clazzName, clazzName);
+        String service = String.format(SERVICE, parentPackageName, parentPackageName, clazzName,
+                comment, clazzName, clazzName, clazzName, comment, clazzName.toUpperCase());
         ModuleTest.writeFile(new File(servicePath, clazzName + "Service.java"), service);
 
 

@@ -9,9 +9,6 @@ import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.ApplicationContext;
 
-/**
- * @author https://github.com/liuanxin
- */
 @SpringBootApplication
 @EnableDiscoveryClient
 public class UserApplication extends SpringBootServletInitializer {

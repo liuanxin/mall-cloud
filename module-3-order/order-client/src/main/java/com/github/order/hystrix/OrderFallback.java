@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * 订单相关的断路器
- * 
+ *
  * @author https://github.com/liuanxin
  */
 @Component

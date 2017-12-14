@@ -3,6 +3,11 @@ package com.github.product.service;
 import com.github.common.page.PageInfo;
 import com.github.common.page.Pages;
 import com.github.common.util.LogUtil;
+import com.github.global.model.Develop;
+import com.github.liuanxin.api.annotation.ApiGroup;
+import com.github.liuanxin.api.annotation.ApiMethod;
+import com.github.liuanxin.api.annotation.ApiParam;
+import com.github.product.config.ProductConst;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -10,11 +15,15 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * @author https://github.com/liuanxin
  */
+@ApiGroup({ ProductConst.MODULE_INFO })
 @RestController
 public class ProductService implements ProductInterface {
     
+    @ApiMethod(title = "商品测试接口", develop = Develop.PRODUCT)
     @Override
-    public PageInfo demo(String xx, Integer page, Integer limit) {
+    public PageInfo demo(String xx, 
+                         @ApiParam(desc = "当前页数") Integer page,
+                         @ApiParam(desc = "每页条数") Integer limit) {
         if (LogUtil.ROOT_LOG.isDebugEnabled()) {
             LogUtil.ROOT_LOG.debug("调用实现类");
         }
