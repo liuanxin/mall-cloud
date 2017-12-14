@@ -22,6 +22,7 @@ public class OrderConfig {
     @Bean
     public DocumentCopyright urlCopyright() {
         return new DocumentCopyright()
+                .setTitle(Develop.TITLE)
                 .setContact(Develop.CONTACT)
                 .setTeam(Develop.TEAM)
                 .setVersion(OrderConst.MODULE_VERSION)

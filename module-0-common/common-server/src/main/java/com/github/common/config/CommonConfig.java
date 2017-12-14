@@ -22,6 +22,7 @@ public class CommonConfig {
     @Bean
     public DocumentCopyright urlCopyright() {
         return new DocumentCopyright()
+                .setTitle(Develop.TITLE)
                 .setContact(Develop.CONTACT)
                 .setTeam(Develop.TEAM)
                 .setVersion(CommonConst.MODULE_VERSION)

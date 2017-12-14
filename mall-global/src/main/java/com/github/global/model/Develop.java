@@ -2,6 +2,7 @@ package com.github.global.model;
 
 public class Develop {
 
+    public static final String TITLE = "xxx 项目文档";
     public static final String CONTACT = "联系";
     public static final String TEAM = "团队";
 

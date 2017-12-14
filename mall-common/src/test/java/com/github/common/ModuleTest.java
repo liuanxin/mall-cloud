@@ -416,6 +416,7 @@ class Server {
             "    @Bean\n" +
             "    public DocumentCopyright urlCopyright() {\n" +
             "        return new DocumentCopyright()\n" +
+            "                .setTitle(Develop.TITLE)\n" +
             "                .setContact(Develop.CONTACT)\n" +
             "                .setTeam(Develop.TEAM)\n" +
             "                .setVersion(%sConst.MODULE_VERSION)\n" +
