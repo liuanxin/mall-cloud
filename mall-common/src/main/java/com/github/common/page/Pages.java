@@ -1,9 +1,11 @@
 package com.github.common.page;
 
+import com.github.common.util.A;
 import com.github.liuanxin.page.model.PageBounds;
 import com.github.liuanxin.page.model.PageList;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -39,11 +41,17 @@ public final class Pages {
     @SuppressWarnings("unchecked")
     public static PageInfo returnList(List list) {
         PageInfo pageInfo = new PageInfo();
+        if (A.isEmpty(list)) {
+            pageInfo.setTotal(0);
+            pageInfo.setList(Collections.emptyList());
+            return pageInfo;
+        }
+
         if (list instanceof PageList) {
             pageInfo.setTotal(((PageList) list).getTotal());
             pageInfo.setList(new ArrayList(list));
         } else {
-            pageInfo.setTotal(0);
+            pageInfo.setTotal(list.size());
             pageInfo.setList(list);
         }
         return pageInfo;
