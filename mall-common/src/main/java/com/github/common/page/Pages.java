@@ -40,20 +40,12 @@ public final class Pages {
     /** 在 service 的实现类中调用 --> 在 repository 方法上的返回类型是 List, service 上的返回类型是 PageInfo, 使用此方法进行转换 */
     @SuppressWarnings("unchecked")
     public static PageInfo returnList(List list) {
-        PageInfo pageInfo = new PageInfo();
         if (A.isEmpty(list)) {
-            pageInfo.setTotal(0);
-            pageInfo.setList(Collections.emptyList());
-            return pageInfo;
-        }
-
-        if (list instanceof PageList) {
-            pageInfo.setTotal(((PageList) list).getTotal());
-            pageInfo.setList(new ArrayList(list));
+            return new PageInfo(0, Collections.emptyList());
+        } else if (list instanceof PageList) {
+            return new PageInfo(((PageList) list).getTotal(), new ArrayList(list));
         } else {
-            pageInfo.setTotal(list.size());
-            pageInfo.setList(list);
+            return new PageInfo(list.size(), list);
         }
-        return pageInfo;
     }
 }
