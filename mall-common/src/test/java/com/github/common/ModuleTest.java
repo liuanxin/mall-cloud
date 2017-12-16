@@ -658,7 +658,7 @@ class Server {
             "\n" +
             "import " + PACKAGE + ".common.Const;\n" +
             "import " + PACKAGE + ".common.mvc.SpringMvc;\n" +
-            "import " + PACKAGE + ".common.mvc.VersionRequestMappingHandlerMapping;\n" +
+//            "import " + PACKAGE + ".common.mvc.VersionRequestMappingHandlerMapping;\n" +
             "import org.springframework.context.annotation.Configuration;\n" +
             "import org.springframework.format.FormatterRegistry;\n" +
             "import org.springframework.http.converter.HttpMessageConverter;\n" +
@@ -667,7 +667,7 @@ class Server {
             "import org.springframework.web.servlet.config.annotation.InterceptorRegistry;\n" +
             "import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;\n" +
 //            "import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;\n" +
-            "import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;\n" +
+//            "import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;\n" +
             "\n" +
             "import java.util.List;\n" +
             "\n" +
@@ -677,12 +677,13 @@ class Server {
             " */\n" +
             "@Configuration\n" +
             "public class %sWarInit extends WebMvcConfigurerAdapter {\n" +
-//            "public class %sWarInit extends WebMvcConfigurationSupport {\n" +
-//            "\n" +
-//            "    @Override\n" +
-//            "    protected RequestMappingHandlerMapping createRequestMappingHandlerMapping() {\n" +
-//            "        return new VersionRequestMappingHandlerMapping();\n" +
-//            "    }\n" +
+            "// extends WebMvcConfigurationSupport {\n" +
+            "//\n" +
+            "//    // 继承至 Support 之后将会无法路由静态资源\n" +
+            "//    @Override\n" +
+            "//    protected RequestMappingHandlerMapping createRequestMappingHandlerMapping() {\n" +
+            "//        return new VersionRequestMappingHandlerMapping();\n" +
+            "//    }\n" +
             "\n" +
             "    @Override\n" +
             "    public void addFormatters(FormatterRegistry registry) {\n" +
