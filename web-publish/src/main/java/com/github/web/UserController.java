@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/user")
-@ApiGroup({"user-用户模块"})
+@ApiGroup({"user-用户"})
 public class UserController {
 
     @Autowired

@@ -7,6 +7,7 @@ import com.github.common.annotation.NotNeedPermission;
 import com.github.common.util.LogUtil;
 import com.github.common.util.RequestUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -102,6 +103,6 @@ public class WebInterceptor implements HandlerInterceptor {
     private <T extends Annotation> T getAnnotation(HandlerMethod handlerMethod, Class<T> clazz) {
         // 先找方法上的注解, 再找类上的注解
         T annotation = handlerMethod.getMethodAnnotation(clazz);
-        return annotation == null ? handlerMethod.getBean().getClass().getAnnotation(clazz) : annotation;
+        return annotation == null ? AnnotationUtils.findAnnotation(handlerMethod.getBeanType(), clazz) : annotation;
     }
 }

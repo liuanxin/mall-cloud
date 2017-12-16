@@ -269,8 +269,6 @@ class Model {
             "\n" +
             "    /** 当前模块说明. 当用在文档中时有用 */\n" +
             "    public static final String MODULE_INFO = MODULE_NAME + \"-%s\";\n" +
-            "    /** 当前模块版本. 当用在文档中时有用 */\n" +
-            "    public static final String MODULE_VERSION = \"1.0\";\n" +
             "\n\n" +
             "    // ========== url 说明 ==========\n\n" +
             "    /** 测试地址 */\n" +
@@ -395,6 +393,7 @@ class Server {
 
     private static String MODULE_CONFIG = "package " + PACKAGE + ".%s.config;\n" +
             "\n" +
+            "import " + PACKAGE + ".common.AppVersion;\n" +
             "import " + PACKAGE + ".global.model.Develop;\n" +
             "import com.github.liuanxin.api.annotation.EnableApiInfo;\n" +
             "import com.github.liuanxin.api.model.DocumentCopyright;\n" +
@@ -419,7 +418,7 @@ class Server {
             "                .setTitle(Develop.TITLE)\n" +
             "                .setContact(Develop.CONTACT)\n" +
             "                .setTeam(Develop.TEAM)\n" +
-            "                .setVersion(%sConst.MODULE_VERSION)\n" +
+            "                .setVersion(AppVersion.currentVersion().getValue())\n" +
             "                .setOnline(online);\n" +
             "    }\n" +
             "}\n";
@@ -655,17 +654,19 @@ class Server {
             "    }\n" +
             "}\n";
 
-    private static String WEB_ADAPTER = "package " + PACKAGE + ".%s.config;\n" +
+    private static String WAR_INIT = "package " + PACKAGE + ".%s.config;\n" +
             "\n" +
             "import " + PACKAGE + ".common.Const;\n" +
-            "import " + PACKAGE + ".common.converter.*;\n" +
             "import " + PACKAGE + ".common.mvc.SpringMvc;\n" +
+            "import " + PACKAGE + ".common.mvc.VersionRequestMappingHandlerMapping;\n" +
             "import org.springframework.context.annotation.Configuration;\n" +
             "import org.springframework.format.FormatterRegistry;\n" +
             "import org.springframework.http.converter.HttpMessageConverter;\n" +
+            "import org.springframework.web.method.support.HandlerMethodArgumentResolver;\n" +
             "import org.springframework.web.servlet.config.annotation.CorsRegistry;\n" +
             "import org.springframework.web.servlet.config.annotation.InterceptorRegistry;\n" +
-            "import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;\n" +
+            "import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;\n" +
+            "import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;\n" +
             "\n" +
             "import java.util.List;\n" +
             "\n" +
@@ -674,7 +675,12 @@ class Server {
             ModuleTest.AUTHOR +
             " */\n" +
             "@Configuration\n" +
-            "public class %sWebAdapter extends WebMvcConfigurerAdapter {\n" +
+            "public class %sWarInit extends WebMvcConfigurationSupport {\n" +
+            "\n" +
+            "    @Override\n" +
+            "    protected RequestMappingHandlerMapping createRequestMappingHandlerMapping() {\n" +
+            "        return new VersionRequestMappingHandlerMapping();\n" +
+            "    }\n" +
             "\n" +
             "    @Override\n" +
             "    public void addFormatters(FormatterRegistry registry) {\n" +
@@ -684,6 +690,11 @@ class Server {
             "    @Override\n" +
             "    public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {\n" +
             "        SpringMvc.handlerConvert(converters);\n" +
+            "    }\n" +
+            "\n" +
+            "    @Override\n" +
+            "    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {\n" +
+            "        SpringMvc.handlerArgument(argumentResolvers);\n" +
             "    }\n" +
             "\n" +
             "    @Override\n" +
@@ -1098,8 +1109,8 @@ class Server {
         String interceptor = String.format(INTERCEPTOR, parentPackageName, comment, clazzName);
         ModuleTest.writeFile(new File(configPath, clazzName + "Interceptor.java"), interceptor);
 
-        String war = String.format(WEB_ADAPTER, parentPackageName, comment, clazzName, clazzName);
-        ModuleTest.writeFile(new File(configPath, clazzName + "WebAdapter.java"), war);
+        String war = String.format(WAR_INIT, parentPackageName, comment, clazzName, clazzName);
+        ModuleTest.writeFile(new File(configPath, clazzName + "WarInit.java"), war);
 
         String service = String.format(SERVICE, parentPackageName, parentPackageName, clazzName,
                 comment, clazzName, clazzName, clazzName, comment, clazzName.toUpperCase());

@@ -1,24 +1,31 @@
-package com.github.common.config;
+package com.github.order.config;
 
 import com.github.common.Const;
-import com.github.common.converter.*;
 import com.github.common.mvc.SpringMvc;
+import com.github.common.mvc.VersionRequestMappingHandlerMapping;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import java.util.List;
 
 /**
- * 公共服务模块的配置数据. 主要是 mybatis 的多配置目录和类型处理器
+ * 订单模块的配置数据. 主要是 mybatis 的多配置目录和类型处理器
  *
  * @author https://github.com/liuanxin
  */
 @Configuration
-public class CommonWebAdapter extends WebMvcConfigurerAdapter {
+public class OrderWarInit extends WebMvcConfigurationSupport {
+
+    @Override
+    protected RequestMappingHandlerMapping createRequestMappingHandlerMapping() {
+        return new VersionRequestMappingHandlerMapping();
+    }
 
     @Override
     public void addFormatters(FormatterRegistry registry) {
@@ -31,8 +38,13 @@ public class CommonWebAdapter extends WebMvcConfigurerAdapter {
     }
 
     @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+        SpringMvc.handlerArgument(argumentResolvers);
+    }
+
+    @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new CommonInterceptor()).addPathPatterns("/**");
+        registry.addInterceptor(new OrderInterceptor()).addPathPatterns("/**");
     }
 
     /**

@@ -46,7 +46,9 @@ public final class Const {
     public static final String REDIRECT_PREFIX = "redirect:";
 
     /** pc 端传过来的 token 的 key, 下划线主要用来区分跟其他参数不同 */
-    public static final String TOKEN = "_token";
+    public static final String TOKEN = "_t";
+    /** pc 端传过来的 version 的 key, 下划线主要用来区分跟其他参数不同 */
+    public static final String VERSION = "_v";
 
     /** cors 支持的所有方法 */
     public static final String[] SUPPORT_METHODS = new String[] { "HEAD", "GET", "POST", "PUT", "DELETE", "OPTIONS" };

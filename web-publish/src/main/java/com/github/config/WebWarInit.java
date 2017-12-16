@@ -2,19 +2,15 @@ package com.github.config;
 
 import com.github.common.Const;
 import com.github.common.mvc.SpringMvc;
-import com.github.common.page.Page;
-import com.github.common.util.RequestUtils;
+import com.github.common.mvc.VersionRequestMappingHandlerMapping;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.MethodParameter;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.web.bind.support.WebDataBinderFactory;
-import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
-import org.springframework.web.method.support.ModelAndViewContainer;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import java.util.List;
 
@@ -24,7 +20,12 @@ import java.util.List;
  * @see org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration.WebMvcAutoConfigurationAdapter
  */
 @Configuration
-public class WebWarInit extends WebMvcConfigurerAdapter {
+public class WebWarInit extends WebMvcConfigurationSupport {
+
+    @Override
+    protected RequestMappingHandlerMapping createRequestMappingHandlerMapping() {
+        return new VersionRequestMappingHandlerMapping();
+    }
 
     @Override
     public void addFormatters(FormatterRegistry registry) {
@@ -38,19 +39,7 @@ public class WebWarInit extends WebMvcConfigurerAdapter {
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
-        argumentResolvers.add(new HandlerMethodArgumentResolver() {
-            @Override
-            public boolean supportsParameter(MethodParameter parameter) {
-                return Page.class.isAssignableFrom(parameter.getParameterType());
-            }
-            @Override
-            public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
-                                          NativeWebRequest request, WebDataBinderFactory factory) throws Exception {
-                Page page = new Page(request.getParameter(Page.GLOBAL_PAGE), request.getParameter(Page.GLOBAL_LIMIT));
-                page.setWasMobile(RequestUtils.isMobileRequest());
-                return page;
-            }
-        });
+        SpringMvc.handlerArgument(argumentResolvers);
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.github.config;
 
+import com.github.common.AppVersion;
+import com.github.liuanxin.api.model.DocumentCopyright;
 import com.github.util.WebDataCollectUtil;
 import com.github.util.WebSessionUtil;
 import com.github.common.RenderViewResolver;
@@ -55,5 +57,15 @@ public class WebBeanInit {
                 .putEnum(WebDataCollectUtil.ENUM_CLASS);
         properties.applyToViewResolver(resolver);
         return resolver;
+    }
+
+    @Bean
+    public DocumentCopyright copyright() {
+        return new DocumentCopyright()
+                .setTitle("xxx project document api")
+                .setContact("contact")
+                .setTeam("team")
+                //.setReturnRecordLevel(true)
+                .setVersion(AppVersion.currentVersion().getValue());
     }
 }

@@ -1,14 +1,16 @@
 package com.github.product.config;
 
 import com.github.common.Const;
-import com.github.common.converter.*;
 import com.github.common.mvc.SpringMvc;
+import com.github.common.mvc.VersionRequestMappingHandlerMapping;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import java.util.List;
 
@@ -18,7 +20,12 @@ import java.util.List;
  * @author https://github.com/liuanxin
  */
 @Configuration
-public class ProductWebAdapter extends WebMvcConfigurerAdapter {
+public class ProductWarInit extends WebMvcConfigurationSupport {
+
+    @Override
+    protected RequestMappingHandlerMapping createRequestMappingHandlerMapping() {
+        return new VersionRequestMappingHandlerMapping();
+    }
 
     @Override
     public void addFormatters(FormatterRegistry registry) {
@@ -28,6 +35,11 @@ public class ProductWebAdapter extends WebMvcConfigurerAdapter {
     @Override
     public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
         SpringMvc.handlerConvert(converters);
+    }
+
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+        SpringMvc.handlerArgument(argumentResolvers);
     }
 
     @Override
