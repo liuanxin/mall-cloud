@@ -658,16 +658,13 @@ class Server {
             "\n" +
             "import " + PACKAGE + ".common.Const;\n" +
             "import " + PACKAGE + ".common.mvc.SpringMvc;\n" +
-//            "import " + PACKAGE + ".common.mvc.VersionRequestMappingHandlerMapping;\n" +
+            "import " + PACKAGE + ".common.mvc.VersionRequestMappingHandlerMapping;\n" +
             "import org.springframework.context.annotation.Configuration;\n" +
             "import org.springframework.format.FormatterRegistry;\n" +
             "import org.springframework.http.converter.HttpMessageConverter;\n" +
             "import org.springframework.web.method.support.HandlerMethodArgumentResolver;\n" +
-            "import org.springframework.web.servlet.config.annotation.CorsRegistry;\n" +
-            "import org.springframework.web.servlet.config.annotation.InterceptorRegistry;\n" +
-            "import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;\n" +
-//            "import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;\n" +
-//            "import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;\n" +
+            "import org.springframework.web.servlet.config.annotation.*;\n" +
+            "import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;\n" +
             "\n" +
             "import java.util.List;\n" +
             "\n" +
@@ -676,14 +673,19 @@ class Server {
             ModuleTest.AUTHOR +
             " */\n" +
             "@Configuration\n" +
-            "public class %sWarInit extends WebMvcConfigurerAdapter {\n" +
-            "// extends WebMvcConfigurationSupport {\n" +
-            "//\n" +
-            "//    // 继承至 Support 之后将会无法路由静态资源\n" +
-            "//    @Override\n" +
-            "//    protected RequestMappingHandlerMapping createRequestMappingHandlerMapping() {\n" +
-            "//        return new VersionRequestMappingHandlerMapping();\n" +
-            "//    }\n" +
+            "public class %sWarInit extends WebMvcConfigurationSupport {\n" +
+//            "public class %sWarInit extends WebMvcConfigurerAdapter {\n" +
+            "\n" +
+            "    @Override\n" +
+            "    protected RequestMappingHandlerMapping createRequestMappingHandlerMapping() {\n" +
+            "        return new VersionRequestMappingHandlerMapping();\n" +
+            "    }\n" +
+            "\n" +
+            "    @Override\n" +
+            "    protected void addResourceHandlers(ResourceHandlerRegistry registry) {\n" +
+            "        // 继承至 Support 之后且处理了版本需要手动路由静态资源\n" +
+            "        registry.addResourceHandler(\"/static/**\").addResourceLocations( \"classpath:/static/\");\n" +
+            "    }\n" +
             "\n" +
             "    @Override\n" +
             "    public void addFormatters(FormatterRegistry registry) {\n" +
