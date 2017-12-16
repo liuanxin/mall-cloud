@@ -21,7 +21,7 @@ public class ModuleTest {
     /** 注册中心的端口 */
     static String REGISTER_CENTER_PORT = "8761";
     // static String PARENT = "/home/tony/project/mall-cloud/";
-    private static String PARENT = ModuleTest.class.getClassLoader().getResource("").getFile() + "../../../";
+    private static final String PARENT = ModuleTest.class.getClassLoader().getResource("").getFile() + "../../../";
     static String PACKAGE_PATH = PACKAGE.replaceAll("\\.", "/");
     static String AUTHOR = " *\n * @author https://github.com/liuanxin\n";
 
@@ -148,7 +148,7 @@ class Parent {
 
 
 class Client {
-    private static String CLIENT = "package " + PACKAGE + ".%s.client;\n"+
+    private static final String CLIENT = "package " + PACKAGE + ".%s.client;\n"+
             "\n"+
             "import " + PACKAGE + ".%s.service.%sInterface;\n" +
             "import " + PACKAGE + ".%s.config.%sConst;\n" +
@@ -163,7 +163,7 @@ class Client {
             "public interface %sClient extends %sInterface {\n" +
             "}\n";
 
-    private static String FALLBACK = "package " + PACKAGE + ".%s.hystrix;\n" +
+    private static final String FALLBACK = "package " + PACKAGE + ".%s.hystrix;\n" +
             "\n" +
             "import " + PACKAGE + ".common.page.PageInfo;\n" +
             "import " + PACKAGE + ".common.page.Pages;\n" +
@@ -187,7 +187,7 @@ class Client {
             "    }\n" +
             "}\n";
 
-    private static String POM = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+    private static final String POM = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
             "<project xmlns=\"http://maven.apache.org/POM/4.0.0\"\n" +
             "         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
             "         xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\">\n" +
@@ -256,7 +256,7 @@ class Client {
 
 
 class Model {
-    private static String CONST = "package " + PACKAGE + ".%s.config;\n"+
+    private static final String CONST = "package " + PACKAGE + ".%s.config;\n"+
             "\n"+
             "/**\n" +
             " * %s模块相关的常数设置类\n" +
@@ -275,7 +275,7 @@ class Model {
             "    public static final String %s_DEMO = MODULE_NAME + \"/demo\";\n" +
             "}\n";
 
-    private static String INTERFACE = "package " + PACKAGE + ".%s.service;\n" +
+    private static final String INTERFACE = "package " + PACKAGE + ".%s.service;\n" +
             "\n" +
             "import " + PACKAGE + ".common.page.PageInfo;\n" +
             "import " + PACKAGE + ".%s.config.%sConst;\n" +
@@ -302,7 +302,7 @@ class Model {
             "                  @RequestParam(value = \"limit\", required = false) Integer limit);\n" +
             "}\n";
 
-    private static String POM = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+    private static final String POM = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
             "<project xmlns=\"http://maven.apache.org/POM/4.0.0\"\n" +
             "         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
             "         xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\">\n" +
@@ -360,7 +360,7 @@ class Model {
 
 
 class Server {
-    private static String APPLICATION = "package " + PACKAGE + ";\n" +
+    private static final String APPLICATION = "package " + PACKAGE + ";\n" +
             "\n" +
             "import " + PACKAGE + ".common.util.A;\n" +
             "import " + PACKAGE + ".common.util.LogUtil;\n" +
@@ -391,7 +391,7 @@ class Server {
             "    }\n" +
             "}\n";
 
-    private static String MODULE_CONFIG = "package " + PACKAGE + ".%s.config;\n" +
+    private static final String MODULE_CONFIG = "package " + PACKAGE + ".%s.config;\n" +
             "\n" +
             "import " + PACKAGE + ".common.AppVersion;\n" +
             "import " + PACKAGE + ".global.model.Develop;\n" +
@@ -423,7 +423,7 @@ class Server {
             "    }\n" +
             "}\n";
 
-    private static String CONFIG_DATA = "package " + PACKAGE + ".%s.config;\n" +
+    private static final String CONFIG_DATA = "package " + PACKAGE + ".%s.config;\n" +
             "\n" +
             "import com.google.common.collect.Lists;\n" +
             "import " + PACKAGE + ".common.Const;\n" +
@@ -465,7 +465,7 @@ class Server {
             "    static final TypeHandler[] HANDLER_ARRAY = CollectHandlerUtil.handler(HANDLERS);\n" +
             "}\n";
 
-    private static String DATA_SOURCE = "package " + PACKAGE + ".%s.config;\n" +
+    private static final String DATA_SOURCE = "package " + PACKAGE + ".%s.config;\n" +
             "\n" +
             "import com.github.liuanxin.page.PageInterceptor;\n" +
             "import " + PACKAGE + ".common.Const;\n" +
@@ -527,7 +527,7 @@ class Server {
             "    */\n" +
             "}\n";
 
-    private static String EXCEPTION = "package " + PACKAGE + ".%s.config;\n" +
+    private static final String EXCEPTION = "package " + PACKAGE + ".%s.config;\n" +
             "\n" +
             "import " + PACKAGE + ".common.exception.NotLoginException;\n" +
             "import " + PACKAGE + ".common.exception.ServiceException;\n" +
@@ -611,7 +611,7 @@ class Server {
             "    }\n" +
             "}\n";
 
-    private static String INTERCEPTOR = "package " + PACKAGE + ".%s.config;\n" +
+    private static final String INTERCEPTOR = "package " + PACKAGE + ".%s.config;\n" +
             "\n" +
             "import " + PACKAGE + ".common.util.LogUtil;\n" +
             "import " + PACKAGE + ".common.util.RequestUtils;\n" +
@@ -654,7 +654,7 @@ class Server {
             "    }\n" +
             "}\n";
 
-    private static String WAR_INIT = "package " + PACKAGE + ".%s.config;\n" +
+    private static final String WAR_INIT = "package " + PACKAGE + ".%s.config;\n" +
             "\n" +
             "import " + PACKAGE + ".common.Const;\n" +
             "import " + PACKAGE + ".common.mvc.SpringMvc;\n" +
@@ -665,7 +665,8 @@ class Server {
             "import org.springframework.web.method.support.HandlerMethodArgumentResolver;\n" +
             "import org.springframework.web.servlet.config.annotation.CorsRegistry;\n" +
             "import org.springframework.web.servlet.config.annotation.InterceptorRegistry;\n" +
-            "import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;\n" +
+            "import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;\n" +
+//            "import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;\n" +
             "import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;\n" +
             "\n" +
             "import java.util.List;\n" +
@@ -675,12 +676,13 @@ class Server {
             ModuleTest.AUTHOR +
             " */\n" +
             "@Configuration\n" +
-            "public class %sWarInit extends WebMvcConfigurationSupport {\n" +
-            "\n" +
-            "    @Override\n" +
-            "    protected RequestMappingHandlerMapping createRequestMappingHandlerMapping() {\n" +
-            "        return new VersionRequestMappingHandlerMapping();\n" +
-            "    }\n" +
+            "public class %sWarInit extends WebMvcConfigurerAdapter {\n" +
+//            "public class %sWarInit extends WebMvcConfigurationSupport {\n" +
+//            "\n" +
+//            "    @Override\n" +
+//            "    protected RequestMappingHandlerMapping createRequestMappingHandlerMapping() {\n" +
+//            "        return new VersionRequestMappingHandlerMapping();\n" +
+//            "    }\n" +
             "\n" +
             "    @Override\n" +
             "    public void addFormatters(FormatterRegistry registry) {\n" +
@@ -713,7 +715,7 @@ class Server {
             "    }\n" +
             "}\n";
 
-    private static String SERVICE = "package " + PACKAGE + ".%s.service;\n" +
+    private static final String SERVICE = "package " + PACKAGE + ".%s.service;\n" +
             "\n" +
             "import " + PACKAGE + ".common.page.PageInfo;\n" +
             "import " + PACKAGE + ".common.page.Pages;\n" +
@@ -745,7 +747,7 @@ class Server {
             "    }\n" +
             "}\n";
 
-    private static String APPLICATION_YML = "\n" +
+    private static final String APPLICATION_YML = "\n" +
             "# https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html\n" +
             "online: false\n" +
             "\n" +
@@ -779,7 +781,7 @@ class Server {
             "    # 服务端在收到最后一个心跳后的等待时间. 超出将移除该实例, 默认 90 秒, 此值至少要大于 lease-renewal-interval-in-seconds\n" +
             "    lease-expiration-duration-in-seconds: 60\n";
 
-    private static String APPLICATION_TEST_YML = "\n" +
+    private static final String APPLICATION_TEST_YML = "\n" +
             "online: false\n" +
             "\n" +
             "server.port: %s\n" +
@@ -812,7 +814,7 @@ class Server {
             "    lease-renewal-interval-in-seconds: 10\n" +
             "    lease-expiration-duration-in-seconds: 30\n";
 
-    private static String APPLICATION_PROD_YML = "\n" +
+    private static final String APPLICATION_PROD_YML = "\n" +
             "online: true\n" +
             "\n" +
             "server.port: %s\n" +
@@ -849,7 +851,7 @@ class Server {
             "# 当前文件是主要为了抑制 <No URLs will be polled as dynamic configuration sources> 这个警告. 无其他用处\n"+
             "# see com.netflix.config.sources.URLConfigurationSource.URLConfigurationSource()\n";
 
-    private static String LOG_XML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+    private static final String LOG_XML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
             "<configuration>\n" +
             "    <include resource=\"org/springframework/boot/logging/logback/defaults.xml\" />\n" +
             "    <property name=\"CONSOLE_LOG_PATTERN\" value=\"[%X{receiveTime}%d] [${PID:- } %t\\\\(%logger\\\\) : %p]%n%X{requestInfo}%class.%method\\\\(%file:%line\\\\)%n%m%n%n\"/>\n" +
@@ -870,7 +872,7 @@ class Server {
             "    </root>\n" +
             "</configuration>\n";
 
-    private static String LOG_TEST_XML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+    private static final String LOG_TEST_XML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
             "<configuration>\n" +
             "    <property name=\"FILE_PATH\" value=\"${user.home}/logs/~MODULE_NAME~-test\"/>\n" +
             "    <property name=\"SQL_PATTERN\" value=\"%d [${PID:- } %t\\\\(%logger\\\\) : %p]%n%class.%method\\\\(%file:%line\\\\)%n%m%n%n\"/>\n" +
@@ -921,7 +923,7 @@ class Server {
             "    </root>\n" +
             "</configuration>\n";
 
-    private static String LOG_PROD_XML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+    private static final String LOG_PROD_XML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
             "<configuration>\n" +
             "    <property name=\"FILE_PATH\" value=\"${user.home}/logs/~MODULE_NAME~-prod\"/>\n" +
             "    <property name=\"LOG_PATTERN\" value=\"[%X{receiveTime}%d] [${PID:- } %t\\\\(%logger\\\\) : %p] %X{requestInfo} %class{30}#%method\\\\(%file:%line\\\\)%n%m%n%n\"/>\n" +
@@ -959,7 +961,7 @@ class Server {
             "</configuration>\n";
 
 
-    private static String SERVER_POM = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+    private static final String SERVER_POM = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
             "<project xmlns=\"http://maven.apache.org/POM/4.0.0\"\n" +
             "         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
             "         xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\">\n" +
@@ -1051,7 +1053,7 @@ class Server {
             "</project>\n";
 
     
-    private static String TEST_ENUM_HANDLE = "package " + PACKAGE + ".%s;\n" +
+    private static final String TEST_ENUM_HANDLE = "package " + PACKAGE + ".%s;\n" +
             "\n" +
             "import " + PACKAGE + ".common.Const;\n" +
             "import " + PACKAGE + ".common.util.GenerateEnumHandler;\n" +
