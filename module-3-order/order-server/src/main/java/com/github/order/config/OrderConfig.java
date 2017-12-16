@@ -26,7 +26,7 @@ public class OrderConfig {
                 .setTitle(Develop.TITLE)
                 .setContact(Develop.CONTACT)
                 .setTeam(Develop.TEAM)
-                .setVersion(AppVersion.currentVersion().getValue())
+                .setVersion(AppVersion.currentVersion())
                 .setOnline(online);
     }
 }

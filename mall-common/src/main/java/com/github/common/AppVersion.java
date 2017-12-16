@@ -38,7 +38,7 @@ public enum AppVersion {
         return (version != null) && (code >= version.code);
     }
 
-    public static AppVersion currentVersion() {
-        return V100;
+    public static String currentVersion() {
+        return V100.value;
     }
 }

@@ -418,7 +418,7 @@ class Server {
             "                .setTitle(Develop.TITLE)\n" +
             "                .setContact(Develop.CONTACT)\n" +
             "                .setTeam(Develop.TEAM)\n" +
-            "                .setVersion(AppVersion.currentVersion().getValue())\n" +
+            "                .setVersion(AppVersion.currentVersion())\n" +
             "                .setOnline(online);\n" +
             "    }\n" +
             "}\n";

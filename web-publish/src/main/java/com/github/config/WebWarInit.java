@@ -9,6 +9,7 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
@@ -25,6 +26,12 @@ public class WebWarInit extends WebMvcConfigurationSupport {
     @Override
     protected RequestMappingHandlerMapping createRequestMappingHandlerMapping() {
         return new VersionRequestMappingHandlerMapping();
+    }
+
+    @Override
+    protected void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // 继承至 Support 之后且处理了版本需要手动路由静态资源
+        registry.addResourceHandler("/static/**").addResourceLocations( "classpath:/static/");
     }
 
     @Override
