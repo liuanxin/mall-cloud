@@ -1,5 +1,6 @@
 package com.github.common.config;
 
+import com.github.common.AppVersion;
 import com.github.global.model.Develop;
 import com.github.liuanxin.api.annotation.EnableApiInfo;
 import com.github.liuanxin.api.model.DocumentCopyright;
@@ -25,7 +26,7 @@ public class CommonConfig {
                 .setTitle(Develop.TITLE)
                 .setContact(Develop.CONTACT)
                 .setTeam(Develop.TEAM)
-                .setVersion(CommonConst.MODULE_VERSION)
+                .setVersion(AppVersion.currentVersion())
                 .setOnline(online);
     }
 }

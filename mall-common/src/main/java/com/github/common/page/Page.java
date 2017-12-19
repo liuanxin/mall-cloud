@@ -35,16 +35,17 @@ import java.io.Serializable;
 public class Page implements Serializable {
     private static final long serialVersionUID = 0L;
 
-    /** 分页默认页 */
-    public static final int DEFAULT_PAGE_NO = 1;
-    /** 分页默认的每页条数 */
-    public static final int DEFAULT_LIMIT = 15;
-    /** 最大分页条数 */
-    private static final int MAX_LIMIT = 1000;
     /** 前台传递过来的分页参数名 */
     public static final String GLOBAL_PAGE = "page";
     /** 前台传递过来的每页条数名 */
     public static final String GLOBAL_LIMIT = "limit";
+
+    /** 分页默认页 */
+    private static final int DEFAULT_PAGE_NO = 1;
+    /** 分页默认的每页条数 */
+    private static final int DEFAULT_LIMIT = 15;
+    /** 最大分页条数 */
+    private static final int MAX_LIMIT = 1000;
 
     /** 当前页数. 不传或传入 0, 或负数, 或非数字则默认是 1 */
     @ApiParam(desc = "当前页数. 不传或传入 0, 或负数, 或非数字则默认是 1")
@@ -59,16 +60,22 @@ public class Page implements Serializable {
     private boolean wasMobile = false;
 
     public Page(String page, String limit) {
+        this.page = handlerPage(page);
+        this.limit = handlerLimit(limit);
+    }
+
+    public static int handlerPage(String page) {
         int pageNum = NumberUtils.toInt(page);
         if (pageNum <= 0) {
             pageNum = DEFAULT_PAGE_NO;
         }
-        this.page = pageNum;
-
+        return pageNum;
+    }
+    public static int handlerLimit(String limit) {
         int limitNum = NumberUtils.toInt(limit);
-        if (limitNum <= 0 || limitNum > 1000) {
+        if (limitNum <= 0 || limitNum > MAX_LIMIT) {
             limitNum = DEFAULT_LIMIT;
         }
-        this.limit = limitNum;
+        return limitNum;
     }
 }
