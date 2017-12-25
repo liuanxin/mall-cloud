@@ -1040,7 +1040,7 @@ class Server {
             "\n" +
             "        <dependency>\n" +
             "            <groupId>com.github.liuanxin</groupId>\n" +
-            "            <artifactId>api-info</artifactId>\n" +
+            "            <artifactId>api-document</artifactId>\n" +
             "        </dependency>\n" +
             "    </dependencies>\n" +
             "\n" +
@@ -1055,7 +1055,7 @@ class Server {
             "    </build>\n" +
             "</project>\n";
 
-    
+
     private static final String TEST_ENUM_HANDLE = "package " + PACKAGE + ".%s;\n" +
             "\n" +
             "import " + PACKAGE + ".common.Const;\n" +
