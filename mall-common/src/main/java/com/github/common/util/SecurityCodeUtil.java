@@ -68,7 +68,7 @@ public final class SecurityCodeUtil {
     /** 最少个数 */
     private static final int LEAST_COUNT = 4;
     /** 字体 */
-    private static final String FONT_STYLE = "DejaVuSansMono,consola,monospace,monaco,fixedsys,arial,serif,sans-serif";
+    private static final String FONT_STYLE = "consola,monospace,monaco,fixedsys,arial,serif,sans-serif";
 
     /**
      * <pre>
