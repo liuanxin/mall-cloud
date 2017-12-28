@@ -529,6 +529,7 @@ class Server {
 
     private static final String EXCEPTION = "package " + PACKAGE + ".%s.config;\n" +
             "\n" +
+            "import " + PACKAGE + ".common.exception.ForbiddenException;\n" +
             "import " + PACKAGE + ".common.exception.NotLoginException;\n" +
             "import " + PACKAGE + ".common.exception.ServiceException;\n" +
             "import " + PACKAGE + ".common.json.JsonResult;\n" +
@@ -560,9 +561,31 @@ class Server {
             "    @Value(\"${online:false}\")\n" +
             "    private boolean online;\n" +
             "\n" +
+            "    /** 业务异常 */\n" +
+            "    @ExceptionHandler(ServiceException.class)\n" +
+            "    public void serviceException(ServiceException e, HttpServletResponse response) throws IOException {\n" +
+            "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
+            "            LogUtil.ROOT_LOG.debug(e.getMessage(), e);\n" +
+            "        }\n" +
+            "        RequestUtils.toJson(JsonResult.fail(e.getMessage()), response);\n" +
+            "    }\n" +
+            "\n" +
+            "    /** 未登录 */\n" +
             "    @ExceptionHandler(NotLoginException.class)\n" +
-            "    public void notFound(NotLoginException e, HttpServletResponse response) throws IOException {\n" +
+            "    public void notLogin(NotLoginException e, HttpServletResponse response) throws IOException {\n" +
+            "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
+            "            LogUtil.ROOT_LOG.debug(e.getMessage(), e);\n" +
+            "        }\n" +
             "        RequestUtils.toJson(JsonResult.notLogin(), response);\n" +
+            "    }\n" +
+            "\n" +
+            "    /** 无权限 */\n" +
+            "    @ExceptionHandler(ForbiddenException.class)\n" +
+            "    public void notFound(ForbiddenException e, HttpServletResponse response) throws IOException {\n" +
+            "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
+            "            LogUtil.ROOT_LOG.debug(e.getMessage(), e);\n" +
+            "        }\n" +
+            "        RequestUtils.toJson(JsonResult.fail(e.getMessage()), response);\n" +
             "    }\n" +
             "\n" +
             "    @ExceptionHandler(NoHandlerFoundException.class)\n" +
@@ -576,9 +599,9 @@ class Server {
             "    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)\n" +
             "    public void notSupported(HttpRequestMethodNotSupportedException e,\n" +
             "                             HttpServletResponse response) throws IOException {\n" +
-            "        if (LogUtil.ROOT_LOG.isDebugEnabled())\n" +
-            "            LogUtil.ROOT_LOG.debug(e.getMessage());\n" +
-            "\n" +
+            "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
+            "            LogUtil.ROOT_LOG.debug(e.getMessage(), e);\n" +
+            "        }\n" +
             "        String msg = U.EMPTY;\n" +
             "        if (!online) {\n" +
             "            msg = \" 当前方式(\" + e.getMethod() + \"), 支持方式(\" + A.toStr(e.getSupportedMethods()) + \")\";\n" +
@@ -586,27 +609,21 @@ class Server {
             "        RequestUtils.toJson(JsonResult.fail(\"不支持此种请求方式!\" + msg), response);\n" +
             "    }\n" +
             "\n" +
-            "    /** 业务异常 */\n" +
-            "    @ExceptionHandler(ServiceException.class)\n" +
-            "    public void serviceException(ServiceException e, HttpServletResponse response) throws IOException {\n" +
-            "        if (LogUtil.ROOT_LOG.isDebugEnabled())\n" +
-            "            LogUtil.ROOT_LOG.debug(e.getMessage());\n" +
-            "        RequestUtils.toJson(JsonResult.fail(e.getMessage()), response);\n" +
-            "    }\n" +
-            "\n" +
             "    /** 上传文件太大 */\n" +
             "    @ExceptionHandler(MaxUploadSizeExceededException.class)\n" +
             "    public void notFound(MaxUploadSizeExceededException e, HttpServletResponse response) throws IOException {\n" +
-            "        if (LogUtil.ROOT_LOG.isDebugEnabled())\n" +
+            "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
             "            LogUtil.ROOT_LOG.debug(\"文件太大: \" + e.getMessage(), e);\n" +
+            "        }\n" +
             "        RequestUtils.toJson(JsonResult.fail(\"上传文件太大! 请保持在 \" + (e.getMaxUploadSize() >> 20) + \"M 以内\"), response);\n" +
             "    }\n" +
             "\n" +
             "    /** 未知的所有其他异常 */\n" +
             "    @ExceptionHandler(Throwable.class)\n" +
             "    public void exception(Throwable e, HttpServletResponse response) throws IOException {\n" +
-            "        if (LogUtil.ROOT_LOG.isErrorEnabled())\n" +
+            "        if (LogUtil.ROOT_LOG.isErrorEnabled()) {\n" +
             "            LogUtil.ROOT_LOG.error(\"有错误: \" + e.getMessage(), e);\n" +
+            "        }\n" +
             "        RequestUtils.toJson(JsonResult.fail(online || U.isBlank(e.getMessage()) ? \"服务异常\" : e.getMessage()), response);\n" +
             "    }\n" +
             "}\n";

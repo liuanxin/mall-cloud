@@ -1,5 +1,6 @@
 package com.github.common.config;
 
+import com.github.common.exception.ForbiddenException;
 import com.github.common.exception.NotLoginException;
 import com.github.common.exception.ServiceException;
 import com.github.common.json.JsonResult;
@@ -32,9 +33,31 @@ public class CommonGlobalException {
     @Value("${online:false}")
     private boolean online;
 
+    /** 业务异常 */
+    @ExceptionHandler(ServiceException.class)
+    public void serviceException(ServiceException e, HttpServletResponse response) throws IOException {
+        if (LogUtil.ROOT_LOG.isDebugEnabled()) {
+            LogUtil.ROOT_LOG.debug(e.getMessage(), e);
+        }
+        RequestUtils.toJson(JsonResult.fail(e.getMessage()), response);
+    }
+
+    /** 未登录 */
     @ExceptionHandler(NotLoginException.class)
-    public void notFound(NotLoginException e, HttpServletResponse response) throws IOException {
+    public void notLogin(NotLoginException e, HttpServletResponse response) throws IOException {
+        if (LogUtil.ROOT_LOG.isDebugEnabled()) {
+            LogUtil.ROOT_LOG.debug(e.getMessage(), e);
+        }
         RequestUtils.toJson(JsonResult.notLogin(), response);
+    }
+
+    /** 无权限 */
+    @ExceptionHandler(ForbiddenException.class)
+    public void notFound(ForbiddenException e, HttpServletResponse response) throws IOException {
+        if (LogUtil.ROOT_LOG.isDebugEnabled()) {
+            LogUtil.ROOT_LOG.debug(e.getMessage(), e);
+        }
+        RequestUtils.toJson(JsonResult.fail(e.getMessage()), response);
     }
 
     @ExceptionHandler(NoHandlerFoundException.class)
@@ -48,9 +71,9 @@ public class CommonGlobalException {
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public void notSupported(HttpRequestMethodNotSupportedException e,
                              HttpServletResponse response) throws IOException {
-        if (LogUtil.ROOT_LOG.isDebugEnabled())
-            LogUtil.ROOT_LOG.debug(e.getMessage());
-
+        if (LogUtil.ROOT_LOG.isDebugEnabled()) {
+            LogUtil.ROOT_LOG.debug(e.getMessage(), e);
+        }
         String msg = U.EMPTY;
         if (!online) {
             msg = " 当前方式(" + e.getMethod() + "), 支持方式(" + A.toStr(e.getSupportedMethods()) + ")";
@@ -58,27 +81,21 @@ public class CommonGlobalException {
         RequestUtils.toJson(JsonResult.fail("不支持此种请求方式!" + msg), response);
     }
 
-    /** 业务异常 */
-    @ExceptionHandler(ServiceException.class)
-    public void serviceException(ServiceException e, HttpServletResponse response) throws IOException {
-        if (LogUtil.ROOT_LOG.isDebugEnabled())
-            LogUtil.ROOT_LOG.debug(e.getMessage());
-        RequestUtils.toJson(JsonResult.fail(e.getMessage()), response);
-    }
-
     /** 上传文件太大 */
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public void notFound(MaxUploadSizeExceededException e, HttpServletResponse response) throws IOException {
-        if (LogUtil.ROOT_LOG.isDebugEnabled())
+        if (LogUtil.ROOT_LOG.isDebugEnabled()) {
             LogUtil.ROOT_LOG.debug("文件太大: " + e.getMessage(), e);
+        }
         RequestUtils.toJson(JsonResult.fail("上传文件太大! 请保持在 " + (e.getMaxUploadSize() >> 20) + "M 以内"), response);
     }
 
     /** 未知的所有其他异常 */
     @ExceptionHandler(Throwable.class)
     public void exception(Throwable e, HttpServletResponse response) throws IOException {
-        if (LogUtil.ROOT_LOG.isErrorEnabled())
+        if (LogUtil.ROOT_LOG.isErrorEnabled()) {
             LogUtil.ROOT_LOG.error("有错误: " + e.getMessage(), e);
+        }
         RequestUtils.toJson(JsonResult.fail(online || U.isBlank(e.getMessage()) ? "服务异常" : e.getMessage()), response);
     }
 }
