@@ -2,7 +2,6 @@ package com.github.order.config;
 
 import com.github.common.util.LogUtil;
 import com.github.common.util.RequestUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -16,8 +15,10 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class OrderInterceptor implements HandlerInterceptor {
 
-    @Value("${online:false}")
     private boolean online;
+    OrderInterceptor(boolean online) {
+        this.online = online;
+    }
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response,

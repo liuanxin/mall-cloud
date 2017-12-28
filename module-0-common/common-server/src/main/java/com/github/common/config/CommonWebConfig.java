@@ -1,8 +1,9 @@
-package com.github.order.config;
+package com.github.common.config;
 
 import com.github.common.Const;
 import com.github.common.mvc.SpringMvc;
 import com.github.common.mvc.VersionRequestMappingHandlerMapping;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -13,12 +14,15 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import java.util.List;
 
 /**
- * 订单模块的配置数据. 主要是 mybatis 的多配置目录和类型处理器
+ * 公共服务模块的配置数据. 主要是 mybatis 的多配置目录和类型处理器
  *
  * @author https://github.com/liuanxin
  */
 @Configuration
-public class OrderWarInit extends WebMvcConfigurationSupport {
+public class CommonWebConfig extends WebMvcConfigurationSupport {
+
+    @Value("${online:false}")
+    private boolean online;
 
     @Override
     protected RequestMappingHandlerMapping createRequestMappingHandlerMapping() {
@@ -48,7 +52,7 @@ public class OrderWarInit extends WebMvcConfigurationSupport {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new OrderInterceptor()).addPathPatterns("/**");
+        registry.addInterceptor(new CommonInterceptor(online)).addPathPatterns("/**");
     }
 
     /**

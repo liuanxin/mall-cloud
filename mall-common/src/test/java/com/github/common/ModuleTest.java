@@ -615,7 +615,6 @@ class Server {
             "\n" +
             "import " + PACKAGE + ".common.util.LogUtil;\n" +
             "import " + PACKAGE + ".common.util.RequestUtils;\n" +
-            "import org.springframework.beans.factory.annotation.Value;\n" +
             "import org.springframework.web.servlet.HandlerInterceptor;\n" +
             "import org.springframework.web.servlet.ModelAndView;\n" +
             "\n" +
@@ -628,8 +627,10 @@ class Server {
             " */\n" +
             "public class %sInterceptor implements HandlerInterceptor {\n" +
             "\n" +
-            "    @Value(\"${online:false}\")\n" +
             "    private boolean online;\n" +
+            "    %sInterceptor(boolean online) {\n" +
+            "        this.online = online;\n" +
+            "    }\n" +
             "\n" +
             "    @Override\n" +
             "    public boolean preHandle(HttpServletRequest request, HttpServletResponse response,\n" +
@@ -654,11 +655,12 @@ class Server {
             "    }\n" +
             "}\n";
 
-    private static final String WAR_INIT = "package " + PACKAGE + ".%s.config;\n" +
+    private static final String WEB_CONFIG = "package " + PACKAGE + ".%s.config;\n" +
             "\n" +
             "import " + PACKAGE + ".common.Const;\n" +
             "import " + PACKAGE + ".common.mvc.SpringMvc;\n" +
             "import " + PACKAGE + ".common.mvc.VersionRequestMappingHandlerMapping;\n" +
+            "import org.springframework.beans.factory.annotation.Value;\n" +
             "import org.springframework.context.annotation.Configuration;\n" +
             "import org.springframework.format.FormatterRegistry;\n" +
             "import org.springframework.http.converter.HttpMessageConverter;\n" +
@@ -673,8 +675,10 @@ class Server {
             ModuleTest.AUTHOR +
             " */\n" +
             "@Configuration\n" +
-            "public class %sWarInit extends WebMvcConfigurationSupport {\n" +
-//            "public class %sWarInit extends WebMvcConfigurerAdapter {\n" +
+            "public class %sWebConfig extends WebMvcConfigurationSupport {\n" +
+            "\n" +
+            "    @Value(\"${online:false}\")\n" +
+            "    private boolean online;\n" +
             "\n" +
             "    @Override\n" +
             "    protected RequestMappingHandlerMapping createRequestMappingHandlerMapping() {\n" +
@@ -704,7 +708,7 @@ class Server {
             "\n" +
             "    @Override\n" +
             "    public void addInterceptors(InterceptorRegistry registry) {\n" +
-            "        registry.addInterceptor(new %sInterceptor()).addPathPatterns(\"/**\");\n" +
+            "        registry.addInterceptor(new %sInterceptor(online)).addPathPatterns(\"/**\");\n" +
             "    }\n" +
             "\n" +
             "    /**\n" +
@@ -1111,11 +1115,11 @@ class Server {
         String exception = String.format(EXCEPTION, parentPackageName, clazzName);
         ModuleTest.writeFile(new File(configPath, clazzName + "GlobalException.java"), exception);
 
-        String interceptor = String.format(INTERCEPTOR, parentPackageName, comment, clazzName);
+        String interceptor = String.format(INTERCEPTOR, parentPackageName, comment, clazzName, clazzName);
         ModuleTest.writeFile(new File(configPath, clazzName + "Interceptor.java"), interceptor);
 
-        String war = String.format(WAR_INIT, parentPackageName, comment, clazzName, clazzName);
-        ModuleTest.writeFile(new File(configPath, clazzName + "WarInit.java"), war);
+        String war = String.format(WEB_CONFIG, parentPackageName, comment, clazzName, clazzName);
+        ModuleTest.writeFile(new File(configPath, clazzName + "WebConfig.java"), war);
 
         String service = String.format(SERVICE, parentPackageName, parentPackageName, clazzName,
                 comment, clazzName, clazzName, clazzName, comment, clazzName.toUpperCase());
