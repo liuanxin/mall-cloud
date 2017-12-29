@@ -96,6 +96,13 @@ public class CommonGlobalException {
         if (LogUtil.ROOT_LOG.isErrorEnabled()) {
             LogUtil.ROOT_LOG.error("有错误: " + e.getMessage(), e);
         }
-        RequestUtils.toJson(JsonResult.fail(online || U.isBlank(e.getMessage()) ? "服务异常" : e.getMessage()), response);
+
+        String msg = e.getMessage();
+        if (online) {
+            msg = "请求 公共服务模块 时异常";
+        } else if (e instanceof NullPointerException && U.isBlank(msg)) {
+            msg = "空指针异常, 联系后台查看日志进行处理";
+        }
+        RequestUtils.toJson(JsonResult.fail(msg), response);
     }
 }

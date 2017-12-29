@@ -624,7 +624,14 @@ class Server {
             "        if (LogUtil.ROOT_LOG.isErrorEnabled()) {\n" +
             "            LogUtil.ROOT_LOG.error(\"有错误: \" + e.getMessage(), e);\n" +
             "        }\n" +
-            "        RequestUtils.toJson(JsonResult.fail(online || U.isBlank(e.getMessage()) ? \"服务异常\" : e.getMessage()), response);\n" +
+            "\n" +
+            "        String msg = e.getMessage();\n" +
+            "        if (online) {\n" +
+            "            msg = \"请求 %s模块 时异常\";\n" +
+            "        } else if (e instanceof NullPointerException && U.isBlank(msg)) {\n" +
+            "            msg = \"空指针异常, 联系后台查看日志进行处理\";\n" +
+            "        }\n" +
+            "        RequestUtils.toJson(JsonResult.fail(msg), response);\n" +
             "    }\n" +
             "}\n";
 
@@ -1129,7 +1136,7 @@ class Server {
         String dataSource = String.format(DATA_SOURCE, parentPackageName, clazzName, clazzName, clazzName);
         ModuleTest.writeFile(new File(configPath, clazzName + "DataSourceInit.java"), dataSource);
 
-        String exception = String.format(EXCEPTION, parentPackageName, clazzName);
+        String exception = String.format(EXCEPTION, parentPackageName, clazzName, comment);
         ModuleTest.writeFile(new File(configPath, clazzName + "GlobalException.java"), exception);
 
         String interceptor = String.format(INTERCEPTOR, parentPackageName, comment, clazzName, clazzName);

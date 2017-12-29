@@ -92,6 +92,13 @@ public class WebGlobalException {
         if (LogUtil.ROOT_LOG.isErrorEnabled()) {
             LogUtil.ROOT_LOG.error("有错误: " + e.getMessage(), e);
         }
-        RequestUtils.toJson(JsonResult.fail(online ? "请求时出现错误, 我们将会尽快处理." : e.getMessage()), response);
+
+        String msg = e.getMessage();
+        if (online) {
+            msg = "请求时出现错误, 我们将会尽快处理";
+        } else if (e instanceof NullPointerException && U.isBlank(msg)) {
+            msg = "空指针异常, 联系后台查看日志进行处理";
+        }
+        RequestUtils.toJson(JsonResult.fail(msg), response);
     }
 }
