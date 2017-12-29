@@ -1,2 +1,237 @@
 
-基于 spring cloud 的基础代码结构
+** 基于 spring cloud 的基础代码结构
+
+*** 说明
+安装 lombok 和 mybatis 插件
+
+将下面的内容保存成 settings.xml 并放到 ${Demo.home}/.m2 目录下, 如果想要改变仓库地址, 注释解开并设置即可
+#+BEGIN_SRC xml
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+    <!-- <localRepository>仓库地址. 默认是 ${Demo.home}/.m2/repository </localRepository> -->
+    
+    <mirrors>
+        <mirror>
+            <id>aliyun</id>
+            <name>aliyun maven</name>
+            <mirrorOf>central</mirrorOf>
+            <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+        </mirror>
+    </mirrors>
+
+    <profiles>
+        <profile>
+            <id>company</id>
+            <repositories>
+                <repository>
+                    <id>aliyun-repository</id>
+                    <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+                    <releases><enabled>true</enabled></releases>
+                    <snapshots><enabled>false</enabled></snapshots>
+                </repository>
+            </repositories>
+            <pluginRepositories>
+                <pluginRepository>
+                    <id>aliyun-plugin</id>
+                    <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+                    <releases><enabled>true</enabled></releases>
+                    <snapshots><enabled>false</enabled></snapshots>
+                </pluginRepository>
+            </pluginRepositories>
+        </profile>
+    </profiles>
+
+    <activeProfiles>
+        <activeProfile>company</activeProfile>
+    </activeProfiles>
+</settings>
+#+END_SRC
+
+当前项目依赖了 dubbo 2.8.4 的版本, 这是当当网在 github 上维护的版本, 并没有发布到中央仓库, 操作下面的步骤(已经安装到本地此步骤可以忽略)
+#+BEGIN_SRC bash
+git clone https://github.com/dangdangdotcom/dubbox.git && cd dubbox && mvn clean install -DskipTests && cd ../ && rm -fr dubbox
+#+END_SRC
+
+moduble 开头的模块代表了具体的功能模块, 它下面的 server 是 dubbo 的服务端, 本地开发时直接运行相关的 Application 即可.
+当前只有一个 web 项目, 主要是用来向前端项目提供 http 调用的
+本地运行时, 需要先安装 zookeeper, 如果要连接其他的 zk 服务器, 修改相关的 application.yml 配置即可
+
+
+*** 分页示例
+
+在 controller 中这样
+#+BEGIN_SRC java
+@GetMapping("/demo")  // 如果前台不传 page 和 limit, 或者传的是 page=a&limit=-100 将会有默认值 page=1&limit=15
+public JsonResult DemoList(Page page) {
+    return JsonResult.success("用户列表", demoService.pageList(page));
+}
+#+END_SRC
+
+dubbo 的接口及实现类
+#+BEGIN_SRC java
+public interface DemoService {
+    PageInfo pageList(Page page);
+}
+
+public class DemoServiceImpl implements DemoService {
+    
+    @Autowired
+    private DemoMapper demoMapper;
+    
+    @Override
+    public PageInfo DemoList(Page page) {
+        // 会自动基于 Page 中的 page 和 limit 值拼到 sql 语句中去
+        return PageInfo.returnList(demoMapper.selectByExample(null, page.bounds()));
+    }
+}
+#+END_SRC
+
+在 dao(repository) 中只需要在查询的地方加多一个方法即可
+#+BEGIN_SRC java
+public interface DemoMapper {
+
+    // ...
+
+    // 这是原先有的方法
+    List<Demo> selectByExample(DemoExample example);
+
+    // 加上这个方法(只是多了一个参数). 当调用此方法且 pageBounds 有值时将会自动基于数据库发起 limit 分页查询
+    List<Demo> selectByExample(DemoExample example, PageBounds pageBounds);
+
+    // ...
+}
+#+END_SRC
+
+
+*** 通过 Example 简化查询
+
+如果我们想要生成如下的 sql 语句:
+#+BEGIN_SRC sql
+select xxx from `t_demo` where `name` = 'xx' and `level` > 1 and `ver` in (1, 2, 3)
+#+END_SRC
+
+可以这样构建  example 来达到上面的效果
+#+BEGIN_SRC java
+DemoExample demoExample = new DemoExample();
+demoExample.or().andNameEqualTo("xx").andLevelGreaterThan(1).andVerIn(Arrays.asList(1, 2, 3));
+demoMapper.selectByExample(DemoExample);
+#+END_SRC
+
+同样的 where 条件也可以用在 update 和 delete 上
+#+BEGIN_SRC java
+Demo demo = new Demo();
+demo.setPassword("abc");
+
+DemoExample demoExample = new DemoExample();
+demoExample.or().andNameEqualTo("xx").andLevelGreaterThan(1).andVerIn(Arrays.asList(1, 2, 3));
+
+demoMapper.updateByExampleSelective(demo, demoExample);
+#+END_SRC
+
+上面将会生成如下的 sql 语句
+#+BEGIN_SRC sql
+update `t_demo` set `password`='abc' where `name` = 'xx' and `level` > 1 and `ver` in (1, 2, 3)
+#+END_SRC
+
+如果要生成 or 语句, 可以像这样
+#+BEGIN_SRC java
+DemoExample demoExample = new DemoExample();
+demoExample.or().andNameEqualTo("xx").andCreateTimeLessThan(new Date());
+demoExample.or().andEmailEqualTo("xx").andCerIsNotNull();
+demoExample.or().andPhoneEqualTo("xxx").andVerIn(Arrays.asList(1, 2, 3));
+demoMapper.selectByExample(DemoExample);
+#+END_SRC
+
+生成的 sql 如下
+#+BEGIN_SRC sql
+select ... from `t_demo`
+where (`name` = 'xx' and `create_time` < xxx)
+   or (`email` = 'xx' and `cer` is not null)
+   or (`phone` = 'xx' and `ver` in (1, 2, 3) )
+#+END_SRC
+
+如果要生成条件复杂的 or 语句(比如在一个 and 条件里面有好几个 or), exmple 将会无法实现, 此时就需要手写 sql 了
+
+
+*** 何时需要手工写自己的 customer mapper 文件
+当有一些不得不联表的 sql 语句, 或者基于 example 很难生成的 or 查询, 此时放在 custom.xml 中, 确保自动生成和手写的 sql 分开管理.
+
+PS: 尽量不要使用 join 来联表, 尽量由应用程序来组装数据并每次向数据库发起单一且易维护的 sql 语句,
+这样的好处是就算到了大后期, 对于数据库而言, 压力也全在单表的 sql 上, 优化起来很容易,
+而且应用程序还可以在这里加上二级缓存, 将大部分的压力由 db 的 io 操作转移到了应用程序的内部运算和网卡的数据库连接上,
+java 做内部运算本就是强项, 这一块成为瓶颈可能性很低且易重构, 数据库连接可以由 druid 连接池来达到高性能操作.
+
+阿里在 17 年初出的开发手册中也明确说明: 超级三个表禁止 join, 是有其原因的.
+
+
+*** 如何把枚举类映射成数据库字段
+比如有这样一个 性别 的枚举
+#+BEGIN_SRC java
+/** 用户性别 */
+public enum Gender {
+
+    Male(1, "男"), Female(2, "女");
+
+    int code;
+    String value;
+    Gender(int code, String value) {
+        this.code = code;
+        this.value = value;
+    }
+
+    /** 显示用 */
+    public String getValue() {
+        return value;
+    }
+    /** 存进数据库 及 返回给前端 时 */
+    @JsonValue
+    public int getCode() {
+        return code;
+    }
+    /** 数据反序列化时 */
+    @JsonCreator
+    public static Gender deserializer(Object obj) {
+        return U.toEnum(Gender.class, obj);
+    }
+}
+#+END_SRC
+
+其中 code 和 value 都要有, 一个用来存入数据库, 一个用来显示, 两个 jackson 的注解已经说明了序列化和反序列化的规则,
+此时还需要让 mybatis 也知道, 我在每个模块的 test 中放了 xxxGenerateEnumHandle 这个测试类,
+运行后会在当前模块的 handler 包中生成对应的枚举处理类, 就像下面这样
+
+#+BEGIN_SRC java
+/**
+* 当前 handle 是自动生成的
+*
+* @see org.apache.ibatis.type.TypeHandlerRegistry
+* @see org.apache.ibatis.type.EnumTypeHandler
+* @see org.apache.ibatis.type.EnumOrdinalTypeHandler
+*/
+public class GenderHandler extends BaseTypeHandler {
+
+    @Override
+    public void setNonNullParameter(PreparedStatement ps, int i, Gender parameter, JdbcType jdbcType) throws SQLException {
+        ps.setInt(i, parameter.getCode());
+    }
+
+    @Override
+    public Gender getNullableResult(ResultSet rs, String columnName) throws SQLException {
+        return U.toEnum(Gender.class, rs.getObject(columnName));
+    }
+
+    @Override
+    public Gender getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
+        return U.toEnum(Gender.class, rs.getObject(columnIndex));
+    }
+
+    @Override
+    public Gender getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
+        return U.toEnum(Gender.class, cs.getObject(columnIndex));
+    }
+}
+#+END_SRC
+
+这个类会被装载到 mybatis 的上下文中去, 这样在整个项目过程中, 任意地方都可以直接使用枚举而不需要基于数值转来转去
