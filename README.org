@@ -49,61 +49,6 @@
 </settings>
 #+END_SRC
 
-当前项目依赖了 dubbo 2.8.4 的版本, 这是当当网在 github 上维护的版本, 并没有发布到中央仓库, 操作下面的步骤(已经安装到本地此步骤可以忽略)
-#+BEGIN_SRC bash
-git clone https://github.com/dangdangdotcom/dubbox.git && cd dubbox && mvn clean install -DskipTests && cd ../ && rm -fr dubbox
-#+END_SRC
-
-moduble 开头的模块代表了具体的功能模块, 它下面的 server 是 dubbo 的服务端, 本地开发时直接运行相关的 Application 即可.
-当前只有一个 web 项目, 主要是用来向前端项目提供 http 调用的
-本地运行时, 需要先安装 zookeeper, 如果要连接其他的 zk 服务器, 修改相关的 application.yml 配置即可
-
-
-*** 分页示例
-
-在 controller 中这样
-#+BEGIN_SRC java
-@GetMapping("/demo")  // 如果前台不传 page 和 limit, 或者传的是 page=a&limit=-100 将会有默认值 page=1&limit=15
-public JsonResult DemoList(Page page) {
-    return JsonResult.success("用户列表", demoService.pageList(page));
-}
-#+END_SRC
-
-dubbo 的接口及实现类
-#+BEGIN_SRC java
-public interface DemoService {
-    PageInfo pageList(Page page);
-}
-
-public class DemoServiceImpl implements DemoService {
-    
-    @Autowired
-    private DemoMapper demoMapper;
-    
-    @Override
-    public PageInfo DemoList(Page page) {
-        // 会自动基于 Page 中的 page 和 limit 值拼到 sql 语句中去
-        return PageInfo.returnList(demoMapper.selectByExample(null, page.bounds()));
-    }
-}
-#+END_SRC
-
-在 dao(repository) 中只需要在查询的地方加多一个方法即可
-#+BEGIN_SRC java
-public interface DemoMapper {
-
-    // ...
-
-    // 这是原先有的方法
-    List<Demo> selectByExample(DemoExample example);
-
-    // 加上这个方法(只是多了一个参数). 当调用此方法且 pageBounds 有值时将会自动基于数据库发起 limit 分页查询
-    List<Demo> selectByExample(DemoExample example, PageBounds pageBounds);
-
-    // ...
-}
-#+END_SRC
-
 
 *** 通过 Example 简化查询
 
