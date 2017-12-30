@@ -637,6 +637,7 @@ class Server {
 
     private static final String INTERCEPTOR = "package " + PACKAGE + ".%s.config;\n" +
             "\n" +
+            "import " + PACKAGE + ".common.mvc.Cors;\n" +
             "import " + PACKAGE + ".common.util.LogUtil;\n" +
             "import " + PACKAGE + ".common.util.RequestUtils;\n" +
             "import org.springframework.web.servlet.HandlerInterceptor;\n" +
@@ -659,6 +660,7 @@ class Server {
             "    @Override\n" +
             "    public boolean preHandle(HttpServletRequest request, HttpServletResponse response,\n" +
             "                             Object handler) throws Exception {\n" +
+            "        Cors.handlerCors(request, response);\n" +
             "        LogUtil.bind(RequestUtils.logContextInfo(online));\n" +
             "        return true;\n" +
             "    }\n" +
@@ -681,7 +683,6 @@ class Server {
 
     private static final String WEB_CONFIG = "package " + PACKAGE + ".%s.config;\n" +
             "\n" +
-            "import " + PACKAGE + ".common.Const;\n" +
             "import " + PACKAGE + ".common.mvc.SpringMvc;\n" +
             "import " + PACKAGE + ".common.mvc.VersionRequestMappingHandlerMapping;\n" +
             "import org.springframework.beans.factory.annotation.Value;\n" +
@@ -689,7 +690,9 @@ class Server {
             "import org.springframework.format.FormatterRegistry;\n" +
             "import org.springframework.http.converter.HttpMessageConverter;\n" +
             "import org.springframework.web.method.support.HandlerMethodArgumentResolver;\n" +
-            "import org.springframework.web.servlet.config.annotation.*;\n" +
+            "import org.springframework.web.servlet.config.annotation.InterceptorRegistry;\n" +
+            "import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;\n" +
+            "import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;\n" +
             "import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;\n" +
             "\n" +
             "import java.util.List;\n" +
@@ -733,16 +736,6 @@ class Server {
             "    @Override\n" +
             "    public void addInterceptors(InterceptorRegistry registry) {\n" +
             "        registry.addInterceptor(new %sInterceptor(online)).addPathPatterns(\"/**\");\n" +
-            "    }\n" +
-            "\n" +
-            "    /**\n" +
-            "     * see : http://www.ruanyifeng.com/blog/2016/04/cors.html\n" +
-            "     *\n" +
-            "     * {@link org.springframework.web.servlet.config.annotation.CorsRegistration#CorsRegistration(String)}\n" +
-            "     */\n" +
-            "    @Override\n" +
-            "    public void addCorsMappings(CorsRegistry registry) {\n" +
-            "        registry.addMapping(\"/**\").allowedMethods(Const.SUPPORT_METHODS);\n" +
             "    }\n" +
             "}\n";
 

@@ -1,5 +1,6 @@
 package com.github.order.config;
 
+import com.github.common.mvc.Cors;
 import com.github.common.util.LogUtil;
 import com.github.common.util.RequestUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -23,6 +24,7 @@ public class OrderInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
                              Object handler) throws Exception {
+        Cors.handlerCors(request, response);
         LogUtil.bind(RequestUtils.logContextInfo(online));
         return true;
     }
