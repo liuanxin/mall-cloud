@@ -17,8 +17,7 @@ public final class Cors {
     private static final String METHODS = "Access-Control-Allow-Methods";
     private static final String HEADERS = "Access-Control-Allow-Headers";
 
-    public static void handlerCors(HttpServletRequest request,
-                                   HttpServletResponse response) {
+    public static void handlerCors(HttpServletRequest request, HttpServletResponse response) {
         String origin = request.getHeader(HttpHeaders.ORIGIN);
         if (U.isNotBlank(origin)) {
             if (U.isBlank(response.getHeader(ALLOW_ORIGIN))) {
@@ -38,7 +37,8 @@ public final class Cors {
 
     /** 在指定域名内的才加 cors 进 header */
     public static void handlerCors(HttpServletRequest request,
-                                   HttpServletResponse response, List<String> assignOriginList) {
+                                   HttpServletResponse response,
+                                   List<String> assignOriginList) {
         if (A.isNotEmpty(assignOriginList) && assignOriginList.contains(request.getHeader(HttpHeaders.ORIGIN))) {
             handlerCors(request, response);
         }
