@@ -29,6 +29,7 @@ public class Money implements Serializable {
     /** 从 web 前台过来的数据, 使用此构造 */
     public Money(String yuan) {
         cent = yuan2Cent(yuan);
+        // checkNegative();
     }
     /** 从数据库过来的数据, 使用此构造 */
     public Money(Long cent) {
