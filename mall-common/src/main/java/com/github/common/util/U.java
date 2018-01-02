@@ -467,6 +467,11 @@ public final class U {
         }
     }
 
+    /** 无条件抛出业务异常 */
+    public static void assertException(String msg) {
+        throw new ServiceException(msg);
+    }
+
     /** 条件为 true 则抛出必须处理的异常 */
     public static void assertMustHandleException(Boolean flag, String msg) throws ServiceMustHandleException {
         if (flag != null && flag) {
