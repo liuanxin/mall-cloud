@@ -2,6 +2,7 @@ package com.github.common.mvc;
 
 import com.github.common.Const;
 import com.github.common.util.A;
+import com.github.common.util.RequestUtils;
 import com.github.common.util.U;
 import org.springframework.http.HttpHeaders;
 
@@ -16,6 +17,8 @@ public final class Cors {
     private static final String CREDENTIALS = "Access-Control-Allow-Credentials";
     private static final String METHODS = "Access-Control-Allow-Methods";
     private static final String HEADERS = "Access-Control-Allow-Headers";
+    /** for ie: https://www.lovelucy.info/ie-accept-third-party-cookie.html */
+    private static final String P3P = "P3P";
 
     public static void handlerCors(HttpServletRequest request, HttpServletResponse response) {
         String origin = request.getHeader(HttpHeaders.ORIGIN);
@@ -29,8 +32,11 @@ public final class Cors {
             if (U.isBlank(response.getHeader(METHODS))) {
                 response.addHeader(METHODS, A.toStr(Const.SUPPORT_METHODS));
             }
-            if (U.isBlank(HEADERS)) {
+            if (U.isBlank(response.getHeader(HEADERS))) {
                 response.addHeader(HEADERS, "*");
+            }
+            if (RequestUtils.userAgent().toUpperCase().contains("MSIE") && U.isBlank(response.getHeader(P3P))) {
+                response.addHeader(P3P, "CP='CAO IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT'");
             }
         }
     }
