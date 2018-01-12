@@ -39,7 +39,7 @@ public final class Pages {
 
     /** 在 service 的实现类中调用 --> 在 repository 方法上的返回类型是 List, service 上的返回类型是 PageInfo, 使用此方法进行转换 */
     @SuppressWarnings("unchecked")
-    public static PageInfo returnList(List list) {
+    public static <T> PageInfo<T> returnList(List<T> list) {
         if (A.isEmpty(list)) {
             return new PageInfo(0, Collections.emptyList());
         } else if (list instanceof PageList) {
