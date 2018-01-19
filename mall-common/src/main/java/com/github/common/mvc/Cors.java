@@ -33,7 +33,10 @@ public final class Cors {
                 response.addHeader(METHODS, A.toStr(Const.SUPPORT_METHODS));
             }
             if (U.isBlank(response.getHeader(HEADERS))) {
-                response.addHeader(HEADERS, "*");
+                // 如果有自定义头, 附加进去, 避免用 *
+                response.addHeader(HEADERS, "Accept, Accept-Encoding, Accept-Language, Cache-Control, " +
+                        "Connection, Cookie, DNT, Host, User-Agent, Content-Type, Authorization, " +
+                        "X-Requested-With, Origin, Access-Control-Request-headers");
             }
             if (RequestUtils.userAgent().toUpperCase().contains("MSIE") && U.isBlank(response.getHeader(P3P))) {
                 response.addHeader(P3P, "CP='CAO IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT'");
