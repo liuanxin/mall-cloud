@@ -38,7 +38,7 @@ public final class Cors {
                         "Connection, Cookie, DNT, Host, User-Agent, Content-Type, Authorization, " +
                         "X-Requested-With, Origin, Access-Control-Request-headers");
             }
-            if (RequestUtils.userAgent().toUpperCase().contains("MSIE") && U.isBlank(response.getHeader(P3P))) {
+            if (RequestUtils.isIeRequest() && U.isBlank(response.getHeader(P3P))) {
                 response.addHeader(P3P, "CP='CAO IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT'");
             }
         }
