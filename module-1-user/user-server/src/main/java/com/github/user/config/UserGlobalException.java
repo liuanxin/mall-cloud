@@ -63,6 +63,7 @@ public class UserGlobalException {
         }
         return JsonResult.fail("无对应的请求");
     }
+
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public JsonResult notSupported(HttpRequestMethodNotSupportedException e) {
         if (LogUtil.ROOT_LOG.isDebugEnabled()) {
@@ -75,6 +76,7 @@ public class UserGlobalException {
         }
         return JsonResult.fail("不支持此种请求方式!" + msg);
     }
+
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public JsonResult notFound(MaxUploadSizeExceededException e) {
         if (LogUtil.ROOT_LOG.isDebugEnabled()) {

@@ -591,6 +591,7 @@ class Server {
             "        }\n" +
             "        return JsonResult.fail(\"无对应的请求\");\n" +
             "    }\n" +
+            "\n" +
             "    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)\n" +
             "    public JsonResult notSupported(HttpRequestMethodNotSupportedException e) {\n" +
             "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
@@ -603,6 +604,7 @@ class Server {
             "        }\n" +
             "        return JsonResult.fail(\"不支持此种请求方式!\" + msg);\n" +
             "    }\n" +
+            "\n" +
             "    @ExceptionHandler(MaxUploadSizeExceededException.class)\n" +
             "    public JsonResult notFound(MaxUploadSizeExceededException e) {\n" +
             "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
@@ -944,7 +946,7 @@ class Server {
     private static final String LOG_PROD_XML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
             "<configuration>\n" +
             "    <property name=\"FILE_PATH\" value=\"${user.home}/logs/~MODULE_NAME~-prod\"/>\n" +
-            "    <property name=\"LOG_PATTERN\" value=\"[%X{receiveTime}%d] [${PID:- } %t\\\\(%logger\\\\) : %p] %X{requestInfo} %class{30}#%method\\\\(%file:%line\\\\)%n%m%n%n\"/>\n" +
+            "    <property name=\"LOG_PATTERN\" value=\"[%X{receiveTime}%d] [${PID:- } %t\\\\(%logger\\\\) : %p] %X{requestInfo} %class{30}#%method\\\\(%file:%line\\\\) %m%n%n\"/>\n" +
             "\n" +
             "    <appender name=\"PROJECT\" class=\"ch.qos.logback.core.rolling.RollingFileAppender\">\n" +
             "        <file>${FILE_PATH}.log</file>\n" +
