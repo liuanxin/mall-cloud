@@ -535,17 +535,13 @@ class Server {
             "import " + PACKAGE + ".common.json.JsonResult;\n" +
             "import " + PACKAGE + ".common.util.A;\n" +
             "import " + PACKAGE + ".common.util.LogUtil;\n" +
-            "import " + PACKAGE + ".common.util.RequestUtils;\n" +
             "import " + PACKAGE + ".common.util.U;\n" +
             "import org.springframework.beans.factory.annotation.Value;\n" +
             "import org.springframework.web.HttpRequestMethodNotSupportedException;\n" +
-            "import org.springframework.web.bind.annotation.ControllerAdvice;\n" +
             "import org.springframework.web.bind.annotation.ExceptionHandler;\n" +
+            "import org.springframework.web.bind.annotation.RestControllerAdvice;\n" +
             "import org.springframework.web.multipart.MaxUploadSizeExceededException;\n" +
             "import org.springframework.web.servlet.NoHandlerFoundException;\n" +
-            "\n" +
-            "import javax.servlet.http.HttpServletResponse;\n" +
-            "import java.io.IOException;\n" +
             "\n" +
             "/**\n" +
             " * 处理全局异常的控制类. 如果要自定义错误处理类\n" +
@@ -555,7 +551,7 @@ class Server {
             " * @see org.springframework.boot.autoconfigure.web.ErrorMvcAutoConfiguration\n" +
             ModuleTest.AUTHOR +
             " */\n" +
-            "@ControllerAdvice\n" +
+            "@RestControllerAdvice\n" +
             "public class %sGlobalException {\n" +
             "\n" +
             "    @Value(\"${online:false}\")\n" +
@@ -563,75 +559,73 @@ class Server {
             "\n" +
             "    /** 业务异常 */\n" +
             "    @ExceptionHandler(ServiceException.class)\n" +
-            "    public void serviceException(ServiceException e, HttpServletResponse response) throws IOException {\n" +
+            "    public JsonResult serviceException(ServiceException e) {\n" +
             "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
             "            LogUtil.ROOT_LOG.debug(e.getMessage(), e);\n" +
             "        }\n" +
-            "        RequestUtils.toJson(JsonResult.fail(e.getMessage()), response);\n" +
+            "        return JsonResult.fail(e.getMessage());\n" +
             "    }\n" +
             "\n" +
             "    /** 未登录 */\n" +
             "    @ExceptionHandler(NotLoginException.class)\n" +
-            "    public void notLogin(NotLoginException e, HttpServletResponse response) throws IOException {\n" +
+            "    public JsonResult noLogin(NotLoginException e) {\n" +
             "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
             "            LogUtil.ROOT_LOG.debug(e.getMessage(), e);\n" +
             "        }\n" +
-            "        RequestUtils.toJson(JsonResult.notLogin(), response);\n" +
+            "        return JsonResult.notLogin();\n" +
             "    }\n" +
             "\n" +
             "    /** 无权限 */\n" +
             "    @ExceptionHandler(ForbiddenException.class)\n" +
-            "    public void notFound(ForbiddenException e, HttpServletResponse response) throws IOException {\n" +
+            "    public JsonResult notFound(ForbiddenException e) {\n" +
             "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
             "            LogUtil.ROOT_LOG.debug(e.getMessage(), e);\n" +
             "        }\n" +
-            "        RequestUtils.toJson(JsonResult.fail(e.getMessage()), response);\n" +
+            "        return JsonResult.fail(e.getMessage());\n" +
             "    }\n" +
             "\n" +
             "    @ExceptionHandler(NoHandlerFoundException.class)\n" +
-            "    public void forbidden(NoHandlerFoundException e, HttpServletResponse response) throws IOException {\n" +
-            "        if (LogUtil.ROOT_LOG.isDebugEnabled())\n" +
-            "            LogUtil.ROOT_LOG.debug(e.getMessage(), e);\n" +
-            "\n" +
-            "        RequestUtils.toJson(JsonResult.fail(\"无对应的请求\"), response);\n" +
-            "    }\n" +
-            "\n" +
-            "    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)\n" +
-            "    public void notSupported(HttpRequestMethodNotSupportedException e,\n" +
-            "                             HttpServletResponse response) throws IOException {\n" +
+            "    public JsonResult forbidden(NoHandlerFoundException e) {\n" +
             "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
             "            LogUtil.ROOT_LOG.debug(e.getMessage(), e);\n" +
             "        }\n" +
+            "        return JsonResult.fail(\"无对应的请求\");\n" +
+            "    }\n" +
+            "    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)\n" +
+            "    public JsonResult notSupported(HttpRequestMethodNotSupportedException e) {\n" +
+            "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
+            "            LogUtil.ROOT_LOG.debug(e.getMessage(), e);\n" +
+            "        }\n" +
+            "\n" +
             "        String msg = U.EMPTY;\n" +
             "        if (!online) {\n" +
             "            msg = \" 当前方式(\" + e.getMethod() + \"), 支持方式(\" + A.toStr(e.getSupportedMethods()) + \")\";\n" +
             "        }\n" +
-            "        RequestUtils.toJson(JsonResult.fail(\"不支持此种请求方式!\" + msg), response);\n" +
+            "        return JsonResult.fail(\"不支持此种请求方式!\" + msg);\n" +
             "    }\n" +
-            "\n" +
-            "    /** 上传文件太大 */\n" +
             "    @ExceptionHandler(MaxUploadSizeExceededException.class)\n" +
-            "    public void notFound(MaxUploadSizeExceededException e, HttpServletResponse response) throws IOException {\n" +
+            "    public JsonResult notFound(MaxUploadSizeExceededException e) {\n" +
             "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
             "            LogUtil.ROOT_LOG.debug(\"文件太大: \" + e.getMessage(), e);\n" +
             "        }\n" +
-            "        RequestUtils.toJson(JsonResult.fail(\"上传文件太大! 请保持在 \" + (e.getMaxUploadSize() >> 20) + \"M 以内\"), response);\n" +
+            "        // 右移 20 位相当于除以两次 1024, 正好表示从字节到 Mb\n" +
+            "        return JsonResult.fail(\"上传文件太大! 请保持在 \" + (e.getMaxUploadSize() >> 20) + \"M 以内\");\n" +
             "    }\n" +
             "\n" +
             "    /** 未知的所有其他异常 */\n" +
             "    @ExceptionHandler(Throwable.class)\n" +
-            "    public void exception(Throwable e, HttpServletResponse response) throws IOException {\n" +
+            "    public JsonResult exception(Throwable e) {\n" +
             "        if (LogUtil.ROOT_LOG.isErrorEnabled()) {\n" +
             "            LogUtil.ROOT_LOG.error(\"有错误: \" + e.getMessage(), e);\n" +
             "        }\n" +
             "\n" +
             "        String msg = e.getMessage();\n" +
             "        if (online) {\n" +
-            "            msg = \"请求 %s模块 时异常\";\n" +
+            "            msg = \"请求时出现错误, 我们会尽快处理\";\n" +
             "        } else if (e instanceof NullPointerException && U.isBlank(msg)) {\n" +
             "            msg = \"空指针异常, 联系后台查看日志进行处理\";\n" +
             "        }\n" +
-            "        RequestUtils.toJson(JsonResult.fail(msg), response);\n" +
+            "        return JsonResult.fail(msg);\n" +
             "    }\n" +
             "}\n";
 

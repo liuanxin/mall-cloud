@@ -66,6 +66,6 @@ public class WebBeanInit {
                 .setContact("contact")
                 .setTeam("team")
                 //.setReturnRecordLevel(true)
-                .setVersion(AppVersion.currentVersion().getValue());
+                .setVersion(AppVersion.currentVersion());
     }
 }
