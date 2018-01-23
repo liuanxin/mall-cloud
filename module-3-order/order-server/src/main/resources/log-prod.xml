@@ -21,6 +21,7 @@
     </appender>
     
     <logger name="com.github.order.repository" level="warn"/>
+    <logger name="com.github.common.mvc" level="warn"/>
     <logger name="org.springframework" level="warn"/>
     <logger name="org.hibernate" level="warn"/>
     <logger name="com.netflix" level="warn"/>

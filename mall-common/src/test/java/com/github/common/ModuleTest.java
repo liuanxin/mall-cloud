@@ -878,6 +878,7 @@ class Server {
             "    <include resource=\"org/springframework/boot/logging/logback/console-appender.xml\" />\n" +
             "\n" +
             "    <logger name=\"" + PACKAGE + ".~MODULE_NAME~.repository\" level=\"warn\"/>\n" +
+            "    <logger name=\"" + PACKAGE + ".common.mvc\" level=\"warn\"/>\n" +
             "    <logger name=\"org.springframework\" level=\"warn\"/>\n" +
             "    <logger name=\"org.hibernate\" level=\"warn\"/>\n" +
             "    <logger name=\"com.netflix\" level=\"warn\"/>\n" +
@@ -929,6 +930,7 @@ class Server {
             "    </logger>\n" +
             "\n" +
             "    <logger name=\"" + PACKAGE + ".~MODULE_NAME~.repository\" level=\"warn\"/>\n" +
+            "    <logger name=\"" + PACKAGE + ".common.mvc\" level=\"warn\"/>\n" +
             "    <logger name=\"org.springframework\" level=\"warn\"/>\n" +
             "    <logger name=\"org.hibernate\" level=\"warn\"/>\n" +
             "    <logger name=\"com.netflix\" level=\"warn\"/>\n" +
@@ -966,6 +968,7 @@ class Server {
             "    </appender>\n" +
             "    \n" +
             "    <logger name=\"" + PACKAGE + ".~MODULE_NAME~.repository\" level=\"warn\"/>\n" +
+            "    <logger name=\"" + PACKAGE + ".common.mvc\" level=\"warn\"/>\n" +
             "    <logger name=\"org.springframework\" level=\"warn\"/>\n" +
             "    <logger name=\"org.hibernate\" level=\"warn\"/>\n" +
             "    <logger name=\"com.netflix\" level=\"warn\"/>\n" +
