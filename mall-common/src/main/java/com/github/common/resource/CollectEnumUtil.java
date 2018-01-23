@@ -20,7 +20,7 @@ public final class CollectEnumUtil {
     /** 在 enum 中返回给前台的下拉数据的值, 如果没有将会以 name() 为值 */
     private static final String VALUE = "getValue";
 
-    private static List<Map<Object, Object>> cacheList = Lists.newArrayList();
+    private static List<Map<Object, Object>> cacheList = null;
     private static Map<String, Map<Object, Object>> cacheMap = Maps.newHashMap();
 
     /** 获取所有枚举的说明 */
