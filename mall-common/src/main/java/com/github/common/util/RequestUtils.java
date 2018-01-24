@@ -215,7 +215,7 @@ public final class RequestUtils {
         HttpServletRequest request = getRequest();
 
         return new LogUtil.RequestLogContext()
-                .setOnline(online)
+                // .setOnline(online) // 输出全部信息对排查问题是很重要的事
                 .setIp(getRealIp())
                 .setMethod(request.getMethod())
                 .setUrl(request.getRequestURL().toString())
