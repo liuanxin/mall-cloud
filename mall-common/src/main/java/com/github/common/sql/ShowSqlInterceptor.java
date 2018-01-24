@@ -35,13 +35,13 @@ public class ShowSqlInterceptor implements StatementInterceptor {
             }
         }
         if (U.isNotBlank(sql) && !"SELECT 1".equalsIgnoreCase(sql)) {
-            long handleTime = (System.currentTimeMillis() - TIME.get());
-            TIME.remove();
+            long executeTime = (System.currentTimeMillis() - TIME.get());
             if (LogUtil.SQL_LOG.isDebugEnabled()) {
                 // druid -> SQLUtils.formatMySql
-                LogUtil.SQL_LOG.debug("time: {} ms, sql: {}", handleTime, SqlFormat.format(sql));
+                LogUtil.SQL_LOG.debug("time: {} ms, sql: {}", executeTime, SqlFormat.format(sql));
             }
         }
+        TIME.remove();
         return null;
     }
 
