@@ -12,12 +12,22 @@ import java.util.Properties;
 
 public class ShowSqlInterceptor implements StatementInterceptor {
 
+    private static final ThreadLocal<Long> TIME = new ThreadLocal<>();
+
     @Override
     public void init(Connection connection, Properties properties) throws SQLException {}
 
     @Override
     public ResultSetInternalMethods preProcess(String sql, Statement statement,
                                                Connection connection) throws SQLException {
+        TIME.set(System.currentTimeMillis());
+        return null;
+    }
+
+    @Override
+    public ResultSetInternalMethods postProcess(String sql, Statement statement,
+                                                ResultSetInternalMethods resultSetInternalMethods,
+                                                Connection connection) throws SQLException {
         if (U.isBlank(sql) && statement != null) {
             sql = statement.toString();
             if (U.isNotBlank(sql) && sql.indexOf(':') > 0) {
@@ -29,13 +39,6 @@ public class ShowSqlInterceptor implements StatementInterceptor {
                 LogUtil.SQL_LOG.debug("{}", SqlFormat.format(sql));
             }
         }
-        return null;
-    }
-
-    @Override
-    public ResultSetInternalMethods postProcess(String s, Statement statement,
-                                                ResultSetInternalMethods resultSetInternalMethods,
-                                                Connection connection) throws SQLException {
         return null;
     }
 
