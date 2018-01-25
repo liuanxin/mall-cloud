@@ -1,5 +1,6 @@
 package com.github.common;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.github.common.util.U;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -26,7 +27,8 @@ public class Money implements Serializable {
     private Long cent;
 
     public Money() {}
-    /** 从 web 前台过来的数据, 使用此构造 */
+    /** 从前台过来的数据, 或者要反序列化回去. 都使用此构造 */
+    @JsonCreator
     public Money(String yuan) {
         cent = yuan2Cent(yuan);
         // checkNegative();
@@ -89,6 +91,11 @@ public class Money implements Serializable {
         return cent2Yuan(cent);
     }
 
+    /** 输出大写中文 */
+    public String toChinese() {
+        return ChineseConvert.upperCase(toString());
+    }
+
     private static Long yuan2Cent(String yuan) {
         // 元转换为分
         if (U.isBlank(yuan)) {
@@ -108,11 +115,6 @@ public class Money implements Serializable {
     private static String cent2Yuan(Long cent) {
         // 分转换为元
         return U.greater0(cent) ? BigDecimal.valueOf(cent).movePointLeft(SCALE).toString() : U.EMPTY;
-    }
-
-    /** 输出大写中文 */
-    public String toChinese() {
-        return ChineseConvert.upperCase(toString());
     }
 
 
