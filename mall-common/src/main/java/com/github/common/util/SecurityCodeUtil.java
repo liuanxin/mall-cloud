@@ -100,9 +100,9 @@ public final class SecurityCodeUtil {
             loop = LEAST_COUNT;
         }
 
-        String str = WORD;
-        if ("num".equalsIgnoreCase(style)) {
-            str = NUMBER;
+        String str = NUMBER;
+        if ("w".equalsIgnoreCase(style)) {
+            str = WORD;
         } else if ("n".equalsIgnoreCase(style)) {
             str += NUMBER;
         } else if ("cn".equalsIgnoreCase(style)) {
@@ -127,27 +127,25 @@ public final class SecurityCodeUtil {
         graphics.setColor(Color.LIGHT_GRAY);
         graphics.fillRect(0, 0, widthCount, heightCount);
 
-        // 边框填充为黑色
-        graphics.setColor(Color.BLACK);
-        graphics.drawRect(0, 0, widthCount - 1, heightCount - 1);
-
         // 画一些干扰线
-        for (int i = 0; i < 64; i++) {
-            graphics.setColor(new Color(RANDOM.nextInt(255), RANDOM.nextInt(255), RANDOM.nextInt(255)));
-            graphics.drawLine(RANDOM.nextInt(widthCount), RANDOM.nextInt(heightCount),
-                    RANDOM.nextInt(widthCount), RANDOM.nextInt(heightCount));
+        for (int i = 0; i < 16; i++) {
+            graphics.setColor(new Color(138, 138, 138));
+            graphics.drawLine(RANDOM.nextInt(widthCount),
+                    RANDOM.nextInt(heightCount),
+                    RANDOM.nextInt(widthCount),
+                    RANDOM.nextInt(heightCount));
         }
+        // graphics.setColor(Color.BLUE);
+        graphics.setColor(new Color(57, 66, 108));
 
-        graphics.setColor(Color.BLUE);
-        // 字体大小看输出的图片高度
-        graphics.setFont(new Font(FONT_STYLE, Font.BOLD, heightCount - 10));
-
-        int x = (widthCount - 4) / (loop + 1);
-        int y = heightCount - 7;
+        int x = (widthCount - 8) / (loop + 1);
+        int y = heightCount - 5;
 
         StringBuilder sbd = new StringBuilder();
         for (int i = 0; i < loop; i++) {
             String value = String.valueOf(str.charAt(RANDOM.nextInt(str.length())));
+            // 字体大小看输出的图片高度
+            graphics.setFont(new Font(FONT_STYLE, Font.BOLD, heightCount - RANDOM.nextInt(8)));
             graphics.drawString(value, (i + 1) * x, y);
             sbd.append(value);
         }
