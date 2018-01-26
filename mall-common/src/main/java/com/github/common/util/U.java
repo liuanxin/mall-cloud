@@ -11,6 +11,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
@@ -452,18 +453,43 @@ public final class U {
 
     /** 对象为 null、空白符、"null" 字符串时, 则抛出异常 */
     public static void assertNil(Object obj, String msg) {
-        assertException(isBlank(obj), msg);
+        if (isBlank(obj)) {
+            assertException(msg);
+        }
+    }
+
+    /** 数组为 null 或 长度为 0 时则抛出异常 */
+    public static <T> void assertEmpty(T[] array, String msg) {
+        if (A.isEmpty(array)) {
+            assertException(msg);
+        }
+    }
+
+    /** 列表为 null 或 长度为 0 时则抛出异常 */
+    public static <T> void assertEmpty(Collection<T> list, String msg) {
+        if (A.isEmpty(list)) {
+            assertException(msg);
+        }
+    }
+
+    /** map 为 null 或 长度为 0 时则抛出异常 */
+    public static <K,V> void assertEmpty(Map<K,V> map, String msg) {
+        if (A.isEmpty(map)) {
+            assertException(msg);
+        }
     }
 
     /** 数值为空或小于 1 则抛出异常 */
-    public static void assert0(Number obj, String msg) {
-        assertException(less0(obj), msg);
+    public static void assert0(Number number, String msg) {
+        if (less0(number)) {
+            assertException(msg);
+        }
     }
 
     /** 条件为 true 则抛出业务异常 */
     public static void assertException(Boolean flag, String msg) {
         if (flag != null && flag) {
-            throw new ServiceException(msg);
+            assertException(msg);
         }
     }
 
