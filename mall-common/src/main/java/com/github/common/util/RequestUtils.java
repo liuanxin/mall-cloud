@@ -69,6 +69,11 @@ public final class RequestUtils {
         return getRequest().getHeader(USER_AGENT);
     }
 
+    /** 如果是 ie 请求就返回 true */
+    public static boolean isIeRequest() {
+        return userAgent().toUpperCase().contains("MSIE");
+    }
+
     /** 判断当前请求是否来自移动端, 来自移动端则返回 true */
     public static boolean isMobileRequest() {
         return U.checkMobile(userAgent());
@@ -210,7 +215,7 @@ public final class RequestUtils {
         HttpServletRequest request = getRequest();
 
         return new LogUtil.RequestLogContext()
-                .setOnline(online)
+                // .setOnline(online) // 输出全部信息对排查问题是很重要的事
                 .setIp(getRealIp())
                 .setMethod(request.getMethod())
                 .setUrl(request.getRequestURL().toString())

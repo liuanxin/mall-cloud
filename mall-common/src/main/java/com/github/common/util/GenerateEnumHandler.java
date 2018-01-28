@@ -1,6 +1,6 @@
 package com.github.common.util;
 
-import org.apache.commons.io.FileUtils;
+import com.google.common.io.Files;
 
 import java.io.File;
 import java.io.IOException;
@@ -85,7 +85,7 @@ public class GenerateEnumHandler {
                         }
                         File writeFile = new File(parent, clazzName + "Handler.java");
                         if (!writeFile.exists()) {
-                            FileUtils.write(writeFile, templateInfo.replaceAll(PLACEHOLDER, clazzName));
+                            Files.write(templateInfo.replaceAll(PLACEHOLDER, clazzName).getBytes(U.UTF8), writeFile);
                             System.out.println("生成文件: " + writeFile.getPath());
                             count += 1;
                         }

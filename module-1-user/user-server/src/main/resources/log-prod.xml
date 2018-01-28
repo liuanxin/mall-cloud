@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <property name="FILE_PATH" value="${user.home}/logs/user-prod"/>
-    <property name="LOG_PATTERN" value="[%X{receiveTime}%d] [${PID:- } %t\\(%logger\\) : %p] %X{requestInfo} %class{30}#%method\\(%file:%line\\)%n%m%n%n"/>
+    <property name="LOG_PATTERN" value="[%X{receiveTime}%d] [${PID:- } %t\\(%logger\\) : %p] %X{requestInfo} %class{30}#%method\\(%file:%line\\) %m%n%n"/>
 
     <appender name="PROJECT" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${FILE_PATH}.log</file>
@@ -21,6 +21,7 @@
     </appender>
     
     <logger name="com.github.user.repository" level="warn"/>
+    <logger name="com.github.common.mvc" level="warn"/>
     <logger name="org.springframework" level="warn"/>
     <logger name="org.hibernate" level="warn"/>
     <logger name="com.netflix" level="warn"/>

@@ -1,5 +1,6 @@
 package com.github.config;
 
+import com.github.common.mvc.Cors;
 import com.github.util.WebSessionUtil;
 import com.google.common.collect.Lists;
 import com.github.common.annotation.NotNeedLogin;
@@ -27,6 +28,7 @@ public class WebInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
                              Object handler) throws Exception {
+        Cors.handlerCors(request, response);
         bindParam();
         checkLoginAndPermission(handler);
         return true;

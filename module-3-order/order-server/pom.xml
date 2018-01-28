@@ -74,7 +74,7 @@
 
         <dependency>
             <groupId>com.github.liuanxin</groupId>
-            <artifactId>api-info</artifactId>
+            <artifactId>api-document</artifactId>
         </dependency>
     </dependencies>
 

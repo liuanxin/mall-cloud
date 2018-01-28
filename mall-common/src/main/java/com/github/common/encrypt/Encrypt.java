@@ -26,10 +26,10 @@ public final class Encrypt {
     /** 加密解密算法 */
     private static final String ALGORITHM = "AES";
     /** aes 加解密时, 长度必须为 16 位的密钥 */
-    private static final byte[] AES_SECRET = "wqt&gAesEn!crypt".getBytes(StandardCharsets.UTF_8);
+    private static final byte[] AES_SECRET = "&gAe#sEn!cr*yp^t".getBytes(StandardCharsets.UTF_8);
 
     /** jwt 加密解密密钥 */
-    private static final String JWT_SECRET = "*qt&gJw%tE#ncry^pt";
+    private static final String JWT_SECRET = "*&gJw%tE#ncry^pt";
     private static final JWTSigner JWT_SIGNER = new JWTSigner(JWT_SECRET);
     private static final JWTVerifier JWT_VERIFIER = new JWTVerifier(JWT_SECRET);
 

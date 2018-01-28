@@ -1,5 +1,6 @@
 package com.github.common.page;
 
+import com.github.common.util.U;
 import com.github.liuanxin.api.annotation.ApiReturn;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -41,4 +43,17 @@ public class PageInfo<T> implements Serializable {
 
     @ApiReturn(desc = "当前页的数据")
     private List<T> list;
+
+    /** 在 Controller 中调用 --> 组装不同的 vo 时使用此方法 */
+    @SuppressWarnings("unchecked")
+    public static <S,T> PageInfo<T> convert(PageInfo<S> pageInfo) {
+        if (U.isBlank(pageInfo)) {
+            return new PageInfo(0, Collections.emptyList());
+        } else {
+            // 只要总条数
+            PageInfo info = new PageInfo();
+            info.setTotal(pageInfo.getTotal());
+            return info;
+        }
+    }
 }

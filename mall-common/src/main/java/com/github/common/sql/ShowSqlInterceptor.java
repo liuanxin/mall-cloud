@@ -12,30 +12,36 @@ import java.util.Properties;
 
 public class ShowSqlInterceptor implements StatementInterceptor {
 
+    private static final ThreadLocal<Long> TIME = new ThreadLocal<>();
+
     @Override
     public void init(Connection connection, Properties properties) throws SQLException {}
 
     @Override
     public ResultSetInternalMethods preProcess(String sql, Statement statement,
                                                Connection connection) throws SQLException {
+        TIME.set(System.currentTimeMillis());
+        return null;
+    }
+
+    @Override
+    public ResultSetInternalMethods postProcess(String sql, Statement statement,
+                                                ResultSetInternalMethods resultSetInternalMethods,
+                                                Connection connection) throws SQLException {
         if (U.isBlank(sql) && statement != null) {
             sql = statement.toString();
             if (U.isNotBlank(sql) && sql.indexOf(':') > 0) {
                 sql = sql.substring(sql.indexOf(':') + 1).trim();
             }
         }
-        if (U.isNotBlank(sql)) {
-            if (LogUtil.SQL_LOG.isDebugEnabled() && !"SELECT 1".equalsIgnoreCase(sql)) {
-                LogUtil.SQL_LOG.debug("{}", SqlFormat.format(sql));
+        if (U.isNotBlank(sql) && !"SELECT 1".equalsIgnoreCase(sql)) {
+            long executeTime = (System.currentTimeMillis() - TIME.get());
+            if (LogUtil.SQL_LOG.isDebugEnabled()) {
+                // druid -> SQLUtils.formatMySql
+                LogUtil.SQL_LOG.debug("time: {} ms, sql: {}", executeTime, SqlFormat.format(sql));
             }
         }
-        return null;
-    }
-
-    @Override
-    public ResultSetInternalMethods postProcess(String s, Statement statement,
-                                                ResultSetInternalMethods resultSetInternalMethods,
-                                                Connection connection) throws SQLException {
+        TIME.remove();
         return null;
     }
 

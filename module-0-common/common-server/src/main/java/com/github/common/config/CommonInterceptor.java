@@ -1,8 +1,8 @@
 package com.github.common.config;
 
+import com.github.common.mvc.Cors;
 import com.github.common.util.LogUtil;
 import com.github.common.util.RequestUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -16,12 +16,15 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class CommonInterceptor implements HandlerInterceptor {
 
-    @Value("${online:false}")
     private boolean online;
+    CommonInterceptor(boolean online) {
+        this.online = online;
+    }
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
                              Object handler) throws Exception {
+        Cors.handlerCors(request, response);
         LogUtil.bind(RequestUtils.logContextInfo(online));
         return true;
     }

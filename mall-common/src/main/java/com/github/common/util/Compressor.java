@@ -20,6 +20,8 @@ public final class Compressor {
 
     private static final String CLAZZ_NAME = Compressor.class.getName();
 
+
+    private static final String SPACE = " ";
     private static final Pattern LINE_REGEX = compile("\\n|\\r");
     private static final Pattern MULTI_SPACE_REGEX = compile("\\s{2,}");
 
@@ -93,24 +95,23 @@ public final class Compressor {
         List<String> preList = A.linkedLists();
         List<String> textareaList = A.linkedLists();
 
-        // 先收集 js 再收集 if pre textarea 这些
-        html = replaceJs(html, scriptList);
-        html = replace(html, IF_REGEX, ifList, IF_PLACE);
+        // 先收集 pre textarea 再收集 js, 最后收集 if
         html = replace(html, PRE_REGEX, preList, PRE_PLACE);
         html = replace(html, TEXTAREA_REGEX, textareaList, TEXTAREA_PLACE);
+        html = replaceJs(html, scriptList);
+        html = replace(html, IF_REGEX, ifList, IF_PLACE);
 
         // 去掉页面中 <!-- xx --> 及 css 中的 /* xx */ 注释
         html = replacePageAnnotation(html);
-        // 把 if 还原回来
+        // 最后把 if 还原回来
         html = receive(html, IF_PLACE_REGEX, ifList);
         // 去掉空白(换行制表空格等)
         html = replaceBlank(html);
-
-        // 把 <pre> <textarea> 还原回来
-        html = receive(html, PRE_PLACE_REGEX, preList);
-        html = receive(html, TEXTAREA_PLACE_REGEX, textareaList);
-        // 把 js 操作成一行了还原回来
+        // 把 js 操作成一行了还原回来(如果 js 中也有 if 就不会处理)
         html = receiveJs(html, scriptList);
+        // 把 <textarea> <pre> 还原回来
+        html = receive(html, TEXTAREA_PLACE_REGEX, textareaList);
+        html = receive(html, PRE_PLACE_REGEX, preList);
 
         return html.trim();
     }
@@ -166,22 +167,22 @@ public final class Compressor {
     private static String replacePageAnnotation(String content) {
         // 将页面中 /* xx */ 和 <!-- xx --> 替换成 空格
         content = replaceJsOrCssAnnotation(content);
-        return replaceAll(PAGE_REGEX, U.SPACE, content);
+        return replaceAll(PAGE_REGEX, SPACE, content);
     }
     private static String replaceJsOrCssAnnotation(String content) {
         // 将 /* xx */ 替换成 空格
-        return replaceAll(CSS_JS_REGEX, U.SPACE, content);
+        return replaceAll(CSS_JS_REGEX, SPACE, content);
     }
     private static String replaceJsAnnotation(String content) {
         // 将 js 中的 /* xx * / 和 // xx 替换成空格
         // 先替换多行(/**/), 避免先替换单行(//)时, 把   /* http://abc.com * /   替换成了   /* http:   导致后面出错
         content = replaceJsOrCssAnnotation(content);
-        return replaceAll(SINGLE_JS_REGEX, U.SPACE, content);
+        return replaceAll(SINGLE_JS_REGEX, SPACE, content);
     }
     private static String replaceBlank(String content) {
         // 将 换行 替换成一个空格, 再将 多个空白符 替换成一个空格
-        content = replaceAll(LINE_REGEX, U.SPACE, content);
-        return replaceAll(MULTI_SPACE_REGEX, U.SPACE, content);
+        content = replaceAll(LINE_REGEX, SPACE, content);
+        return replaceAll(MULTI_SPACE_REGEX, SPACE, content);
     }
     private static String replaceAll(Pattern pattern, String place, String content) {
         // content.replaceAll(regex, place) ==> Pattern.compile(regex).matcher(content).replaceAll(place);

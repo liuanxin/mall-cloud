@@ -529,22 +529,19 @@ class Server {
 
     private static final String EXCEPTION = "package " + PACKAGE + ".%s.config;\n" +
             "\n" +
+            "import " + PACKAGE + ".common.exception.ForbiddenException;\n" +
             "import " + PACKAGE + ".common.exception.NotLoginException;\n" +
             "import " + PACKAGE + ".common.exception.ServiceException;\n" +
             "import " + PACKAGE + ".common.json.JsonResult;\n" +
             "import " + PACKAGE + ".common.util.A;\n" +
             "import " + PACKAGE + ".common.util.LogUtil;\n" +
-            "import " + PACKAGE + ".common.util.RequestUtils;\n" +
             "import " + PACKAGE + ".common.util.U;\n" +
             "import org.springframework.beans.factory.annotation.Value;\n" +
             "import org.springframework.web.HttpRequestMethodNotSupportedException;\n" +
-            "import org.springframework.web.bind.annotation.ControllerAdvice;\n" +
             "import org.springframework.web.bind.annotation.ExceptionHandler;\n" +
+            "import org.springframework.web.bind.annotation.RestControllerAdvice;\n" +
             "import org.springframework.web.multipart.MaxUploadSizeExceededException;\n" +
             "import org.springframework.web.servlet.NoHandlerFoundException;\n" +
-            "\n" +
-            "import javax.servlet.http.HttpServletResponse;\n" +
-            "import java.io.IOException;\n" +
             "\n" +
             "/**\n" +
             " * 处理全局异常的控制类. 如果要自定义错误处理类\n" +
@@ -554,68 +551,91 @@ class Server {
             " * @see org.springframework.boot.autoconfigure.web.ErrorMvcAutoConfiguration\n" +
             ModuleTest.AUTHOR +
             " */\n" +
-            "@ControllerAdvice\n" +
+            "@RestControllerAdvice\n" +
             "public class %sGlobalException {\n" +
             "\n" +
             "    @Value(\"${online:false}\")\n" +
             "    private boolean online;\n" +
             "\n" +
+            "    /** 业务异常 */\n" +
+            "    @ExceptionHandler(ServiceException.class)\n" +
+            "    public JsonResult serviceException(ServiceException e) {\n" +
+            "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
+            "            LogUtil.ROOT_LOG.debug(e.getMessage(), e);\n" +
+            "        }\n" +
+            "        return JsonResult.fail(e.getMessage());\n" +
+            "    }\n" +
+            "\n" +
+            "    /** 未登录 */\n" +
             "    @ExceptionHandler(NotLoginException.class)\n" +
-            "    public void notFound(NotLoginException e, HttpServletResponse response) throws IOException {\n" +
-            "        RequestUtils.toJson(JsonResult.notLogin(), response);\n" +
+            "    public JsonResult noLogin(NotLoginException e) {\n" +
+            "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
+            "            LogUtil.ROOT_LOG.debug(e.getMessage(), e);\n" +
+            "        }\n" +
+            "        return JsonResult.notLogin();\n" +
+            "    }\n" +
+            "\n" +
+            "    /** 无权限 */\n" +
+            "    @ExceptionHandler(ForbiddenException.class)\n" +
+            "    public JsonResult notFound(ForbiddenException e) {\n" +
+            "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
+            "            LogUtil.ROOT_LOG.debug(e.getMessage(), e);\n" +
+            "        }\n" +
+            "        return JsonResult.fail(e.getMessage());\n" +
             "    }\n" +
             "\n" +
             "    @ExceptionHandler(NoHandlerFoundException.class)\n" +
-            "    public void forbidden(NoHandlerFoundException e, HttpServletResponse response) throws IOException {\n" +
-            "        if (LogUtil.ROOT_LOG.isDebugEnabled())\n" +
+            "    public JsonResult forbidden(NoHandlerFoundException e) {\n" +
+            "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
             "            LogUtil.ROOT_LOG.debug(e.getMessage(), e);\n" +
-            "\n" +
-            "        RequestUtils.toJson(JsonResult.fail(\"无对应的请求\"), response);\n" +
+            "        }\n" +
+            "        return JsonResult.fail(\"无对应的请求\");\n" +
             "    }\n" +
             "\n" +
             "    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)\n" +
-            "    public void notSupported(HttpRequestMethodNotSupportedException e,\n" +
-            "                             HttpServletResponse response) throws IOException {\n" +
-            "        if (LogUtil.ROOT_LOG.isDebugEnabled())\n" +
-            "            LogUtil.ROOT_LOG.debug(e.getMessage());\n" +
+            "    public JsonResult notSupported(HttpRequestMethodNotSupportedException e) {\n" +
+            "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
+            "            LogUtil.ROOT_LOG.debug(e.getMessage(), e);\n" +
+            "        }\n" +
             "\n" +
             "        String msg = U.EMPTY;\n" +
             "        if (!online) {\n" +
             "            msg = \" 当前方式(\" + e.getMethod() + \"), 支持方式(\" + A.toStr(e.getSupportedMethods()) + \")\";\n" +
             "        }\n" +
-            "        RequestUtils.toJson(JsonResult.fail(\"不支持此种请求方式!\" + msg), response);\n" +
+            "        return JsonResult.fail(\"不支持此种请求方式!\" + msg);\n" +
             "    }\n" +
             "\n" +
-            "    /** 业务异常 */\n" +
-            "    @ExceptionHandler(ServiceException.class)\n" +
-            "    public void serviceException(ServiceException e, HttpServletResponse response) throws IOException {\n" +
-            "        if (LogUtil.ROOT_LOG.isDebugEnabled())\n" +
-            "            LogUtil.ROOT_LOG.debug(e.getMessage());\n" +
-            "        RequestUtils.toJson(JsonResult.fail(e.getMessage()), response);\n" +
-            "    }\n" +
-            "\n" +
-            "    /** 上传文件太大 */\n" +
             "    @ExceptionHandler(MaxUploadSizeExceededException.class)\n" +
-            "    public void notFound(MaxUploadSizeExceededException e, HttpServletResponse response) throws IOException {\n" +
-            "        if (LogUtil.ROOT_LOG.isDebugEnabled())\n" +
+            "    public JsonResult notFound(MaxUploadSizeExceededException e) {\n" +
+            "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
             "            LogUtil.ROOT_LOG.debug(\"文件太大: \" + e.getMessage(), e);\n" +
-            "        RequestUtils.toJson(JsonResult.fail(\"上传文件太大! 请保持在 \" + (e.getMaxUploadSize() >> 20) + \"M 以内\"), response);\n" +
+            "        }\n" +
+            "        // 右移 20 位相当于除以两次 1024, 正好表示从字节到 Mb\n" +
+            "        return JsonResult.fail(\"上传文件太大! 请保持在 \" + (e.getMaxUploadSize() >> 20) + \"M 以内\");\n" +
             "    }\n" +
             "\n" +
             "    /** 未知的所有其他异常 */\n" +
             "    @ExceptionHandler(Throwable.class)\n" +
-            "    public void exception(Throwable e, HttpServletResponse response) throws IOException {\n" +
-            "        if (LogUtil.ROOT_LOG.isErrorEnabled())\n" +
+            "    public JsonResult exception(Throwable e) {\n" +
+            "        if (LogUtil.ROOT_LOG.isErrorEnabled()) {\n" +
             "            LogUtil.ROOT_LOG.error(\"有错误: \" + e.getMessage(), e);\n" +
-            "        RequestUtils.toJson(JsonResult.fail(online || U.isBlank(e.getMessage()) ? \"服务异常\" : e.getMessage()), response);\n" +
+            "        }\n" +
+            "\n" +
+            "        String msg = e.getMessage();\n" +
+            "        if (online) {\n" +
+            "            msg = \"请求时出现错误, 我们会尽快处理\";\n" +
+            "        } else if (e instanceof NullPointerException && U.isBlank(msg)) {\n" +
+            "            msg = \"空指针异常, 联系后台查看日志进行处理\";\n" +
+            "        }\n" +
+            "        return JsonResult.fail(msg);\n" +
             "    }\n" +
             "}\n";
 
     private static final String INTERCEPTOR = "package " + PACKAGE + ".%s.config;\n" +
             "\n" +
+            "import " + PACKAGE + ".common.mvc.Cors;\n" +
             "import " + PACKAGE + ".common.util.LogUtil;\n" +
             "import " + PACKAGE + ".common.util.RequestUtils;\n" +
-            "import org.springframework.beans.factory.annotation.Value;\n" +
             "import org.springframework.web.servlet.HandlerInterceptor;\n" +
             "import org.springframework.web.servlet.ModelAndView;\n" +
             "\n" +
@@ -628,12 +648,15 @@ class Server {
             " */\n" +
             "public class %sInterceptor implements HandlerInterceptor {\n" +
             "\n" +
-            "    @Value(\"${online:false}\")\n" +
             "    private boolean online;\n" +
+            "    %sInterceptor(boolean online) {\n" +
+            "        this.online = online;\n" +
+            "    }\n" +
             "\n" +
             "    @Override\n" +
             "    public boolean preHandle(HttpServletRequest request, HttpServletResponse response,\n" +
             "                             Object handler) throws Exception {\n" +
+            "        Cors.handlerCors(request, response);\n" +
             "        LogUtil.bind(RequestUtils.logContextInfo(online));\n" +
             "        return true;\n" +
             "    }\n" +
@@ -654,16 +677,18 @@ class Server {
             "    }\n" +
             "}\n";
 
-    private static final String WAR_INIT = "package " + PACKAGE + ".%s.config;\n" +
+    private static final String WEB_CONFIG = "package " + PACKAGE + ".%s.config;\n" +
             "\n" +
-            "import " + PACKAGE + ".common.Const;\n" +
             "import " + PACKAGE + ".common.mvc.SpringMvc;\n" +
             "import " + PACKAGE + ".common.mvc.VersionRequestMappingHandlerMapping;\n" +
+            "import org.springframework.beans.factory.annotation.Value;\n" +
             "import org.springframework.context.annotation.Configuration;\n" +
             "import org.springframework.format.FormatterRegistry;\n" +
             "import org.springframework.http.converter.HttpMessageConverter;\n" +
             "import org.springframework.web.method.support.HandlerMethodArgumentResolver;\n" +
-            "import org.springframework.web.servlet.config.annotation.*;\n" +
+            "import org.springframework.web.servlet.config.annotation.InterceptorRegistry;\n" +
+            "import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;\n" +
+            "import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;\n" +
             "import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;\n" +
             "\n" +
             "import java.util.List;\n" +
@@ -673,8 +698,10 @@ class Server {
             ModuleTest.AUTHOR +
             " */\n" +
             "@Configuration\n" +
-            "public class %sWarInit extends WebMvcConfigurationSupport {\n" +
-//            "public class %sWarInit extends WebMvcConfigurerAdapter {\n" +
+            "public class %sWebConfig extends WebMvcConfigurationSupport {\n" +
+            "\n" +
+            "    @Value(\"${online:false}\")\n" +
+            "    private boolean online;\n" +
             "\n" +
             "    @Override\n" +
             "    protected RequestMappingHandlerMapping createRequestMappingHandlerMapping() {\n" +
@@ -704,17 +731,7 @@ class Server {
             "\n" +
             "    @Override\n" +
             "    public void addInterceptors(InterceptorRegistry registry) {\n" +
-            "        registry.addInterceptor(new %sInterceptor()).addPathPatterns(\"/**\");\n" +
-            "    }\n" +
-            "\n" +
-            "    /**\n" +
-            "     * see : http://www.ruanyifeng.com/blog/2016/04/cors.html\n" +
-            "     *\n" +
-            "     * {@link org.springframework.web.servlet.config.annotation.CorsRegistration#CorsRegistration(String)}\n" +
-            "     */\n" +
-            "    @Override\n" +
-            "    public void addCorsMappings(CorsRegistry registry) {\n" +
-            "        registry.addMapping(\"/**\").allowedMethods(Const.SUPPORT_METHODS);\n" +
+            "        registry.addInterceptor(new %sInterceptor(online)).addPathPatterns(\"/**\");\n" +
             "    }\n" +
             "}\n";
 
@@ -861,6 +878,7 @@ class Server {
             "    <include resource=\"org/springframework/boot/logging/logback/console-appender.xml\" />\n" +
             "\n" +
             "    <logger name=\"" + PACKAGE + ".~MODULE_NAME~.repository\" level=\"warn\"/>\n" +
+            "    <logger name=\"" + PACKAGE + ".common.mvc\" level=\"warn\"/>\n" +
             "    <logger name=\"org.springframework\" level=\"warn\"/>\n" +
             "    <logger name=\"org.hibernate\" level=\"warn\"/>\n" +
             "    <logger name=\"com.netflix\" level=\"warn\"/>\n" +
@@ -912,6 +930,7 @@ class Server {
             "    </logger>\n" +
             "\n" +
             "    <logger name=\"" + PACKAGE + ".~MODULE_NAME~.repository\" level=\"warn\"/>\n" +
+            "    <logger name=\"" + PACKAGE + ".common.mvc\" level=\"warn\"/>\n" +
             "    <logger name=\"org.springframework\" level=\"warn\"/>\n" +
             "    <logger name=\"org.hibernate\" level=\"warn\"/>\n" +
             "    <logger name=\"com.netflix\" level=\"warn\"/>\n" +
@@ -929,7 +948,7 @@ class Server {
     private static final String LOG_PROD_XML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
             "<configuration>\n" +
             "    <property name=\"FILE_PATH\" value=\"${user.home}/logs/~MODULE_NAME~-prod\"/>\n" +
-            "    <property name=\"LOG_PATTERN\" value=\"[%X{receiveTime}%d] [${PID:- } %t\\\\(%logger\\\\) : %p] %X{requestInfo} %class{30}#%method\\\\(%file:%line\\\\)%n%m%n%n\"/>\n" +
+            "    <property name=\"LOG_PATTERN\" value=\"[%X{receiveTime}%d] [${PID:- } %t\\\\(%logger\\\\) : %p] %X{requestInfo} %class{30}#%method\\\\(%file:%line\\\\) %m%n%n\"/>\n" +
             "\n" +
             "    <appender name=\"PROJECT\" class=\"ch.qos.logback.core.rolling.RollingFileAppender\">\n" +
             "        <file>${FILE_PATH}.log</file>\n" +
@@ -949,6 +968,7 @@ class Server {
             "    </appender>\n" +
             "    \n" +
             "    <logger name=\"" + PACKAGE + ".~MODULE_NAME~.repository\" level=\"warn\"/>\n" +
+            "    <logger name=\"" + PACKAGE + ".common.mvc\" level=\"warn\"/>\n" +
             "    <logger name=\"org.springframework\" level=\"warn\"/>\n" +
             "    <logger name=\"org.hibernate\" level=\"warn\"/>\n" +
             "    <logger name=\"com.netflix\" level=\"warn\"/>\n" +
@@ -1040,7 +1060,7 @@ class Server {
             "\n" +
             "        <dependency>\n" +
             "            <groupId>com.github.liuanxin</groupId>\n" +
-            "            <artifactId>api-info</artifactId>\n" +
+            "            <artifactId>api-document</artifactId>\n" +
             "        </dependency>\n" +
             "    </dependencies>\n" +
             "\n" +
@@ -1055,7 +1075,7 @@ class Server {
             "    </build>\n" +
             "</project>\n";
 
-    
+
     private static final String TEST_ENUM_HANDLE = "package " + PACKAGE + ".%s;\n" +
             "\n" +
             "import " + PACKAGE + ".common.Const;\n" +
@@ -1108,14 +1128,14 @@ class Server {
         String dataSource = String.format(DATA_SOURCE, parentPackageName, clazzName, clazzName, clazzName);
         ModuleTest.writeFile(new File(configPath, clazzName + "DataSourceInit.java"), dataSource);
 
-        String exception = String.format(EXCEPTION, parentPackageName, clazzName);
+        String exception = String.format(EXCEPTION, parentPackageName, clazzName, comment);
         ModuleTest.writeFile(new File(configPath, clazzName + "GlobalException.java"), exception);
 
-        String interceptor = String.format(INTERCEPTOR, parentPackageName, comment, clazzName);
+        String interceptor = String.format(INTERCEPTOR, parentPackageName, comment, clazzName, clazzName);
         ModuleTest.writeFile(new File(configPath, clazzName + "Interceptor.java"), interceptor);
 
-        String war = String.format(WAR_INIT, parentPackageName, comment, clazzName, clazzName);
-        ModuleTest.writeFile(new File(configPath, clazzName + "WarInit.java"), war);
+        String war = String.format(WEB_CONFIG, parentPackageName, comment, clazzName, clazzName);
+        ModuleTest.writeFile(new File(configPath, clazzName + "WebConfig.java"), war);
 
         String service = String.format(SERVICE, parentPackageName, parentPackageName, clazzName,
                 comment, clazzName, clazzName, clazzName, comment, clazzName.toUpperCase());
