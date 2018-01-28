@@ -1,5 +1,7 @@
 package com.github.common.util;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import org.apache.http.*;
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.config.RequestConfig;
@@ -24,12 +26,12 @@ import org.apache.http.util.EntityUtils;
 
 import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLHandshakeException;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InterruptedIOException;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -99,56 +101,146 @@ public class HttpClientUtil {
                 .setConnectionManager(connectionManager)
                 .setRetryHandler(httpRequestRetryHandler).build();
     }
-    private static String handle(HttpRequestBase request) {
+
+    public static String get(String url) {
+        url = urlHttp(url);
+        HttpGet request = new HttpGet(url);
+        return handle(request, null, null);
+    }
+
+    public static String get(String url, Map<String, Object> params) {
+        url = urlGet(url, params);
+        return get(url);
+    }
+
+    private static String urlGet(String url, Map<String, Object> params) {
+        if (A.isNotEmpty(params)) {
+            url = U.appendUrl(url) + U.formatParam(params);
+        }
+        return url;
+    }
+
+    /** 向指定 url 进行 get 请求. 有参数和头 */
+    public static String getWithHeader(String url, Map<String, Object> params, Map<String, Object> headerMap) {
+        url = urlGet(url, params);
+
+        HttpGet request = new HttpGet(url);
+        handlerHeader(request, headerMap);
+        return handle(request, U.formatParam(params), U.formatParam(headerMap));
+    }
+
+    public static String post(String url, Map<String, Object> params) {
+        HttpPost request = handlerPostParams(url, params);
+        return handle(request, U.formatParam(params), null);
+    }
+
+    /** 向指定 url 进行 post 请求. 有参数和头 */
+    public static String postWithHeader(String url, Map<String, Object> params, Map<String, Object> headers) {
+        HttpPost request = handlerPostParams(url, params);
+        handlerHeader(request, headers);
+        return handle(request, U.formatParam(params), U.formatParam(headers));
+    }
+
+    public static String postFile(String url, Map<String, Object> params, Map<String, File> files) {
+        HttpPost request = handlerPostParams(url, params);
+        if (A.isEmpty(params)) {
+            params = Maps.newHashMap();
+        }
+        if (A.isNotEmpty(files)) {
+            MultipartEntityBuilder entityBuilder = MultipartEntityBuilder.create().setLaxMode();
+            for (Map.Entry<String, File> entry : files.entrySet()) {
+                String key = entry.getKey();
+                File value = entry.getValue();
+
+                entityBuilder.addBinaryBody(key, value);
+                params.put(key, value.toString());
+            }
+            request.setEntity(entityBuilder.build());
+        }
+        return handle(request, U.formatParam(params), null);
+    }
+
+    /** 下载 url 到指定的文件 */
+    public static void download(String url, String file) {
+        url = urlHttp(url);
+        HttpGet request = new HttpGet(url);
         config(request);
+        try (CloseableHttpResponse response = createHttpClient().execute(request, HttpClientContext.create())) {
+            response.getEntity().writeTo(new FileOutputStream(new File(file)));
+        } catch (IOException e) {
+            if (LogUtil.ROOT_LOG.isInfoEnabled()) {
+                LogUtil.ROOT_LOG.info("download ({}) exception", url, e);
+            }
+        }
+    }
+
+    private static HttpPost handlerPostParams(String url, Map<String, Object> params) {
+        if (!url.startsWith("http://") && !url.startsWith("https://")) {
+            url = "http://" + url;
+        }
+
+        List<NameValuePair> nameValuePairs = Lists.newArrayList();
+        if (A.isNotEmpty(params)) {
+            for (Map.Entry<String, Object> entry : params.entrySet()) {
+                Object value = entry.getValue();
+                if (U.isNotBlank(value)) {
+                    nameValuePairs.add(new BasicNameValuePair(entry.getKey(), value.toString()));
+                }
+            }
+        }
+        HttpPost request = new HttpPost(url);
+        request.setEntity(new UrlEncodedFormEntity(nameValuePairs, StandardCharsets.UTF_8));
+        return request;
+    }
+
+    private static void handlerHeader(HttpRequestBase request, Map<String, Object> headers) {
+        if (A.isNotEmpty(headers)) {
+            for (Map.Entry<String, Object> entry : headers.entrySet()) {
+                Object value = entry.getValue();
+                if (U.isNotBlank(value)) {
+                    request.addHeader(entry.getKey(), value.toString());
+                }
+            }
+        }
+    }
+
+    private static String urlHttp(String url) {
+        if (!url.startsWith("http://") && !url.startsWith("https://")) {
+            url = "http://" + url;
+        }
+        return url;
+    }
+
+    private static String handle(HttpRequestBase request, String params, String headers) {
+        config(request);
+
+        String method = request.getMethod();
+        String url = request.getURI().toString();
 
         long start = System.currentTimeMillis();
         try (CloseableHttpResponse response = createHttpClient().execute(request, HttpClientContext.create())) {
             HttpEntity entity = response.getEntity();
-            String result = EntityUtils.toString(entity, "utf-8");
+            String result = EntityUtils.toString(entity, U.UTF8);
             EntityUtils.consume(entity);
             if (LogUtil.ROOT_LOG.isInfoEnabled()) {
-                String url = request.getURI().toString();
                 long ms = System.currentTimeMillis() - start;
-                LogUtil.ROOT_LOG.info("请求({})耗时({})毫秒, 返回({})", url, ms, result);
+                StringBuilder log = new StringBuilder();
+                log.append("HttpClient(").append(method).append(" ").append(url).append(")");
+                if (U.isNotBlank(params)) {
+                    log.append("params(").append(params).append(")");
+                }
+                if (U.isNotBlank(headers)) {
+                    log.append("headers(").append(headers).append(")");
+                }
+                log.append(" time(").append(ms).append("ms), return(").append(result).append(")");
+                LogUtil.ROOT_LOG.info(log.toString());
             }
             return result;
         } catch (Exception e) {
             if (LogUtil.ROOT_LOG.isInfoEnabled()) {
-                LogUtil.ROOT_LOG.info("handle exception", e);
+                LogUtil.ROOT_LOG.info("({} {}) exception", method, url, e);
             }
             return null;
         }
-    }
-
-
-    public static String get(String url) {
-        return handle(new HttpGet(url));
-    }
-    public static String get(String url, Map<String, Object> params) {
-        if (params != null && params.size() > 0) {
-            url = U.appendUrl(url) + U.formatParam(params);
-        }
-        return get(url);
-    }
-
-    public static String post(String url, Map<String, Object> params) {
-        HttpPost request = postUrl(url, params);
-        return handle(request);
-    }
-    private static HttpPost postUrl(String url, Map<String, Object> params) {
-        HttpPost request = new HttpPost(url);
-
-        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-        for (Map.Entry<String, Object> entry : params.entrySet()) {
-            nameValuePairs.add(new BasicNameValuePair(entry.getKey(), entry.getValue().toString()));
-        }
-        request.setEntity(new UrlEncodedFormEntity(nameValuePairs, StandardCharsets.UTF_8));
-        return request;
-    }
-    public static String postImage(String url, Map<String, Object> params, String name, InputStream inputStream) {
-        HttpPost request = postUrl(url, params);
-        request.setEntity(MultipartEntityBuilder.create().setLaxMode().addBinaryBody(name, inputStream).build());
-        return handle(request);
     }
 }
