@@ -113,12 +113,13 @@ public class HttpOkClientUtil {
         }
     }
 
-    private static void handlerHeader(Request.Builder builder, Map<String, Object> headers) {
+    private static void handlerHeader(Request.Builder request, Map<String, Object> headers) {
         if (A.isNotEmpty(headers)) {
             for (Map.Entry<String, Object> entry : headers.entrySet()) {
+                String key = entry.getKey();
                 Object value = entry.getValue();
                 if (U.isNotBlank(value)) {
-                    builder.addHeader(entry.getKey(), value.toString());
+                    request.addHeader(key, value.toString());
                 }
             }
         }

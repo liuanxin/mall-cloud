@@ -66,33 +66,33 @@ public class HttpClientUtil {
         HttpRequestRetryHandler httpRequestRetryHandler = new HttpRequestRetryHandler() {
             @Override
             public boolean retryRequest(IOException exception, int executionCount, HttpContext context) {
-                // 如果已经重试了5次，就放弃
+                // 如果已经重试了 5 次就不再重试
                 if (executionCount >= 5) {
                     return false;
                 }
-                // 如果服务器丢掉了连接，那么就重试
+                // 服务器丢掉了连接就重试
                 if (exception instanceof NoHttpResponseException) {
                     return true;
                 }
-                // 不要重试 SSL 握手异常
+                // SSL 握手异常时不重试
                 if (exception instanceof SSLHandshakeException) {
                     return false;
                 }
-                // 超时
+                // 超时时不重试
                 if (exception instanceof InterruptedIOException) {
                     return false;
                 }
-                // 目标服务器不可达
+                // 目标服务器不可达时不重试
                 if (exception instanceof UnknownHostException) {
                     return false;
                 }
-                // SSL 握手异常
+                // SSL 握手异常时不重试
                 if (exception instanceof SSLException) {
                     return false;
                 }
 
                 HttpRequest request = HttpClientContext.adapt(context).getRequest();
-                // 如果请求是幂等的，就再次尝试
+                // 如果请求是幂等的就重试
                 return !(request instanceof HttpEntityEnclosingRequest);
             }
         };
@@ -175,9 +175,7 @@ public class HttpClientUtil {
     }
 
     private static HttpPost handlerPostParams(String url, Map<String, Object> params) {
-        if (!url.startsWith("http://") && !url.startsWith("https://")) {
-            url = "http://" + url;
-        }
+        url = urlHttp(url);
 
         List<NameValuePair> nameValuePairs = Lists.newArrayList();
         if (A.isNotEmpty(params)) {
