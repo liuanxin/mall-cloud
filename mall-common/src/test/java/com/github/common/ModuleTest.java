@@ -535,6 +535,7 @@ class Server {
             "import " + PACKAGE + ".common.json.JsonResult;\n" +
             "import " + PACKAGE + ".common.util.A;\n" +
             "import " + PACKAGE + ".common.util.LogUtil;\n" +
+            "import " + PACKAGE + ".common.util.RequestUtils;\n" +
             "import " + PACKAGE + ".common.util.U;\n" +
             "import org.springframework.beans.factory.annotation.Value;\n" +
             "import org.springframework.web.HttpRequestMethodNotSupportedException;\n" +
@@ -587,7 +588,9 @@ class Server {
             "    @ExceptionHandler(NoHandlerFoundException.class)\n" +
             "    public JsonResult forbidden(NoHandlerFoundException e) {\n" +
             "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
+            "            LogUtil.bind(RequestUtils.logContextInfo(false));\n" +
             "            LogUtil.ROOT_LOG.debug(e.getMessage(), e);\n" +
+            "            LogUtil.unbind();\n" +
             "        }\n" +
             "        return JsonResult.fail(\"无对应的请求\");\n" +
             "    }\n" +
@@ -595,7 +598,9 @@ class Server {
             "    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)\n" +
             "    public JsonResult notSupported(HttpRequestMethodNotSupportedException e) {\n" +
             "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
+            "            LogUtil.bind(RequestUtils.logContextInfo(false));\n" +
             "            LogUtil.ROOT_LOG.debug(e.getMessage(), e);\n" +
+            "            LogUtil.unbind();\n" +
             "        }\n" +
             "\n" +
             "        String msg = U.EMPTY;\n" +

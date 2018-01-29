@@ -6,6 +6,7 @@ import com.github.common.exception.ServiceException;
 import com.github.common.json.JsonResult;
 import com.github.common.util.A;
 import com.github.common.util.LogUtil;
+import com.github.common.util.RequestUtils;
 import com.github.common.util.U;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -59,7 +60,9 @@ public class UserGlobalException {
     @ExceptionHandler(NoHandlerFoundException.class)
     public JsonResult forbidden(NoHandlerFoundException e) {
         if (LogUtil.ROOT_LOG.isDebugEnabled()) {
+            LogUtil.bind(RequestUtils.logContextInfo(false));
             LogUtil.ROOT_LOG.debug(e.getMessage(), e);
+            LogUtil.unbind();
         }
         return JsonResult.fail("无对应的请求");
     }
@@ -67,7 +70,9 @@ public class UserGlobalException {
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public JsonResult notSupported(HttpRequestMethodNotSupportedException e) {
         if (LogUtil.ROOT_LOG.isDebugEnabled()) {
+            LogUtil.bind(RequestUtils.logContextInfo(false));
             LogUtil.ROOT_LOG.debug(e.getMessage(), e);
+            LogUtil.unbind();
         }
 
         String msg = U.EMPTY;
