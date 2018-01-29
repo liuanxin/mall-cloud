@@ -16,6 +16,7 @@ import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -132,6 +133,12 @@ public class HttpClientUtil {
     public static String post(String url, Map<String, Object> params) {
         HttpPost request = handlerPostParams(url, params);
         return handle(request, U.formatParam(params), null);
+    }
+
+    public static String post(String url, String json) {
+        HttpPost request = new HttpPost(url);
+        request.setEntity(new ByteArrayEntity(json.getBytes(StandardCharsets.UTF_8)));
+        return handle(request, json, null);
     }
 
     /** 向指定 url 进行 post 请求. 有参数和头 */
