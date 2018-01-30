@@ -8,6 +8,7 @@ import com.github.common.util.A;
 import com.github.common.util.LogUtil;
 import com.github.common.util.RequestUtils;
 import com.github.common.util.U;
+import com.github.util.WebSessionUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -58,7 +59,9 @@ public class WebGlobalException {
     @ExceptionHandler(NoHandlerFoundException.class)
     public JsonResult forbidden(NoHandlerFoundException e) {
         if (LogUtil.ROOT_LOG.isDebugEnabled()) {
-            LogUtil.bind(RequestUtils.logContextInfo(false));
+            LogUtil.bind(RequestUtils.logContextInfo(false)
+                    .setId(String.valueOf(WebSessionUtil.getUserId()))
+                    .setName(WebSessionUtil.getUserName()));
             LogUtil.ROOT_LOG.debug(e.getMessage(), e);
             LogUtil.unbind();
         }
@@ -67,7 +70,9 @@ public class WebGlobalException {
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public JsonResult notSupported(HttpRequestMethodNotSupportedException e) {
         if (LogUtil.ROOT_LOG.isDebugEnabled()) {
-            LogUtil.bind(RequestUtils.logContextInfo(false));
+            LogUtil.bind(RequestUtils.logContextInfo(false)
+                    .setId(String.valueOf(WebSessionUtil.getUserId()))
+                    .setName(WebSessionUtil.getUserName()));
             LogUtil.ROOT_LOG.debug(e.getMessage(), e);
             LogUtil.unbind();
         }
