@@ -7,7 +7,7 @@ import com.github.global.model.Develop;
 import com.github.liuanxin.api.annotation.ApiGroup;
 import com.github.liuanxin.api.annotation.ApiMethod;
 import com.github.liuanxin.api.annotation.ApiParam;
-import com.github.product.config.ProductConst;
+import com.github.product.constant.ProductConst;
 import org.springframework.web.bind.annotation.RestController;
 
 /**

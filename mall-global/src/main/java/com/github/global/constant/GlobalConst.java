@@ -1,4 +1,4 @@
-package com.github.global.config;
+package com.github.global.constant;
 
 public final class GlobalConst {
 

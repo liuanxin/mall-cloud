@@ -6,12 +6,14 @@ import com.github.common.util.RequestUtils;
 import com.github.common.util.U;
 import org.springframework.http.HttpHeaders;
 
+import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 
-/** 处理跨域. 放在所有处理的最前面!!! */
-public final class Cors {
+/** 处理跨域 */
+public class CorsFilter implements Filter {
 
     private static final String ALLOW_ORIGIN = "Access-Control-Allow-Origin";
     private static final String CREDENTIALS = "Access-Control-Allow-Credentials";
@@ -20,7 +22,7 @@ public final class Cors {
     /** for ie: https://www.lovelucy.info/ie-accept-third-party-cookie.html */
     private static final String P3P = "P3P";
 
-    public static void handlerCors(HttpServletRequest request, HttpServletResponse response) {
+    private static void handlerCors(HttpServletRequest request, HttpServletResponse response) {
         String origin = request.getHeader(HttpHeaders.ORIGIN);
         if (U.isNotBlank(origin)) {
             if (U.isBlank(response.getHeader(ALLOW_ORIGIN))) {
@@ -45,11 +47,25 @@ public final class Cors {
     }
 
     /** 在指定域名内的才加 cors 进 header */
-    public static void handlerCors(HttpServletRequest request,
-                                   HttpServletResponse response,
-                                   List<String> assignOriginList) {
+    private static void handlerCors(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    List<String> assignOriginList) {
         if (A.isNotEmpty(assignOriginList) && assignOriginList.contains(request.getHeader(HttpHeaders.ORIGIN))) {
             handlerCors(request, response);
         }
+    }
+
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+    }
+
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
+        handlerCors((HttpServletRequest) request, (HttpServletResponse) response);
+    }
+
+    @Override
+    public void destroy() {
     }
 }

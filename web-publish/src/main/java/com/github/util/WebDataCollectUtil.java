@@ -1,18 +1,18 @@
 package com.github.util;
 
+import com.github.common.Const;
+import com.github.common.constant.CommonConst;
+import com.github.common.resource.Loader;
+import com.github.common.util.A;
+import com.github.common.util.U;
+import com.github.global.constant.GlobalConst;
+import com.github.order.constant.OrderConst;
+import com.github.product.constant.ProductConst;
+import com.github.user.constant.UserConst;
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.github.common.Const;
-import com.github.common.config.CommonConst;
-import com.github.common.resource.Loader;
-import com.github.common.util.A;
-import com.github.common.util.U;
-import com.github.global.config.GlobalConst;
-import com.github.order.config.OrderConst;
-import com.github.product.config.ProductConst;
-import com.github.user.config.UserConst;
 
 import java.util.List;
 import java.util.Map;

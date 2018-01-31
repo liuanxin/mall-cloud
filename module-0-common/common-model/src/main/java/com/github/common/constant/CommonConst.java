@@ -1,4 +1,4 @@
-package com.github.common.config;
+package com.github.common.constant;
 
 /**
  * 公共服务模块相关的常数设置类

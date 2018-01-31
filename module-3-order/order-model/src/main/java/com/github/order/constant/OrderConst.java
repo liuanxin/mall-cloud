@@ -1,4 +1,4 @@
-package com.github.order.config;
+package com.github.order.constant;
 
 /**
  * 订单模块相关的常数设置类

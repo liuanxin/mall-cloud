@@ -148,10 +148,10 @@ class Parent {
 
 
 class Client {
-    private static final String CLIENT = "package " + PACKAGE + ".%s.client;\n"+
-            "\n"+
+    private static final String CLIENT = "package " + PACKAGE + ".%s.client;\n" +
+            "\n" +
             "import " + PACKAGE + ".%s.service.%sInterface;\n" +
-            "import " + PACKAGE + ".%s.config.%sConst;\n" +
+            "import " + PACKAGE + ".%s.constant.%sConst;\n" +
             (ModuleTest.fallback ? "import " + PACKAGE + ".%s.hystrix.%sFallback;\n" : "") +
             "import org.springframework.cloud.netflix.feign.FeignClient;\n" +
             "\n" +
@@ -256,16 +256,16 @@ class Client {
 
 
 class Model {
-    private static final String CONST = "package " + PACKAGE + ".%s.config;\n"+
-            "\n"+
+    private static final String CONST = "package " + PACKAGE + ".%s.constant;\n" +
+            "\n" +
             "/**\n" +
             " * %s模块相关的常数设置类\n" +
             ModuleTest.AUTHOR +
             " */\n" +
-            "public final class %sConst {\n"+
-            "\n"+
-            "    /** 当前模块名. 要与 application.yml 中的一致 */\n"+
-            "    public static final String MODULE_NAME = \"%s\";\n"+
+            "public final class %sConst {\n" +
+            "\n" +
+            "    /** 当前模块名. 要与 application.yml 中的一致 */\n" +
+            "    public static final String MODULE_NAME = \"%s\";\n" +
             "\n" +
             "    /** 当前模块说明. 当用在文档中时有用 */\n" +
             "    public static final String MODULE_INFO = MODULE_NAME + \"-%s\";\n" +
@@ -278,7 +278,7 @@ class Model {
     private static final String INTERFACE = "package " + PACKAGE + ".%s.service;\n" +
             "\n" +
             "import " + PACKAGE + ".common.page.PageInfo;\n" +
-            "import " + PACKAGE + ".%s.config.%sConst;\n" +
+            "import " + PACKAGE + ".%s.constant.%sConst;\n" +
             "import org.springframework.web.bind.annotation.GetMapping;\n" +
             "import org.springframework.web.bind.annotation.RequestParam;\n" +
             "\n" +
@@ -342,7 +342,7 @@ class Model {
         ModuleTest.writeFile(new File(module + "/" + model, "pom.xml"), modelPom);
 
         File modelSourcePath = new File(modelPath, ModuleTest.PACKAGE_PATH + "/" + packageName.replaceAll("\\.", "/"));
-        File model_config = new File(modelSourcePath, "config");
+        File model_config = new File(modelSourcePath, "constant");
         File model_interface = new File(modelSourcePath, "service");
         model_config.mkdirs();
         model_interface.mkdirs();
@@ -425,14 +425,14 @@ class Server {
 
     private static final String CONFIG_DATA = "package " + PACKAGE + ".%s.config;\n" +
             "\n" +
-            "import com.google.common.collect.Lists;\n" +
             "import " + PACKAGE + ".common.Const;\n" +
             "import " + PACKAGE + ".common.resource.CollectHandlerUtil;\n" +
             "import " + PACKAGE + ".common.resource.CollectResourceUtil;\n" +
             "import " + PACKAGE + ".common.resource.LoaderHandler;\n" +
             "import " + PACKAGE + ".common.resource.LoaderResource;\n" +
-            "import " + PACKAGE + ".global.config.GlobalConst;\n" +
-            "import " + PACKAGE + ".%s.config.%sConst;\n" +
+            "import " + PACKAGE + ".global.constant.GlobalConst;\n" +
+            "import " + PACKAGE + ".%s.constant.%sConst;\n" +
+            "import com.google.common.collect.Lists;\n" +
             "import org.apache.ibatis.type.TypeHandler;\n" +
             "import org.springframework.core.io.Resource;\n" +
             "\n" +
@@ -638,7 +638,6 @@ class Server {
 
     private static final String INTERCEPTOR = "package " + PACKAGE + ".%s.config;\n" +
             "\n" +
-            "import " + PACKAGE + ".common.mvc.Cors;\n" +
             "import " + PACKAGE + ".common.util.LogUtil;\n" +
             "import " + PACKAGE + ".common.util.RequestUtils;\n" +
             "import org.springframework.web.servlet.HandlerInterceptor;\n" +
@@ -661,7 +660,6 @@ class Server {
             "    @Override\n" +
             "    public boolean preHandle(HttpServletRequest request, HttpServletResponse response,\n" +
             "                             Object handler) throws Exception {\n" +
-            "        Cors.handlerCors(request, response);\n" +
             "        LogUtil.bind(RequestUtils.logContextInfo(online));\n" +
             "        return true;\n" +
             "    }\n" +
@@ -749,7 +747,7 @@ class Server {
             "import com.github.liuanxin.api.annotation.ApiGroup;\n" +
             "import com.github.liuanxin.api.annotation.ApiMethod;\n" +
             "import com.github.liuanxin.api.annotation.ApiParam;\n" +
-            "import " + PACKAGE + ".%s.config.%sConst;\n" +
+            "import " + PACKAGE + ".%s.constant.%sConst;\n" +
             "import org.springframework.web.bind.annotation.RestController;\n" +
             "\n" +
             "/**\n" +
@@ -1085,7 +1083,7 @@ class Server {
             "\n" +
             "import " + PACKAGE + ".common.Const;\n" +
             "import " + PACKAGE + ".common.util.GenerateEnumHandler;\n" +
-            "import " + PACKAGE + ".%s.config.%sConst;\n" +
+            "import " + PACKAGE + ".%s.constant.%sConst;\n" +
             "import org.junit.Test;\n" +
             "\n" +
             "/**\n" +

@@ -2,7 +2,7 @@ package com.github.product;
 
 import com.github.common.Const;
 import com.github.common.util.GenerateEnumHandler;
-import com.github.product.config.ProductConst;
+import com.github.product.constant.ProductConst;
 import org.junit.Test;
 
 /**

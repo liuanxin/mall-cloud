@@ -1,13 +1,13 @@
 package com.github.user.config;
 
-import com.google.common.collect.Lists;
 import com.github.common.Const;
 import com.github.common.resource.CollectHandlerUtil;
 import com.github.common.resource.CollectResourceUtil;
 import com.github.common.resource.LoaderHandler;
 import com.github.common.resource.LoaderResource;
-import com.github.global.config.GlobalConst;
-import com.github.user.config.UserConst;
+import com.github.global.constant.GlobalConst;
+import com.github.user.constant.UserConst;
+import com.google.common.collect.Lists;
 import org.apache.ibatis.type.TypeHandler;
 import org.springframework.core.io.Resource;
 

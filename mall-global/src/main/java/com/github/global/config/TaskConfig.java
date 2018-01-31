@@ -1,4 +1,4 @@
-package com.github.global;
+package com.github.global.config;
 
 import com.github.common.util.U;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;

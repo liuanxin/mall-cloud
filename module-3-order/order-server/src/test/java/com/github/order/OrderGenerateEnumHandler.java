@@ -2,7 +2,7 @@ package com.github.order;
 
 import com.github.common.Const;
 import com.github.common.util.GenerateEnumHandler;
-import com.github.order.config.OrderConst;
+import com.github.order.constant.OrderConst;
 import org.junit.Test;
 
 /**

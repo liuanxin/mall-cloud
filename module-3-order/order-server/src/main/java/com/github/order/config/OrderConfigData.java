@@ -1,13 +1,13 @@
 package com.github.order.config;
 
-import com.google.common.collect.Lists;
 import com.github.common.Const;
 import com.github.common.resource.CollectHandlerUtil;
 import com.github.common.resource.CollectResourceUtil;
 import com.github.common.resource.LoaderHandler;
 import com.github.common.resource.LoaderResource;
-import com.github.global.config.GlobalConst;
-import com.github.order.config.OrderConst;
+import com.github.global.constant.GlobalConst;
+import com.github.order.constant.OrderConst;
+import com.google.common.collect.Lists;
 import org.apache.ibatis.type.TypeHandler;
 import org.springframework.core.io.Resource;
 

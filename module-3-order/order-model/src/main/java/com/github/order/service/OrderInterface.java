@@ -1,7 +1,7 @@
 package com.github.order.service;
 
 import com.github.common.page.PageInfo;
-import com.github.order.config.OrderConst;
+import com.github.order.constant.OrderConst;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 

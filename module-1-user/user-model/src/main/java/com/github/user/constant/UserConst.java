@@ -1,4 +1,4 @@
-package com.github.user.config;
+package com.github.user.constant;
 
 /**
  * 用户模块相关的常数设置类

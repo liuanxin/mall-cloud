@@ -1,12 +1,11 @@
 package com.github.config;
 
-import com.github.common.mvc.Cors;
-import com.github.util.WebSessionUtil;
-import com.google.common.collect.Lists;
 import com.github.common.annotation.NotNeedLogin;
 import com.github.common.annotation.NotNeedPermission;
 import com.github.common.util.LogUtil;
 import com.github.common.util.RequestUtils;
+import com.github.util.WebSessionUtil;
+import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.web.method.HandlerMethod;
@@ -28,7 +27,6 @@ public class WebInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
                              Object handler) throws Exception {
-        Cors.handlerCors(request, response);
         bindParam();
         checkLoginAndPermission(handler);
         return true;

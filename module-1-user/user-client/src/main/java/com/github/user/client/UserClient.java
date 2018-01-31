@@ -1,7 +1,7 @@
 package com.github.user.client;
 
 import com.github.user.service.UserInterface;
-import com.github.user.config.UserConst;
+import com.github.user.constant.UserConst;
 import com.github.user.hystrix.UserFallback;
 import org.springframework.cloud.netflix.feign.FeignClient;
 

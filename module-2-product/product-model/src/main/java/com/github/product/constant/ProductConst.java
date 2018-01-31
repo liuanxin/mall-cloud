@@ -1,4 +1,4 @@
-package com.github.product.config;
+package com.github.product.constant;
 
 /**
  * 商品模块相关的常数设置类

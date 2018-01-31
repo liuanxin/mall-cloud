@@ -1,7 +1,7 @@
 package com.github.product.service;
 
 import com.github.common.page.PageInfo;
-import com.github.product.config.ProductConst;
+import com.github.product.constant.ProductConst;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 

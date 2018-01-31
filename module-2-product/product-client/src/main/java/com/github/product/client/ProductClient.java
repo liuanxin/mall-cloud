@@ -1,7 +1,7 @@
 package com.github.product.client;
 
 import com.github.product.service.ProductInterface;
-import com.github.product.config.ProductConst;
+import com.github.product.constant.ProductConst;
 import com.github.product.hystrix.ProductFallback;
 import org.springframework.cloud.netflix.feign.FeignClient;
 
