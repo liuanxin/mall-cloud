@@ -391,38 +391,6 @@ class Server {
             "    }\n" +
             "}\n";
 
-    private static final String MODULE_CONFIG = "package " + PACKAGE + ".%s.config;\n" +
-            "\n" +
-            "import " + PACKAGE + ".common.AppVersion;\n" +
-            "import " + PACKAGE + ".global.model.Develop;\n" +
-            "import com.github.liuanxin.api.annotation.EnableApiInfo;\n" +
-            "import com.github.liuanxin.api.model.DocumentCopyright;\n" +
-            "import org.springframework.beans.factory.annotation.Value;\n" +
-            "import org.springframework.context.annotation.Bean;\n" +
-            "import org.springframework.context.annotation.Configuration;\n" +
-            "\n" +
-            "/**\n" +
-            " * %s模块里需要放入 spring 上下文中的 bean\n" +
-            ModuleTest.AUTHOR +
-            " */\n" +
-            "@Configuration\n" +
-            "@EnableApiInfo\n" +
-            "public class %sConfig {\n" +
-            "\n" +
-            "    @Value(\"${online:false}\")\n" +
-            "    private boolean online;\n" +
-            "\n" +
-            "    @Bean\n" +
-            "    public DocumentCopyright urlCopyright() {\n" +
-            "        return new DocumentCopyright()\n" +
-            "                .setTitle(Develop.TITLE)\n" +
-            "                .setContact(Develop.CONTACT)\n" +
-            "                .setTeam(Develop.TEAM)\n" +
-            "                .setVersion(AppVersion.currentVersion())\n" +
-            "                .setOnline(online);\n" +
-            "    }\n" +
-            "}\n";
-
     private static final String CONFIG_DATA = "package " + PACKAGE + ".%s.config;\n" +
             "\n" +
             "import " + PACKAGE + ".common.Const;\n" +
@@ -1060,11 +1028,6 @@ class Server {
             "            <groupId>com.github.liuanxin</groupId>\n" +
             "            <artifactId>mybatis-redis-cache</artifactId>\n" +
             "        </dependency>\n" +
-            "\n" +
-            "        <dependency>\n" +
-            "            <groupId>com.github.liuanxin</groupId>\n" +
-            "            <artifactId>api-document</artifactId>\n" +
-            "        </dependency>\n" +
             "    </dependencies>\n" +
             "\n" +
             "    <build>\n" +
@@ -1120,9 +1083,6 @@ class Server {
 
         String application = String.format(APPLICATION, clazzName, clazzName, clazzName);
         ModuleTest.writeFile(new File(packagePath, clazzName + "Application.java"), application);
-
-        String moduleConfig = String.format(MODULE_CONFIG, parentPackageName, comment, clazzName, clazzName);
-        ModuleTest.writeFile(new File(configPath, clazzName + "Config.java"), moduleConfig);
 
         String configData = String.format(CONFIG_DATA, parentPackageName, parentPackageName, clazzName, comment,
                 clazzName, clazzName, clazzName, clazzName, clazzName, clazzName);

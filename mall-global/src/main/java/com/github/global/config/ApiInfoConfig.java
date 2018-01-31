@@ -1,4 +1,4 @@
-package com.github.product.config;
+package com.github.global.config;
 
 import com.github.common.AppVersion;
 import com.github.global.model.Develop;
@@ -8,14 +8,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-/**
- * 商品模块里需要放入 spring 上下文中的 bean
- *
- * @author https://github.com/liuanxin
- */
 @Configuration
 @EnableApiInfo
-public class ProductConfig {
+public class ApiInfoConfig {
 
     @Value("${online:false}")
     private boolean online;

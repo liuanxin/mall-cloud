@@ -33,6 +33,10 @@
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.github.liuanxin</groupId>
+            <artifactId>api-document</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>commons-fileupload</groupId>
@@ -84,12 +88,6 @@
         <dependency>
             <groupId>com.github.liuanxin</groupId>
             <artifactId>mybatis-page</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.liuanxin</groupId>
-            <artifactId>api-document</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>
