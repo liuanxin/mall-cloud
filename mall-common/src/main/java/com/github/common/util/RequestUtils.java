@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Enumeration;
 
 /** <span style="color:red;">!!!此工具类请只在 Controller 中调用!!!</span> */
@@ -194,19 +195,33 @@ public final class RequestUtils {
     }
 
     /** 将「json 字符」以 json 格式输出 */
-    public static void toJson(JsonResult result, HttpServletResponse response) throws IOException {
+    public static void toJson(JsonResult result, HttpServletResponse response) {
         render("application/json", result, response);
     }
-    private static void render(String type, JsonResult jsonResult, HttpServletResponse response) throws IOException {
+    private static void render(String type, JsonResult jsonResult, HttpServletResponse response) {
         String result = JsonUtil.toJson(jsonResult);
         if (LogUtil.ROOT_LOG.isInfoEnabled()) {
             LogUtil.ROOT_LOG.info("return json: " + result);
         }
-        response.setContentType(type + ";charset=UTF-8;");
-        response.getWriter().write(result);
+
+        try (PrintWriter writer = response.getWriter()) {
+            response.setCharacterEncoding("utf-8");
+            response.setContentType(type + ";charset=utf-8;");
+            writer.write(result);
+            writer.flush();
+        } catch (IllegalStateException e) {
+            // 基于 response 调用了 getOutputStream(), 又再调用 getWriter() 会被 web 容器拒绝
+            if (LogUtil.ROOT_LOG.isDebugEnabled()) {
+                LogUtil.ROOT_LOG.debug("response state exception", e);
+            }
+        } catch (IOException e) {
+            if (LogUtil.ROOT_LOG.isErrorEnabled()) {
+                LogUtil.ROOT_LOG.error("response exception", e);
+            }
+        }
     }
     /** 将「json 字符」以 html 格式输出. 不常见! 这种只会在一些特殊的场景用到 */
-    public static void toHtml(JsonResult result, HttpServletResponse response) throws IOException {
+    public static void toHtml(JsonResult result, HttpServletResponse response) {
         render("text/html", result, response);
     }
 
@@ -214,13 +229,12 @@ public final class RequestUtils {
     public static LogUtil.RequestLogContext logContextInfo(boolean online) {
         HttpServletRequest request = getRequest();
 
-        return new LogUtil.RequestLogContext()
-                // .setOnline(online) // 输出全部信息对排查问题是很重要的事
-                .setIp(getRealIp())
-                .setMethod(request.getMethod())
-                .setUrl(request.getRequestURL().toString())
-                .setParam(formatParam())
-                .setHeadParam(formatHeadParam());
+        String ip = getRealIp();
+        String method = request.getMethod();
+        String url = request.getRequestURL().toString();
+        String param = formatParam();
+        String headParam = formatHeadParam();
+        return new LogUtil.RequestLogContext(ip, method, url, param, headParam).setOnline(online);
     }
 
 

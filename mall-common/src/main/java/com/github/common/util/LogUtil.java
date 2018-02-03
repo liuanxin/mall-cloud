@@ -58,6 +58,14 @@ public final class LogUtil {
         /** 请求 header 中的参数 */
         private String headParam;
 
+        public RequestLogContext(String ip, String method, String url, String param, String headParam) {
+            this.ip = ip;
+            this.method =method;
+            this.url = url;
+            this.param = param;
+            this.headParam = headParam;
+        }
+
         private String requestInfo() {
             StringBuilder sbd = new StringBuilder();
             sbd.append("[");
@@ -68,13 +76,13 @@ public final class LogUtil {
             }
             sbd.append(" ");
             // 非线上环境则输出 head 信息
-            if (!online) {
+            //if (!online) {
                 sbd.append(String.format("header(%s)", headParam));
-            }
+            //}
             sbd.append("]");
-            if (!online) {
+            //if (!online) {
                 sbd.append("\n");
-            }
+            //}
             return sbd.toString();
         }
     }
