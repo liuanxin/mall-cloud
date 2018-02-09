@@ -6,8 +6,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -127,15 +125,10 @@ public final class ExportUtil {
         String userAgent = RequestUtils.userAgent();
         if (U.isNotBlank(userAgent) && userAgent.contains("Mozilla")) {
             // Chrome, Firefox, Safari etc...
-            fileName = new String(fileName.getBytes(), StandardCharsets.ISO_8859_1);
+            return new String(fileName.getBytes(), StandardCharsets.ISO_8859_1);
         } else {
-            try {
-                fileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8.name());
-            } catch (UnsupportedEncodingException e) {
-                // ignore
-            }
+            return U.urlEncode(fileName);
         }
-        return fileName;
     }
 
 
