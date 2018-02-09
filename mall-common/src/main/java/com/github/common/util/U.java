@@ -392,8 +392,10 @@ public final class U {
         if (isBlank(field)) {
             return EMPTY;
         }
-
         field = field.trim();
+        if (isBlank(field)) {
+            return EMPTY;
+        }
         return  "get" + field.substring(0, 1).toUpperCase() + field.substring(1);
     }
 
