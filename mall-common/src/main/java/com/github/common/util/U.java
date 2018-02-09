@@ -37,8 +37,6 @@ public final class U {
     private static final String EMAIL = "^\\w[\\w\\-]*@([\\w\\-]+\\.\\w+)+$";
     /** ico, jpeg, jpg, bmp, png 后缀 */
     private static final String IMAGE = "(?i)^(.*)\\.(ico|jpeg|jpg|bmp|png)$";
-    /** 帐号输入(字母或数字开头, 长度 5-30, 可以有下划线) */
-    private static final String USER_NAME = "^[a-zA-Z0-9]\\w{4,29}$";
     /** IPv4 地址 */
     private static final String IPV4 = "^([01]?[0-9]{1,2}|2[0-4][0-9]|25[0-5])(\\.([01]?[0-9]{1,2}|2[0-4][0-9]|25[0-5])){3}$";
     /** 身份证号码 */
@@ -172,6 +170,7 @@ public final class U {
         return obj != null && obj.toString().trim().length() < max;
     }
 
+    private static final Pattern ALL = Pattern.compile(".");
     /** 将字符串中指定位数的值模糊成 * 并返回. 索引位从 0 开始 */
     public static String foggy(String param, int start, int end) {
         if (isBlank(param)) {
@@ -181,7 +180,7 @@ public final class U {
             return param;
         }
 
-        return param.substring(0, start) + param.substring(start, end).replaceAll("[0-9]", "*") + param.substring(end);
+        return param.substring(0, start) + ALL.matcher(param.substring(start, end)).replaceAll("*") + param.substring(end);
     }
 
     /** 去掉所有的空白符(空格, 制表符, 换行符) */
@@ -230,9 +229,6 @@ public final class U {
     public static boolean checkPhone(String phone) {
         return checkRegexWithStrict(phone, PHONE);
     }
-    public static boolean checkUserName(String userName) {
-        return checkRegexWithStrict(userName, USER_NAME);
-    }
     /** 是一个有效的 ip 地址则返回 true */
     public static boolean isLicitIp(String ip) {
         return checkRegexWithStrict(ip, IPV4);
@@ -247,7 +243,7 @@ public final class U {
     }
 
     /** 只要找到匹配即返回 true */
-    public static boolean checkRegexWithRelax(String param, String regex) {
+    static boolean checkRegexWithRelax(String param, String regex) {
         return isNotBlank(param) && Pattern.compile(regex).matcher(param).find();
     }
     /** 传入的参数只要包含中文就返回 true */
@@ -259,7 +255,7 @@ public final class U {
         return checkRegexWithRelax(param, MOBILE);
     }
     /** 传入的参数只要是 iOS 端就返回 true */
-    public static boolean checkIos(String param) {
+    public static boolean checkiOS(String param) {
         return checkRegexWithRelax(param, IOS);
     }
     /** 传入的参数只要是 android 端就返回 true */
