@@ -163,7 +163,7 @@ public final class RequestUtils {
         return false;
     }
 
-    /** 请求头里的 referer 这个单词拼写是错误的, 应该是 referrer, 然而历史遗留原因导致这个问题永远不会被更正 */
+    /** 请求头里的 referer 这个单词拼写是错误的, 应该是 referrer, 历史遗留问题 */
     public static String getReferrer() {
         return getRequest().getHeader(REFERRER);
     }
