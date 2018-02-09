@@ -1,11 +1,11 @@
 package com.github.common.page;
 
+import com.github.common.util.U;
 import com.github.liuanxin.api.annotation.ApiParam;
 import com.github.liuanxin.api.annotation.ApiParamIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.apache.commons.lang3.math.NumberUtils;
 
 import java.io.Serializable;
 
@@ -65,14 +65,14 @@ public class Page implements Serializable {
     }
 
     public static int handlerPage(String page) {
-        int pageNum = NumberUtils.toInt(page);
+        int pageNum = U.toInt(page);
         if (pageNum <= 0) {
             pageNum = DEFAULT_PAGE_NO;
         }
         return pageNum;
     }
     public static int handlerLimit(String limit) {
-        int limitNum = NumberUtils.toInt(limit);
+        int limitNum = U.toInt(limit);
         if (limitNum <= 0 || limitNum > MAX_LIMIT) {
             limitNum = DEFAULT_LIMIT;
         }

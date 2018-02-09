@@ -3,7 +3,6 @@ package com.github.common;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.github.common.util.U;
-import org.apache.commons.lang3.math.NumberUtils;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -185,7 +184,7 @@ public class Money implements Serializable {
 
             // 基本的位数检查, 按小数拆分, 分别处理
             String left = money.contains(".") ? money.substring(0, money.indexOf(".")) : money;
-            long leftLong = NumberUtils.toLong(left);
+            long leftLong = U.toLong(left);
             if (leftLong < 0) {
                 left = left.substring(1);
             }
@@ -205,17 +204,17 @@ public class Money implements Serializable {
                     sbd.append(NEGATIVE);
                 }
                 for (int i = 0; i < left.length(); i++) {
-                    int number = NumberUtils.toInt(String.valueOf(left.charAt(i)));
+                    int number = U.toInt(String.valueOf(left.charAt(i)));
                     sbd.append(NUM[number]).append(INTEGER[left.length() - i - 1]);
                 }
             }
 
             // 处理小数位后面的值
-            long rightLong = NumberUtils.toLong(right);
+            long rightLong = U.toLong(right);
             if (rightLong > 0) {
                 sbd.append(SPLIT);
                 for (int i = 0; i < right.length(); i++) {
-                    int number = NumberUtils.toInt(String.valueOf(right.charAt(i)));
+                    int number = U.toInt(String.valueOf(right.charAt(i)));
                     sbd.append(NUM[number]).append(DECIMAL[right.length() - i - 1]);
                 }
             } else if (rightLong == 0) {

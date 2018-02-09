@@ -3,7 +3,6 @@ package com.github.common.util;
 import com.github.common.date.DateUtil;
 import com.github.common.exception.ServiceException;
 import com.github.common.exception.ServiceMustHandleException;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
@@ -144,10 +143,50 @@ public final class U {
     public static String toStr(Object obj) {
         return isBlank(obj) ? EMPTY : obj.toString();
     }
+    public static int toInt(Object obj) {
+        if (isBlank(obj)) {
+            return 0;
+        }
+        try {
+            return Integer.parseInt(obj.toString());
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+    public static long toLong(Object obj) {
+        if (isBlank(obj)) {
+            return 0L;
+        }
+        try {
+            return Long.parseLong(obj.toString());
+        } catch (NumberFormatException e) {
+            return 0L;
+        }
+    }
+    public static float toFloat(Object obj) {
+        if (isBlank(obj)) {
+            return 0F;
+        }
+        try {
+            return Float.parseFloat(obj.toString());
+        } catch (NumberFormatException e) {
+            return 0F;
+        }
+    }
+    public static double toDouble(Object obj) {
+        if (isBlank(obj)) {
+            return 0D;
+        }
+        try {
+            return Double.parseDouble(obj.toString());
+        } catch (NumberFormatException e) {
+            return 0D;
+        }
+    }
 
     /** 对象为 null, 或者其字符串形态为 空白符, "null" 时返回 true */
     public static boolean isBlank(Object obj) {
-        return obj == null || StringUtils.isBlank(obj.toString()) || "null".equalsIgnoreCase(obj.toString().trim());
+        return obj == null || "".equals(obj.toString().trim()) || "null".equalsIgnoreCase(obj.toString().trim());
     }
     /** 对象非空时返回 true */
     public static boolean isNotBlank(Object obj) {

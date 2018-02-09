@@ -33,7 +33,7 @@ public class StringToNumberConverter implements ConverterFactory<String, Number>
                 try {
                     return NumberUtils.parseNumber(source.trim(), this.targetType);
                 } catch (IllegalArgumentException e) {
-                    // ignore exception, return default
+                    // ignore exception
                 }
             }
             return NumberUtils.parseNumber(DEFAULT_VALUE, this.targetType);

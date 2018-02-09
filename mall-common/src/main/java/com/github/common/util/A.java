@@ -1,7 +1,5 @@
 package com.github.common.util;
 
-import org.apache.commons.lang3.math.NumberUtils;
-
 import java.util.*;
 
 /** 集合相关的工具包 */
@@ -62,7 +60,7 @@ public final class A {
 
         List<Long> returnData = lists();
         for (String id : ids) {
-            Long num = NumberUtils.toLong(id);
+            Long num = U.toLong(id);
             if (num > 0) {
                 returnData.add(num);
             }
