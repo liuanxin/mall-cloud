@@ -128,14 +128,7 @@ public final class U {
     public static boolean less0(Number obj) {
         return obj == null || obj.doubleValue() <= 0;
     }
-    /** 数值在指定的数区间时(包含边界)返回 true */
-    public static boolean betweenBorder(Number num, Number min, Number max) {
-        return num.doubleValue() >= min.doubleValue() && num.doubleValue() <= max.doubleValue();
-    }
-    /** 数值不在指定的数区间时(包含边界)返回 true */
-    public static boolean notBetweenBorder(Number num, Number min, Number max) {
-        return !betweenBorder(num, min, max);
-    }
+
     /** 数值在指定的数区间时(不包含边界)返回 true */
     public static boolean between(Number num, Number min, Number max) {
         return num.doubleValue() > min.doubleValue() && num.doubleValue() < max.doubleValue();
@@ -161,13 +154,18 @@ public final class U {
         return !isBlank(obj);
     }
 
-    /** 对象长度在指定的数值经内(包含边距)就返回 true */
-    public static boolean lengthBorder(Object obj, int max) {
-        return obj != null && obj.toString().trim().length() <= max;
-    }
     /** 对象长度在指定的数值以内(不包含边距)就返回 true */
     public static boolean length(Object obj, int max) {
         return obj != null && obj.toString().trim().length() < max;
+    }
+
+    /** 对象长度在指定的数值经内(包含边距)就返回 true */
+    public static boolean lengthBorder(String str, int min, int max) {
+        return !isBlank(str) && str.length() >= min && str.length() <= max;
+    }
+    /** 对象长度在指定的数值以内(不包含边距)就返回 true */
+    public static boolean length(String str, int min, int max) {
+        return lengthBorder(str, min + 1, max - 1);
     }
 
     private static final Pattern ALL = Pattern.compile(".");
@@ -181,17 +179,6 @@ public final class U {
         }
 
         return param.substring(0, start) + ALL.matcher(param.substring(start, end)).replaceAll("*") + param.substring(end);
-    }
-
-    /** 去掉所有的空白符(空格, 制表符, 换行符) */
-    public static String trim(String str) {
-        return isBlank(str) ? EMPTY : str.replaceAll("\\s", "");
-    }
-
-    /** 获取图片后缀(包含点 .) */
-    public static String getSuffix(String image) {
-        return (isNotBlank(image) && image.contains("."))
-                ? image.substring(image.lastIndexOf(".")) : EMPTY;
     }
 
     public static String like(String param) {
@@ -307,6 +294,13 @@ public final class U {
     public static String uuid() {
         return UUID.randomUUID().toString().replace("-", "");
     }
+
+    /** 获取后缀(包含点 .) */
+    public static String getSuffix(String file) {
+        return (isNotBlank(file) && file.contains("."))
+                ? file.substring(file.lastIndexOf(".")) : EMPTY;
+    }
+
     /** 将传入的文件重命名成不带 - 的 uuid 名称并返回 */
     public static String renameFile(String fileName) {
         return uuid() + getSuffix(fileName);
@@ -349,13 +343,9 @@ public final class U {
         return url.substring(url.lastIndexOf("/") + 1, last);
     }
 
-    /** 当值为 null, 空白符, "null" 时则返回指定的字符 */
-    public static String getNil(Object obj, String defaultStr) {
-        return isBlank(obj) ? defaultStr : obj.toString().trim();
-    }
     /** 当值为 null, 空白符, "null" 时, 返回空字符串 */
     public static String getNil(Object obj) {
-        return getNil(obj, EMPTY);
+        return isBlank(obj) ? EMPTY : obj.toString().trim();
     }
 
     /** 属性转换成方法, 加上 get 并首字母大写 */
@@ -479,6 +469,13 @@ public final class U {
     public static void assert0(Number number, String msg) {
         if (less0(number)) {
             assertException(msg);
+        }
+    }
+
+    /** 字符长度不在指定的倍数之间则抛出异常 */
+    public static void assertLength(String str, int min, int max, String name) {
+        if (!lengthBorder(str, min, max)) {
+            assertException(String.format("%s长度要在 %s 到 %s 位之间", name, min, max));
         }
     }
 
