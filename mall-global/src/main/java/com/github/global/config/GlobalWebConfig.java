@@ -9,23 +9,23 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
-import javax.servlet.Filter;
+import javax.servlet.Servlet;
 import java.nio.charset.StandardCharsets;
 
 @Configuration
-@ConditionalOnClass({ Filter.class, FilterRegistrationBean.class })
+@ConditionalOnClass({ Servlet.class })
 public class GlobalWebConfig {
 
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
-    public FilterRegistrationBean corsBean() {
+    public FilterRegistrationBean corsFilter() {
         FilterRegistrationBean registrationBean = new FilterRegistrationBean();
         registrationBean.setFilter(new CorsFilter());
         return registrationBean;
     }
 
     @Bean
-    public FilterRegistrationBean filterRegistrationBean() {
+    public FilterRegistrationBean characterFilter() {
         CharacterEncodingFilter encodingFilter = new CharacterEncodingFilter();
         encodingFilter.setEncoding(StandardCharsets.UTF_8.displayName());
         encodingFilter.setForceEncoding(true);
