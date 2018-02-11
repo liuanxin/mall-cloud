@@ -1,7 +1,7 @@
 package com.github.common.mvc;
 
-import com.github.common.Const;
 import com.github.common.AppVersion;
+import com.github.common.Const;
 import com.github.common.util.U;
 import org.springframework.web.servlet.mvc.condition.RequestCondition;
 
@@ -24,12 +24,13 @@ public class ApiVersionCondition implements RequestCondition<ApiVersionCondition
     @Override
     public ApiVersionCondition getMatchingCondition(HttpServletRequest request) {
         // 从请求中获取版本信息
-        String ver = request.getHeader(Const.VERSION);
-        if (U.isBlank(ver)) {
-            ver = request.getParameter(Const.VERSION);
+        String version = request.getHeader(Const.VERSION);
+        if (U.isBlank(version)) {
+            version = request.getParameter(Const.VERSION);
         }
-        AppVersion version = U.toEnum(AppVersion.class, ver);
-        return (version != null && version.greaterOrEqual(this.version)) ? this : null;
+        AppVersion appVersion = U.toEnum(AppVersion.class, version);
+        // 如果前台过来的参数是 v3, 版本里面有 v1 v2 v4 v5, 最后 v1 v2 会被匹配上
+        return (appVersion != null && appVersion.greaterOrEqual(this.version)) ? this : null;
     }
 
     /**

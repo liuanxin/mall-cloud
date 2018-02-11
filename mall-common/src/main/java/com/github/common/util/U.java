@@ -47,7 +47,7 @@ public final class U {
     private static final String MOBILE = "(?i)Mobile|iP(hone|od|ad)|Android|BlackBerry|Blazer|PSP|UCWEB|IEMobile|Kindle|NetFront|Silk-Accelerated|(hpw|web)OS|Fennec|Minimo|Opera M(obi|ini)|Dol(f|ph)in|Skyfire|Zune";
     /** 是否是 iOS 端 */
     private static final String IOS = "(?i)iP(hone|od|ad)";
-    /** 是否是 android 端. Android 端使用的是 okHttp 这个组件 */
+    /** 是否是 android 端 */
     private static final String ANDROID = "(?i)Mobile|Android";
     /** 是否是 pc 端 */
     private static final String PC = "(?i)AppleWebKit|Mozilla|Chrome|Safari|MSIE|Windows NT";
@@ -89,7 +89,7 @@ public final class U {
     public static <E extends Enum> E toEnum(Class<E> clazz, Object obj) {
         if (isNotBlank(obj)) {
             E[] constants = clazz.getEnumConstants();
-            if (constants != null) {
+            if (constants != null && constants.length > 0) {
                 String source = obj.toString().trim();
                 for (E em : constants) {
                     // 如果传递过来的是枚举名, 且能匹配上则返回
@@ -99,13 +99,13 @@ public final class U {
 
                     // 如果传递过来的值跟枚举的 getCode(数字) 相同则返回
                     Object code = getMethod(em, "getCode");
-                    if (code != null && source.equalsIgnoreCase(code.toString().trim())) {
+                    if (isNotBlank(code) && source.equalsIgnoreCase(code.toString().trim())) {
                         return em;
                     }
 
                     // 如果传递过来的值跟枚举的 getValue(中文) 相同则返回
                     code = getMethod(em, "getValue");
-                    if (code != null && source.equalsIgnoreCase(code.toString().trim())) {
+                    if (isNotBlank(code) && source.equalsIgnoreCase(code.toString().trim())) {
                         return em;
                     }
 
@@ -125,7 +125,7 @@ public final class U {
     }
     /** 传入的数为 null 或 小于等于 0 就返回 true */
     public static boolean less0(Number obj) {
-        return obj == null || obj.doubleValue() <= 0;
+        return !greater0(obj);
     }
 
     /** 数值在指定的数区间时(不包含边界)返回 true */
@@ -407,21 +407,24 @@ public final class U {
      * @return 如果属性是枚举则调用枚举的 getValue 方法, 如果是日期则格式化, 否则返回此属性值的 toString 方法
      */
     public static String getField(Object data, String field) {
-        if (data == null || isBlank(field)) {
+        if (isBlank(field)) {
             return EMPTY;
         }
 
         Object value = getMethod(data, fieldToMethod(field));
-        if (value == null) {
+        if (isBlank(value)) {
             return EMPTY;
-        } else if (value.getClass().isEnum()) {
+        }
+        else if (value.getClass().isEnum()) {
             // 如果是枚举, 则调用其 getValue 方法, getValue 没有值则使用枚举的 name
             Object enumValue = getMethod(value, "getValue");
             return getNil(enumValue != null ? enumValue : value.toString());
-        } else if (value instanceof Date) {
+        }
+        else if (value instanceof Date) {
             // 如果是日期, 则格式化
             return getNil(DateUtil.formatFull((Date) value));
-        } else {
+        }
+        else {
             return getNil(value);
         }
     }
@@ -454,10 +457,10 @@ public final class U {
         int i = 0;
         for (Map.Entry<String, ?> entry : params.entrySet()) {
             Object value = entry.getValue();
-            if (value != null && isNotBlank(value.toString())) {
+            if (isNotBlank(value)) {
                 if (value.getClass().isArray()) {
                     for (Object obj : (Object[]) value) {
-                        if (obj != null && isNotBlank(obj.toString())) {
+                        if (isNotBlank(obj)) {
                             if (i > 0) {
                                 sbd.append("&");
                             }
