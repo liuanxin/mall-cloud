@@ -4,13 +4,13 @@
 *** 说明
 安装 lombok 和 mybatis 插件
 
-将下面的内容保存成 settings.xml 并放到 ${Demo.home}/.m2 目录下, 如果想要改变仓库地址, 注释解开并设置即可
+将下面的内容保存成 settings.xml 并放到 ${user.home}/.m2 目录下(没有此目录则新建), 如果想要改变仓库地址, 注释解开并设置即可
 #+BEGIN_SRC xml
 <?xml version="1.0" encoding="UTF-8"?>
 <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
-    <!-- <localRepository>仓库地址. 默认是 ${Demo.home}/.m2/repository </localRepository> -->
+    <!-- <localRepository>仓库地址. 默认是 ${user.home}/.m2/repository </localRepository> -->
     
     <mirrors>
         <mirror>
