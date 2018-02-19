@@ -125,7 +125,15 @@ public class Money implements Serializable {
         private static final String SPLIT = " ";
         private static final String WHOLE = "整";
         private static final String NEGATIVE = "负";
-
+        
+        // 正则替换
+        private static final String ZERO = "零";
+        private static final String BILLION = "亿";
+        private static final String MILLION = "万";
+        private static final String TEN = "拾";
+        private static final String DOLLAR = "圆";
+        private static final String BLANK = "";
+        
         private static final String[] INTEGER = {
                 "圆", "拾", "佰", "仟",
                 "万", "拾", "佰", "仟",
@@ -156,13 +164,7 @@ public class Money implements Serializable {
 
         private static final Pattern ZERO_DIME = Pattern.compile("零角");
         private static final Pattern ZERO_CENT = Pattern.compile("零分");
-
-        private static final String ZERO = "零";
-        private static final String BILLION = "亿";
-        private static final String MILLION = "万";
-        private static final String TEN = "拾";
-        private static final String DOLLAR = "圆";
-        private static final String BLANK = "";
+        
         /**
          * 转换大写
          *
@@ -171,7 +173,7 @@ public class Money implements Serializable {
          */
         private static String upperCase(String money) {
             // 必要的检查. 如果是 0 直接返回
-            if (money == null || money.trim().length() == 0) {
+            if (U.isBlank(money)) {
                 return MONEY_NOT_EFFECTIVE;
             }
             try {
