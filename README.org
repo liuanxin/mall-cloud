@@ -2,7 +2,6 @@
 ** 基于 spring cloud 的基础代码结构
 
 *** 说明
-安装 lombok 和 mybatis 插件
 
 将下面的内容保存成 settings.xml 并放到 ${user.home}/.m2 目录下(没有此目录则新建), 如果想要改变仓库地址, 注释解开并设置即可
 #+BEGIN_SRC xml
@@ -180,3 +179,6 @@ public class GenderHandler extends BaseTypeHandler {
 #+END_SRC
 
 这个类会被装载到 mybatis 的上下文中去, 这样在整个项目过程中, 任意地方都可以直接使用枚举而不需要基于数值转来转去
+
+
+btw: 在 ide 中安装 lombok 和 mybatis 插件
