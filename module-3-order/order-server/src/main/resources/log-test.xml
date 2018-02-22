@@ -34,6 +34,7 @@
         <appender-ref ref="SQL" />
     </logger>
 
+
     <logger name="com.github.order.repository" level="warn"/>
     <logger name="com.github.common.mvc" level="warn"/>
 
@@ -47,6 +48,7 @@
     <logger name="org.mybatis" level="warn"/>
     <logger name="org.apache" level="warn"/>
     <logger name="org.jboss" level="warn"/>
+
 
     <root level="debug">
         <appender-ref ref="PROJECT"/>

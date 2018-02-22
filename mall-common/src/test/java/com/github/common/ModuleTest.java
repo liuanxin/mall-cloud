@@ -847,7 +847,7 @@ class Server {
             "    <include resource=\"org/springframework/boot/logging/logback/defaults.xml\" />\n" +
             "    <property name=\"CONSOLE_LOG_PATTERN\" value=\"[%X{receiveTime}%d] [${PID:- } %t\\\\(%logger\\\\) : %p]%n%X{requestInfo}%class.%method\\\\(%file:%line\\\\)%n%m%n%n\"/>\n" +
             "    <include resource=\"org/springframework/boot/logging/logback/console-appender.xml\" />\n" +
-            "\n" +
+            "\n\n" +
             "    <logger name=\"" + PACKAGE + ".~MODULE_NAME~.repository\" level=\"warn\"/>\n" +
             "    <logger name=\"" + PACKAGE + ".common.mvc\" level=\"warn\"/>\n" +
             "\n" +
@@ -861,7 +861,7 @@ class Server {
             "    <logger name=\"org.mybatis\" level=\"warn\"/>\n" +
             "    <logger name=\"org.apache\" level=\"warn\"/>\n" +
             "    <logger name=\"org.jboss\" level=\"warn\"/>\n" +
-            "\n" +
+            "\n\n" +
             "    <root level=\"debug\">\n" +
             "        <appender-ref ref=\"CONSOLE\"/>\n" +
             "    </root>\n" +
@@ -902,7 +902,7 @@ class Server {
             "    <logger name=\"sqlLog\" level=\"debug\" additivity=\"false\">\n" +
             "        <appender-ref ref=\"SQL\" />\n" +
             "    </logger>\n" +
-            "\n" +
+            "\n\n" +
             "    <logger name=\"" + PACKAGE + ".~MODULE_NAME~.repository\" level=\"warn\"/>\n" +
             "    <logger name=\"" + PACKAGE + ".common.mvc\" level=\"warn\"/>\n" +
             "\n" +
@@ -916,7 +916,7 @@ class Server {
             "    <logger name=\"org.mybatis\" level=\"warn\"/>\n" +
             "    <logger name=\"org.apache\" level=\"warn\"/>\n" +
             "    <logger name=\"org.jboss\" level=\"warn\"/>\n" +
-            "\n" +
+            "\n\n" +
             "    <root level=\"debug\">\n" +
             "        <appender-ref ref=\"PROJECT\"/>\n" +
             "    </root>\n" +
@@ -943,7 +943,7 @@ class Server {
             "        <includeCallerData>true</includeCallerData>\n" +
             "        <appender-ref ref =\"PROJECT\"/>\n" +
             "    </appender>\n" +
-            "    \n" +
+            "\n\n" +
             "    <logger name=\"" + PACKAGE + ".~MODULE_NAME~.repository\" level=\"warn\"/>\n" +
             "    <logger name=\"" + PACKAGE + ".common.mvc\" level=\"warn\"/>\n" +
             "\n" +
@@ -957,7 +957,7 @@ class Server {
             "    <logger name=\"org.mybatis\" level=\"warn\"/>\n" +
             "    <logger name=\"org.apache\" level=\"warn\"/>\n" +
             "    <logger name=\"org.jboss\" level=\"warn\"/>\n" +
-            "\n" +
+            "\n\n" +
             "    <root level=\"info\">\n" +
             "        <appender-ref ref=\"ASYNC\"/>\n" +
             "    </root>\n" +

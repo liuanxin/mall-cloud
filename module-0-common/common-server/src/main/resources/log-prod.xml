@@ -19,7 +19,8 @@
         <includeCallerData>true</includeCallerData>
         <appender-ref ref ="PROJECT"/>
     </appender>
-    
+
+
     <logger name="com.github.common.repository" level="warn"/>
     <logger name="com.github.common.mvc" level="warn"/>
 
@@ -33,6 +34,7 @@
     <logger name="org.mybatis" level="warn"/>
     <logger name="org.apache" level="warn"/>
     <logger name="org.jboss" level="warn"/>
+
 
     <root level="info">
         <appender-ref ref="ASYNC"/>
