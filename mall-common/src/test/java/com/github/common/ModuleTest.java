@@ -850,12 +850,15 @@ class Server {
             "\n" +
             "    <logger name=\"" + PACKAGE + ".~MODULE_NAME~.repository\" level=\"warn\"/>\n" +
             "    <logger name=\"" + PACKAGE + ".common.mvc\" level=\"warn\"/>\n" +
+            "\n" +
+            "    <logger name=\"com.netflix\" level=\"warn\"/>\n" +
+            "    <!--<logger name=\"com.github\" level=\"warn\"/>-->\n" +
+            "    <logger name=\"com.zaxxer\" level=\"warn\"/>\n" +
+            "    <logger name=\"com.sun\" level=\"warn\"/>\n" +
+            "\n" +
             "    <logger name=\"org.springframework\" level=\"warn\"/>\n" +
             "    <logger name=\"org.hibernate\" level=\"warn\"/>\n" +
-            "    <logger name=\"com.netflix\" level=\"warn\"/>\n" +
             "    <logger name=\"org.mybatis\" level=\"warn\"/>\n" +
-            "    <logger name=\"com.github\" level=\"warn\"/>\n" +
-            "    <logger name=\"com.zaxxer\" level=\"warn\"/>\n" +
             "    <logger name=\"org.apache\" level=\"warn\"/>\n" +
             "    <logger name=\"org.jboss\" level=\"warn\"/>\n" +
             "\n" +
@@ -902,12 +905,15 @@ class Server {
             "\n" +
             "    <logger name=\"" + PACKAGE + ".~MODULE_NAME~.repository\" level=\"warn\"/>\n" +
             "    <logger name=\"" + PACKAGE + ".common.mvc\" level=\"warn\"/>\n" +
+            "\n" +
+            "    <logger name=\"com.netflix\" level=\"warn\"/>\n" +
+            "    <!--<logger name=\"com.github\" level=\"warn\"/>-->\n" +
+            "    <logger name=\"com.zaxxer\" level=\"warn\"/>\n" +
+            "    <logger name=\"com.sun\" level=\"warn\"/>\n" +
+            "\n" +
             "    <logger name=\"org.springframework\" level=\"warn\"/>\n" +
             "    <logger name=\"org.hibernate\" level=\"warn\"/>\n" +
-            "    <logger name=\"com.netflix\" level=\"warn\"/>\n" +
             "    <logger name=\"org.mybatis\" level=\"warn\"/>\n" +
-            "    <logger name=\"com.github\" level=\"warn\"/>\n" +
-            "    <logger name=\"com.zaxxer\" level=\"warn\"/>\n" +
             "    <logger name=\"org.apache\" level=\"warn\"/>\n" +
             "    <logger name=\"org.jboss\" level=\"warn\"/>\n" +
             "\n" +
@@ -925,7 +931,7 @@ class Server {
             "        <file>${FILE_PATH}.log</file>\n" +
             "        <rollingPolicy class=\"ch.qos.logback.core.rolling.TimeBasedRollingPolicy\">\n" +
             "            <fileNamePattern>${FILE_PATH}-%d{yyyy-MM-dd}.log</fileNamePattern>\n" +
-            "            <maxHistory>60</maxHistory>\n" +
+            "            <maxHistory>30</maxHistory>\n" +
             "        </rollingPolicy>\n" +
             "        <encoder>\n" +
             "            <pattern>${LOG_PATTERN}</pattern>\n" +
@@ -940,12 +946,15 @@ class Server {
             "    \n" +
             "    <logger name=\"" + PACKAGE + ".~MODULE_NAME~.repository\" level=\"warn\"/>\n" +
             "    <logger name=\"" + PACKAGE + ".common.mvc\" level=\"warn\"/>\n" +
+            "\n" +
+            "    <logger name=\"com.netflix\" level=\"warn\"/>\n" +
+            "    <!--<logger name=\"com.github\" level=\"warn\"/>-->\n" +
+            "    <logger name=\"com.zaxxer\" level=\"warn\"/>\n" +
+            "    <logger name=\"com.sun\" level=\"warn\"/>\n" +
+            "\n" +
             "    <logger name=\"org.springframework\" level=\"warn\"/>\n" +
             "    <logger name=\"org.hibernate\" level=\"warn\"/>\n" +
-            "    <logger name=\"com.netflix\" level=\"warn\"/>\n" +
             "    <logger name=\"org.mybatis\" level=\"warn\"/>\n" +
-            "    <logger name=\"com.github\" level=\"warn\"/>\n" +
-            "    <logger name=\"com.zaxxer\" level=\"warn\"/>\n" +
             "    <logger name=\"org.apache\" level=\"warn\"/>\n" +
             "    <logger name=\"org.jboss\" level=\"warn\"/>\n" +
             "\n" +

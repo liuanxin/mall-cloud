@@ -7,7 +7,7 @@
         <file>${FILE_PATH}.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${FILE_PATH}-%d{yyyy-MM-dd}.log</fileNamePattern>
-            <maxHistory>60</maxHistory>
+            <maxHistory>30</maxHistory>
         </rollingPolicy>
         <encoder>
             <pattern>${LOG_PATTERN}</pattern>
@@ -22,12 +22,15 @@
     
     <logger name="com.github.order.repository" level="warn"/>
     <logger name="com.github.common.mvc" level="warn"/>
+
+    <logger name="com.netflix" level="warn"/>
+    <!--<logger name="com.github" level="warn"/>-->
+    <logger name="com.zaxxer" level="warn"/>
+    <logger name="com.sun" level="warn"/>
+
     <logger name="org.springframework" level="warn"/>
     <logger name="org.hibernate" level="warn"/>
-    <logger name="com.netflix" level="warn"/>
     <logger name="org.mybatis" level="warn"/>
-    <logger name="com.github" level="warn"/>
-    <logger name="com.zaxxer" level="warn"/>
     <logger name="org.apache" level="warn"/>
     <logger name="org.jboss" level="warn"/>
 

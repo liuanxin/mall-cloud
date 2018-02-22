@@ -6,12 +6,15 @@
 
     <logger name="com.github.user.repository" level="warn"/>
     <logger name="com.github.common.mvc" level="warn"/>
+
+    <logger name="com.netflix" level="warn"/>
+    <!--<logger name="com.github" level="warn"/>-->
+    <logger name="com.zaxxer" level="warn"/>
+    <logger name="com.sun" level="warn"/>
+
     <logger name="org.springframework" level="warn"/>
     <logger name="org.hibernate" level="warn"/>
-    <logger name="com.netflix" level="warn"/>
     <logger name="org.mybatis" level="warn"/>
-    <logger name="com.github" level="warn"/>
-    <logger name="com.zaxxer" level="warn"/>
     <logger name="org.apache" level="warn"/>
     <logger name="org.jboss" level="warn"/>
 
