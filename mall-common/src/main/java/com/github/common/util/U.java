@@ -184,9 +184,14 @@ public final class U {
         }
     }
 
+    /** 去掉所有的制表符 和 换行符 */
+    public static String tabAndWrap(String str) {
+        return isBlank(str) ? EMPTY : str.replace("\t", "").replace("\n", "");
+    }
+
     /** 对象为 null, 或者其字符串形态为 空白符, "null" 时返回 true */
     public static boolean isBlank(Object obj) {
-        return obj == null || "".equals(obj.toString().trim()) || "null".equalsIgnoreCase(obj.toString().trim());
+        return obj == null || EMPTY.equals(obj.toString().trim()) || "null".equalsIgnoreCase(obj.toString().trim());
     }
     /** 对象非空时返回 true */
     public static boolean isNotBlank(Object obj) {
