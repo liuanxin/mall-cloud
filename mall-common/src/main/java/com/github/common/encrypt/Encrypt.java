@@ -101,7 +101,7 @@ public final class Encrypt {
     }
 
     /** 使用 jwt 将 map 加密, 并设置一个过期时间(单位: 秒). 其内部默认使用 HmacSHA256 算法 */
-    public static String jwtEncode(Map<String, Object> map, Long time) {
+    public static String jwtEncode(Map<String, Object> map, long time) {
         map.put(JWTVerifier.EXP, System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(time));
         return jwtEncode(map);
     }
