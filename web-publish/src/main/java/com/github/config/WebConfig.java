@@ -60,6 +60,7 @@ public class WebConfig extends WebMvcConfigurationSupport {
 //     * see : http://www.ruanyifeng.com/blog/2016/04/cors.html
 //     *
 //     * {@link org.springframework.web.servlet.config.annotation.CorsRegistration#CorsRegistration(String)}
+//     * {@link com.github.global.config.GlobalWebConfig#corsFilter}
 //     */
 //    @Override
 //    public void addCorsMappings(CorsRegistry registry) {

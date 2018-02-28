@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <property name="FILE_PATH" value="${user.home}/logs/web-test"/>
-    <property name="LOG_PATTERN" value="[%X{receiveTime}%d] [${PID:- } %t\\(%logger\\) : %p] %X{requestInfo} %class{30}#%method\\(%file:%line\\)%n%m%n%n"/>
+    <property name="LOG_PATTERN" value="[%X{receiveTime}%d] [${PID:- } %t\\(%logger\\) : %p]%X{requestInfo}%n%class{30}#%method\\(%file:%line\\)%n%m%n%n"/>
 
     <appender name="PROJECT" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${FILE_PATH}.log</file>
         <!-- yyyy-MM-dd_HH 每小时建一个, yyyy-MM-dd_HH-mm 每分钟建一个 -->
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${FILE_PATH}-%d{yyyy-MM-dd}.log</fileNamePattern>
-            <maxHistory>90</maxHistory>
+            <maxHistory>7</maxHistory>
         </rollingPolicy>
         <!-- 开启了下面的配置将会在文件达到 10MB 的时候才新建文件, 将会按上面的规则一天建一个  -->
         <!--<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
