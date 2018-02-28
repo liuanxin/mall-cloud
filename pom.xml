@@ -18,7 +18,7 @@
     <modules>
         <!-- 公共包, 工具类等 -->
         <module>mall-common</module>
-        <!-- 全局服务模块, 比如 cache 相关的模块 -->
+        <!-- 会放到 spring 上下文的全局服务包, 比如 cache 相关的模块 -->
         <module>mall-global</module>
 
         <!-- 注册中心模块 -->
@@ -26,7 +26,6 @@
 
         <!-- 公共服务模块 -->
         <module>module-0-common</module>
-
         <!-- 用户模块 -->
         <module>module-1-user</module>
         <!-- 商品模块 -->
