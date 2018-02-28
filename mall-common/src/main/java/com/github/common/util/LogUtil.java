@@ -43,8 +43,6 @@ public final class LogUtil {
     @NoArgsConstructor
     @Accessors(chain = true)
     public static class RequestLogContext {
-        private boolean online;
-
         private String id;
         private String name;
         /** 访问 ip */
@@ -54,35 +52,29 @@ public final class LogUtil {
         /** 访问地址 */
         private String url;
         /** 请求 body 中的参数 */
-        private String param;
+        private String params;
         /** 请求 header 中的参数 */
-        private String headParam;
+        private String heads;
 
-        public RequestLogContext(String ip, String method, String url, String param, String headParam) {
+        public RequestLogContext(String ip, String method, String url, String params, String heads) {
             this.ip = ip;
             this.method =method;
             this.url = url;
-            this.param = param;
-            this.headParam = headParam;
+            this.params = params;
+            this.heads = heads;
         }
 
         private String requestInfo() {
             StringBuilder sbd = new StringBuilder();
-            sbd.append("[");
+            sbd.append(" [");
             if (U.isBlank(id) && U.isBlank(name)) {
-                sbd.append(String.format("%s (%s %s) param(%s)", ip, method, url, param));
+                sbd.append(String.format("%s (%s %s) params(%s)", ip, method, url, params));
             } else {
-                sbd.append(String.format("%s (%s/%s) (%s %s) param(%s)", ip, id, name, method, url, param));
+                sbd.append(String.format("%s (%s/%s) (%s %s) params(%s)", ip, id, name, method, url, params));
             }
             sbd.append(" ");
-            // 非线上环境则输出 head 信息
-            //if (!online) {
-                sbd.append(String.format("header(%s)", headParam));
-            //}
+            sbd.append(String.format("headers(%s)", heads));
             sbd.append("]");
-            //if (!online) {
-                sbd.append("\n");
-            //}
             return sbd.toString();
         }
     }

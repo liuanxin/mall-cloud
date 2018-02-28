@@ -165,7 +165,7 @@ public final class RequestUtils {
     }
 
     /** 基于请求上下文生成一个日志需要的上下文信息对象 */
-    public static LogUtil.RequestLogContext logContextInfo(boolean online) {
+    public static LogUtil.RequestLogContext logContextInfo() {
         HttpServletRequest request = getRequest();
 
         String ip = getRealIp();
@@ -173,7 +173,7 @@ public final class RequestUtils {
         String url = request.getRequestURL().toString();
         String param = formatParam();
         String headParam = formatHeadParam();
-        return new LogUtil.RequestLogContext(ip, method, url, param, headParam).setOnline(online);
+        return new LogUtil.RequestLogContext(ip, method, url, param, headParam);
     }
 
 

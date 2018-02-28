@@ -15,15 +15,10 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class CommonInterceptor implements HandlerInterceptor {
 
-    private boolean online;
-    CommonInterceptor(boolean online) {
-        this.online = online;
-    }
-
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
                              Object handler) throws Exception {
-        LogUtil.bind(RequestUtils.logContextInfo(online));
+        LogUtil.bind(RequestUtils.logContextInfo());
         return true;
     }
 

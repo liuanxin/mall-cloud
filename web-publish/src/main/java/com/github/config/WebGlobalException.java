@@ -59,7 +59,7 @@ public class WebGlobalException {
     @ExceptionHandler(NoHandlerFoundException.class)
     public JsonResult forbidden(NoHandlerFoundException e) {
         if (LogUtil.ROOT_LOG.isDebugEnabled()) {
-            LogUtil.bind(RequestUtils.logContextInfo(online)
+            LogUtil.bind(RequestUtils.logContextInfo()
                     .setId(String.valueOf(WebSessionUtil.getUserId()))
                     .setName(WebSessionUtil.getUserName()));
             LogUtil.ROOT_LOG.debug(e.getMessage(), e);
@@ -70,7 +70,7 @@ public class WebGlobalException {
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public JsonResult notSupported(HttpRequestMethodNotSupportedException e) {
         if (LogUtil.ROOT_LOG.isDebugEnabled()) {
-            LogUtil.bind(RequestUtils.logContextInfo(online)
+            LogUtil.bind(RequestUtils.logContextInfo()
                     .setId(String.valueOf(WebSessionUtil.getUserId()))
                     .setName(WebSessionUtil.getUserName()));
             LogUtil.ROOT_LOG.debug(e.getMessage(), e);

@@ -38,7 +38,6 @@ public class CommonGlobalException {
         }
         return JsonResult.fail(e.getMessage());
     }
-
     /** 未登录 */
     @ExceptionHandler(NotLoginException.class)
     public JsonResult noLogin(NotLoginException e) {
@@ -47,7 +46,6 @@ public class CommonGlobalException {
         }
         return JsonResult.notLogin();
     }
-
     /** 无权限 */
     @ExceptionHandler(ForbiddenException.class)
     public JsonResult notFound(ForbiddenException e) {
@@ -60,17 +58,16 @@ public class CommonGlobalException {
     @ExceptionHandler(NoHandlerFoundException.class)
     public JsonResult forbidden(NoHandlerFoundException e) {
         if (LogUtil.ROOT_LOG.isDebugEnabled()) {
-            LogUtil.bind(RequestUtils.logContextInfo(false));
+            LogUtil.bind(RequestUtils.logContextInfo());
             LogUtil.ROOT_LOG.debug(e.getMessage(), e);
             LogUtil.unbind();
         }
-        return JsonResult.fail("无对应的请求");
+        return JsonResult.fail("404");
     }
-
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public JsonResult notSupported(HttpRequestMethodNotSupportedException e) {
         if (LogUtil.ROOT_LOG.isDebugEnabled()) {
-            LogUtil.bind(RequestUtils.logContextInfo(false));
+            LogUtil.bind(RequestUtils.logContextInfo());
             LogUtil.ROOT_LOG.debug(e.getMessage(), e);
             LogUtil.unbind();
         }
@@ -81,7 +78,6 @@ public class CommonGlobalException {
         }
         return JsonResult.fail("不支持此种请求方式!" + msg);
     }
-
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public JsonResult notFound(MaxUploadSizeExceededException e) {
         if (LogUtil.ROOT_LOG.isDebugEnabled()) {

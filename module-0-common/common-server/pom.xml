@@ -71,7 +71,10 @@
             <groupId>com.github.liuanxin</groupId>
             <artifactId>mybatis-redis-cache</artifactId>
         </dependency>
-    </dependencies>
+        <dependency>
+            <groupId>com.github.liuanxin</groupId>
+            <artifactId>api-document</artifactId>
+        </dependency>    </dependencies>
 
     <build>
         <finalName>common-server-8090</finalName>

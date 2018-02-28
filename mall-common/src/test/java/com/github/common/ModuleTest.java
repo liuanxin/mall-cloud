@@ -534,7 +534,6 @@ class Server {
             "        }\n" +
             "        return JsonResult.fail(e.getMessage());\n" +
             "    }\n" +
-            "\n" +
             "    /** 未登录 */\n" +
             "    @ExceptionHandler(NotLoginException.class)\n" +
             "    public JsonResult noLogin(NotLoginException e) {\n" +
@@ -543,7 +542,6 @@ class Server {
             "        }\n" +
             "        return JsonResult.notLogin();\n" +
             "    }\n" +
-            "\n" +
             "    /** 无权限 */\n" +
             "    @ExceptionHandler(ForbiddenException.class)\n" +
             "    public JsonResult notFound(ForbiddenException e) {\n" +
@@ -556,17 +554,16 @@ class Server {
             "    @ExceptionHandler(NoHandlerFoundException.class)\n" +
             "    public JsonResult forbidden(NoHandlerFoundException e) {\n" +
             "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
-            "            LogUtil.bind(RequestUtils.logContextInfo(false));\n" +
+            "            LogUtil.bind(RequestUtils.logContextInfo());\n" +
             "            LogUtil.ROOT_LOG.debug(e.getMessage(), e);\n" +
             "            LogUtil.unbind();\n" +
             "        }\n" +
-            "        return JsonResult.fail(\"无对应的请求\");\n" +
+            "        return JsonResult.fail(\"404\");\n" +
             "    }\n" +
-            "\n" +
             "    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)\n" +
             "    public JsonResult notSupported(HttpRequestMethodNotSupportedException e) {\n" +
             "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
-            "            LogUtil.bind(RequestUtils.logContextInfo(false));\n" +
+            "            LogUtil.bind(RequestUtils.logContextInfo());\n" +
             "            LogUtil.ROOT_LOG.debug(e.getMessage(), e);\n" +
             "            LogUtil.unbind();\n" +
             "        }\n" +
@@ -577,7 +574,6 @@ class Server {
             "        }\n" +
             "        return JsonResult.fail(\"不支持此种请求方式!\" + msg);\n" +
             "    }\n" +
-            "\n" +
             "    @ExceptionHandler(MaxUploadSizeExceededException.class)\n" +
             "    public JsonResult notFound(MaxUploadSizeExceededException e) {\n" +
             "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
@@ -620,15 +616,10 @@ class Server {
             " */\n" +
             "public class %sInterceptor implements HandlerInterceptor {\n" +
             "\n" +
-            "    private boolean online;\n" +
-            "    %sInterceptor(boolean online) {\n" +
-            "        this.online = online;\n" +
-            "    }\n" +
-            "\n" +
             "    @Override\n" +
             "    public boolean preHandle(HttpServletRequest request, HttpServletResponse response,\n" +
             "                             Object handler) throws Exception {\n" +
-            "        LogUtil.bind(RequestUtils.logContextInfo(online));\n" +
+            "        LogUtil.bind(RequestUtils.logContextInfo());\n" +
             "        return true;\n" +
             "    }\n" +
             "\n" +
@@ -652,7 +643,6 @@ class Server {
             "\n" +
             "import " + PACKAGE + ".common.mvc.SpringMvc;\n" +
             "import " + PACKAGE + ".common.mvc.VersionRequestMappingHandlerMapping;\n" +
-            "import org.springframework.beans.factory.annotation.Value;\n" +
             "import org.springframework.context.annotation.Configuration;\n" +
             "import org.springframework.format.FormatterRegistry;\n" +
             "import org.springframework.http.converter.HttpMessageConverter;\n" +
@@ -670,9 +660,6 @@ class Server {
             " */\n" +
             "@Configuration\n" +
             "public class %sWebConfig extends WebMvcConfigurationSupport {\n" +
-            "\n" +
-            "    @Value(\"${online:false}\")\n" +
-            "    private boolean online;\n" +
             "\n" +
             "    @Override\n" +
             "    protected RequestMappingHandlerMapping createRequestMappingHandlerMapping() {\n" +
@@ -702,20 +689,23 @@ class Server {
             "\n" +
             "    @Override\n" +
             "    public void addInterceptors(InterceptorRegistry registry) {\n" +
-            "        registry.addInterceptor(new %sInterceptor(online)).addPathPatterns(\"/**\");\n" +
+            "        registry.addInterceptor(new %sInterceptor()).addPathPatterns(\"/**\");\n" +
             "    }\n" +
             "}\n";
 
     private static final String SERVICE = "package " + PACKAGE + ".%s.service;\n" +
             "\n" +
+            "import " + PACKAGE + ".common.json.JsonResult;\n" +
             "import " + PACKAGE + ".common.page.PageInfo;\n" +
             "import " + PACKAGE + ".common.page.Pages;\n" +
             "import " + PACKAGE + ".common.util.LogUtil;\n" +
             "import " + PACKAGE + ".global.model.Develop;\n" +
             "import com.github.liuanxin.api.annotation.ApiGroup;\n" +
+            "import com.github.liuanxin.api.annotation.ApiIgnore;\n" +
             "import com.github.liuanxin.api.annotation.ApiMethod;\n" +
             "import com.github.liuanxin.api.annotation.ApiParam;\n" +
             "import " + PACKAGE + ".%s.constant.%sConst;\n" +
+            "import org.springframework.web.bind.annotation.GetMapping;\n" +
             "import org.springframework.web.bind.annotation.RestController;\n" +
             "\n" +
             "/**\n" +
@@ -736,6 +726,12 @@ class Server {
             "        }\n" +
             "        return Pages.returnList(null);\n" +
             "    }\n" +
+            "\n" +
+            "    @ApiIgnore\n" +
+            "    @GetMapping(\"/\")\n" +
+            "    public JsonResult index() {\n" +
+            "        return JsonResult.success(\"%s module\");\n" +
+            "    }\n" +
             "}\n";
 
     private static final String APPLICATION_YML = "\n" +
@@ -745,6 +741,10 @@ class Server {
             "server.port: %s\n" +
             "\n" +
             "spring.application.name: %s\n" +
+            "\n" +
+            "spring:\n" +
+            "  mvc.throw-exception-if-no-handler-found: true\n" +
+            "  resources.add-mappings: false\n" +
             "\n" +
             "logging.config: classpath:log-dev.xml\n" +
             "\n" +
@@ -779,6 +779,10 @@ class Server {
             "\n" +
             "spring.application.name: %s\n" +
             "\n" +
+            "spring:\n" +
+            "  mvc.throw-exception-if-no-handler-found: true\n" +
+            "  resources.add-mappings: false\n" +
+            "\n" +
             "logging.config: classpath:log-test.xml\n" +
             "\n" +
             "spring.datasource:\n" +
@@ -811,6 +815,10 @@ class Server {
             "server.port: %s\n" +
             "\n" +
             "spring.application.name: %s\n" +
+            "\n" +
+            "spring:\n" +
+            "  mvc.throw-exception-if-no-handler-found: true\n" +
+            "  resources.add-mappings: false\n" +
             "\n" +
             "logging.config: classpath:log-prod.xml\n" +
             "\n" +
@@ -845,7 +853,7 @@ class Server {
     private static final String LOG_XML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
             "<configuration>\n" +
             "    <include resource=\"org/springframework/boot/logging/logback/defaults.xml\" />\n" +
-            "    <property name=\"CONSOLE_LOG_PATTERN\" value=\"[%X{receiveTime}%d] [${PID:- } %t\\\\(%logger\\\\) : %p]%n%X{requestInfo}%class.%method\\\\(%file:%line\\\\)%n%m%n%n\"/>\n" +
+            "    <property name=\"CONSOLE_LOG_PATTERN\" value=\"[%X{receiveTime}%d] [${PID:- } %t\\\\(%logger\\\\) : %p]%X{requestInfo}%n%class.%method\\\\(%file:%line\\\\)%n%m%n%n\"/>\n" +
             "    <include resource=\"org/springframework/boot/logging/logback/console-appender.xml\" />\n" +
             "\n\n" +
             "    <logger name=\"" + PACKAGE + ".~MODULE_NAME~.repository\" level=\"warn\"/>\n" +
@@ -871,7 +879,7 @@ class Server {
             "<configuration>\n" +
             "    <property name=\"FILE_PATH\" value=\"${user.home}/logs/~MODULE_NAME~-test\"/>\n" +
             "    <property name=\"SQL_PATTERN\" value=\"%d [${PID:- } %t\\\\(%logger\\\\) : %p]%n%class.%method\\\\(%file:%line\\\\)%n%m%n%n\"/>\n" +
-            "    <property name=\"LOG_PATTERN\" value=\"[%X{receiveTime}%d] [${PID:- } %t\\\\(%logger\\\\) : %p] %X{requestInfo} %class{30}#%method\\\\(%file:%line\\\\)%n%m%n%n\"/>\n" +
+            "    <property name=\"LOG_PATTERN\" value=\"[%X{receiveTime}%d] [${PID:- } %t\\\\(%logger\\\\) : %p]%X{requestInfo}%n%class{30}#%method\\\\(%file:%line\\\\)%n%m%n%n\"/>\n" +
             "\n" +
             "    <appender name=\"PROJECT\" class=\"ch.qos.logback.core.rolling.RollingFileAppender\">\n" +
             "        <file>${FILE_PATH}.log</file>\n" +
@@ -925,7 +933,7 @@ class Server {
     private static final String LOG_PROD_XML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
             "<configuration>\n" +
             "    <property name=\"FILE_PATH\" value=\"${user.home}/logs/~MODULE_NAME~-prod\"/>\n" +
-            "    <property name=\"LOG_PATTERN\" value=\"[%X{receiveTime}%d] [${PID:- } %t\\\\(%logger\\\\) : %p] %X{requestInfo} %class{30}#%method\\\\(%file:%line\\\\) %m%n%n\"/>\n" +
+            "    <property name=\"LOG_PATTERN\" value=\"[%X{receiveTime}%d] [${PID:- } %t\\\\(%logger\\\\) : %p]%X{requestInfo} %class{30}#%method\\\\(%file:%line\\\\) %m%n%n\"/>\n" +
             "\n" +
             "    <appender name=\"PROJECT\" class=\"ch.qos.logback.core.rolling.RollingFileAppender\">\n" +
             "        <file>${FILE_PATH}.log</file>\n" +
@@ -1037,6 +1045,10 @@ class Server {
             "            <groupId>com.github.liuanxin</groupId>\n" +
             "            <artifactId>mybatis-redis-cache</artifactId>\n" +
             "        </dependency>\n" +
+            "        <dependency>\n" +
+            "            <groupId>com.github.liuanxin</groupId>\n" +
+            "            <artifactId>api-document</artifactId>\n" +
+            "        </dependency>" +
             "    </dependencies>\n" +
             "\n" +
             "    <build>\n" +
@@ -1110,7 +1122,7 @@ class Server {
         ModuleTest.writeFile(new File(configPath, clazzName + "WebConfig.java"), war);
 
         String service = String.format(SERVICE, parentPackageName, parentPackageName, clazzName,
-                comment, clazzName, clazzName, clazzName, comment, clazzName.toUpperCase());
+                comment, clazzName, clazzName, clazzName, comment, clazzName.toUpperCase(), parentPackageName);
         ModuleTest.writeFile(new File(servicePath, clazzName + "Service.java"), service);
 
 

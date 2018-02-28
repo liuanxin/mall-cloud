@@ -6,7 +6,6 @@ import com.github.common.util.LogUtil;
 import com.github.common.util.RequestUtils;
 import com.github.util.WebSessionUtil;
 import com.google.common.collect.Lists;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -21,8 +20,10 @@ public class WebInterceptor implements HandlerInterceptor {
 
     private static final List<String> LET_IT_GO = Lists.newArrayList("/error");
 
-    @Value("${online:false}")
     private boolean online;
+    public WebInterceptor(boolean online) {
+        this.online = online;
+    }
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
@@ -50,7 +51,7 @@ public class WebInterceptor implements HandlerInterceptor {
 
     private void bindParam() {
         // 打印日志上下文中的数据
-        LogUtil.RequestLogContext logContextInfo = RequestUtils.logContextInfo(online)
+        LogUtil.RequestLogContext logContextInfo = RequestUtils.logContextInfo()
                 .setId(String.valueOf(WebSessionUtil.getUserId()))
                 .setName(WebSessionUtil.getUserName());
         LogUtil.bind(logContextInfo);
