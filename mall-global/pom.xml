@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>mall-global</artifactId>
-    <description>会放到 spring 上下文的全局服务包, 比如 cache 相关的模块, 被 dubbo 服务端依赖</description>
+    <description>放到 spring 上下文的全局服务包, 比如 cache 相关的模块, 被 dubbo 服务端依赖</description>
 
     <dependencies>
         <dependency>
@@ -49,10 +49,10 @@
             <artifactId>mybatis-page</artifactId>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>com.github.liuanxin</groupId>
             <artifactId>api-document</artifactId>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

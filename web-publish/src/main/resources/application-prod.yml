@@ -7,6 +7,10 @@ server.port: 8787
 
 spring.application.name: web
 
+spring:
+  mvc.throw-exception-if-no-handler-found: true
+  resources.add-mappings: false
+
 register.center: http://prod1:8761/eureka/,http://prod2:8761/eureka/,http://prod3:8761/eureka/
 eureka:
   client:

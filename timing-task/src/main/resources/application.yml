@@ -7,7 +7,7 @@ server.port: 8989
 
 spring.application.name: task
 
-register.center: http://127.0.0.1:6060/eureka/
+register.center: http://127.0.0.1:8761/eureka/
 eureka:
   client:
     # 开启健康检查(需要 spring-boot-starter-actuator 包)

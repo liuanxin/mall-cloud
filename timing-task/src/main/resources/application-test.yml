@@ -7,7 +7,7 @@ server.port: 8989
 
 spring.application.name: task
 
-register.center: http://127.0.0.1:6060/eureka/
+register.center: http://test1:8761/eureka/,http://test2:8761/eureka/,http://test3:8761/eureka/
 eureka:
   client:
     healthcheck.enabled: true

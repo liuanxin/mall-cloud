@@ -18,7 +18,7 @@ public class OrderTask {
     public void cancelOrder() {
         LogUtil.recordTime();
         try {
-            cancelOrder();
+            cancel();
         } finally {
             LogUtil.unbind();
         }
@@ -26,7 +26,13 @@ public class OrderTask {
     private void cancel() {
         int cancelCount = 0;
 
-        // cancelCount = orderService.yyy();
+        try {
+            Thread.sleep(1000L);
+        } catch (InterruptedException e) {
+            // ignore
+        }
+
+        // cancelCount = orderClient.yyy();
         if (LogUtil.ROOT_LOG.isInfoEnabled()) {
             LogUtil.ROOT_LOG.info("共取消 {} 笔订单", cancelCount);
         }
