@@ -17,4 +17,9 @@ public class ApplicationContextUtil implements ApplicationContextAware {
     public static <T> T getBean(Class<T> clazz) {
         return context.getBean(clazz);
     }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T getBean(String name) {
+        return (T) context.getBean(name);
+    }
 }
