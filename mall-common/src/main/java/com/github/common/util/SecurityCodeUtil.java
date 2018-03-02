@@ -100,13 +100,15 @@ public final class SecurityCodeUtil {
             loop = LEAST_COUNT;
         }
 
-        String str = NUMBER;
+        String str;
         if ("w".equalsIgnoreCase(style)) {
             str = WORD;
-        } else if ("n".equalsIgnoreCase(style)) {
-            str += NUMBER;
+        } else if ("wn".equalsIgnoreCase(style)) {
+            str = WORD + NUMBER;
         } else if ("cn".equalsIgnoreCase(style)) {
             str = CHINESE;
+        } else {
+            str = NUMBER;
         }
 
         int widthCount = toInt(width);
@@ -129,11 +131,10 @@ public final class SecurityCodeUtil {
 
         // 画一些干扰线
         for (int i = 0; i < 16; i++) {
-            graphics.setColor(new Color(138, 138, 138));
-            graphics.drawLine(RANDOM.nextInt(widthCount),
-                    RANDOM.nextInt(heightCount),
-                    RANDOM.nextInt(widthCount),
-                    RANDOM.nextInt(heightCount));
+            // graphics.setColor(new Color(138, 138, 138));
+            graphics.setColor(new Color(RANDOM.nextInt(255), RANDOM.nextInt(255), RANDOM.nextInt(255)));
+            graphics.drawLine(RANDOM.nextInt(widthCount), RANDOM.nextInt(heightCount),
+                    RANDOM.nextInt(widthCount), RANDOM.nextInt(heightCount));
         }
         // graphics.setColor(Color.BLUE);
         graphics.setColor(new Color(57, 66, 108));
@@ -144,7 +145,7 @@ public final class SecurityCodeUtil {
         StringBuilder sbd = new StringBuilder();
         for (int i = 0; i < loop; i++) {
             String value = String.valueOf(str.charAt(RANDOM.nextInt(str.length())));
-            // 字体大小看输出的图片高度
+            // 字体大小
             graphics.setFont(new Font(FONT_STYLE, Font.BOLD, heightCount - RANDOM.nextInt(8)));
             graphics.drawString(value, (i + 1) * x, y);
             sbd.append(value);
@@ -156,7 +157,6 @@ public final class SecurityCodeUtil {
         if (str == null) {
             return 0;
         }
-
         try {
             return Integer.parseInt(str);
         } catch (NumberFormatException nfe) {

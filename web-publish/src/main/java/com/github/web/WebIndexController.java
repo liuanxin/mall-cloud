@@ -17,8 +17,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static com.github.common.json.JsonResult.success;
-
 @ApiIgnore
 @Controller
 public class WebIndexController {
@@ -31,7 +29,7 @@ public class WebIndexController {
 
     @GetMapping("/change-version")
     public JsonResult version() {
-        return success("版本号更改为: " + RenderViewResolver.changeVersion());
+        return JsonResult.success("版本号更改为: " + RenderViewResolver.changeVersion());
     }
 
     @ApiGroup("common-公共模块")
@@ -41,8 +39,8 @@ public class WebIndexController {
     @ResponseBody
     public JsonResult enumList(String type) {
         return U.isBlank(type) ?
-                success("枚举列表", CollectEnumUtil.enumList(WebDataCollectUtil.ENUMS)) :
-                success("枚举信息", CollectEnumUtil.enumInfo(type, WebDataCollectUtil.ENUMS));
+                JsonResult.success("枚举列表", CollectEnumUtil.enumList(WebDataCollectUtil.ENUMS)) :
+                JsonResult.success("枚举信息", CollectEnumUtil.enumInfo(type, WebDataCollectUtil.ENUMS));
     }
 
     @GetMapping("/code")
