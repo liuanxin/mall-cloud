@@ -41,6 +41,10 @@
 
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>common-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>product-client</artifactId>
         </dependency>
         <dependency>
