@@ -128,9 +128,18 @@ public final class U {
         return !greater0(obj);
     }
 
+    /** 数值在指定的数区间时(包含边界)返回 true */
+    public static boolean betweenBorder(Number num, Number min, Number max) {
+        return isNotBlank(num) && (num.doubleValue() >= min.doubleValue()) && (num.doubleValue() <= max.doubleValue());
+    }
+    /** 数值不在指定的数区间时(包含边界)返回 true */
+    public static boolean notBetweenBorder(Number num, Number min, Number max) {
+        return !betweenBorder(num, min, max);
+    }
+
     /** 数值在指定的数区间时(不包含边界)返回 true */
     public static boolean between(Number num, Number min, Number max) {
-        return num.doubleValue() > min.doubleValue() && num.doubleValue() < max.doubleValue();
+        return isNotBlank(num) && (num.doubleValue() > min.doubleValue()) && (num.doubleValue() < max.doubleValue());
     }
     /** 数值不在指定的数区间时(不包含边界)返回 true */
     public static boolean notBetween(Number num, Number min, Number max) {
