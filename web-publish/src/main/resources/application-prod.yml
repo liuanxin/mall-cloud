@@ -1,7 +1,7 @@
 
 online: true
 
-logging.config: classpath:log-dev.xml
+logging.config: classpath:log-prod.xml
 
 server.port: 8787
 

@@ -1,0 +1,4 @@
+
+logging.config: classpath:log-test.xml
+server.port: 9411
+

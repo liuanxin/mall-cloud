@@ -772,7 +772,10 @@ class Server {
             "    # 客户端发送心跳给注册中心的频率, 默认 30 秒\n" +
             "    lease-renewal-interval-in-seconds: 20\n" +
             "    # 服务端在收到最后一个心跳后的等待时间. 超出将移除该实例, 默认 90 秒, 此值至少要大于 lease-renewal-interval-in-seconds\n" +
-            "    lease-expiration-duration-in-seconds: 60\n";
+            "    lease-expiration-duration-in-seconds: 60\n" +
+            "\n" +
+            "# org.springframework.cloud.sleuth.zipkin2.ZipkinProperties \n" +
+            "spring.zipkin.base-url: http://127.0.0.1:9411\n";
 
     private static final String APPLICATION_TEST_YML = "\n" +
             "online: false\n" +
@@ -809,7 +812,9 @@ class Server {
             "    serviceUrl.defaultZone: ${register.center}\n" +
             "  instance:\n" +
             "    lease-renewal-interval-in-seconds: 10\n" +
-            "    lease-expiration-duration-in-seconds: 30\n";
+            "    lease-expiration-duration-in-seconds: 30\n" +
+            "\n" +
+            "spring.zipkin.base-url: http://zipkin-server:9411\n";
 
     private static final String APPLICATION_PROD_YML = "\n" +
             "online: true\n" +
@@ -846,7 +851,9 @@ class Server {
             "    serviceUrl.defaultZone: ${register.center}\n" +
             "  instance:\n" +
             "    lease-renewal-interval-in-seconds: 5\n" +
-            "    lease-expiration-duration-in-seconds: 15\n";
+            "    lease-expiration-duration-in-seconds: 15\n" +
+            "\n" +
+            "spring.zipkin.base-url: http://zipkin-server:9411\n";
 
     private static final String CONFIG = "\n"+
             "# 当前文件是主要为了抑制 <No URLs will be polled as dynamic configuration sources> 这个警告. 无其他用处\n"+
@@ -855,7 +862,7 @@ class Server {
     private static final String LOG_XML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
             "<configuration>\n" +
             "    <include resource=\"org/springframework/boot/logging/logback/defaults.xml\" />\n" +
-            "    <property name=\"CONSOLE_LOG_PATTERN\" value=\"[%X{receiveTime}%d] [${PID:- } %t\\\\(%logger\\\\) : %p]%X{requestInfo} %class.%method\\\\(%file:%line\\\\)%n%m%n%n\"/>\n" +
+            "    <property name=\"CONSOLE_LOG_PATTERN\" value=\"[%X{receiveTime}%d] [${PID:- } %t\\\\(%logger\\\\) : %p]%X{requestInfo}%n%class.%method\\\\(%file:%line\\\\)%n%m%n%n\"/>\n" +
             "    <include resource=\"org/springframework/boot/logging/logback/console-appender.xml\" />\n" +
             "\n\n" +
             "    <logger name=\"" + PACKAGE + ".~MODULE_NAME~.repository\" level=\"warn\"/>\n" +
@@ -1004,14 +1011,9 @@ class Server {
             "        </dependency>\n" +
             "\n" +
             "        <dependency>\n" +
-            "            <groupId>org.springframework.cloud</groupId>\n" +
-            "            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>\n" +
-            "        </dependency>\n" +
-            "        <dependency>\n" +
             "            <groupId>org.springframework.boot</groupId>\n" +
             "            <artifactId>spring-boot-starter-actuator</artifactId>\n" +
             "        </dependency>\n" +
-            "\n" +
             "        <dependency>\n" +
             "            <groupId>org.springframework.boot</groupId>\n" +
             "            <artifactId>spring-boot-starter-jdbc</artifactId>\n" +
@@ -1022,6 +1024,16 @@ class Server {
             "                </exclusion>\n" +
             "            </exclusions>\n" +
             "        </dependency>\n" +
+            "\n" +
+            "        <dependency>\n" +
+            "            <groupId>org.springframework.cloud</groupId>\n" +
+            "            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>\n" +
+            "        </dependency>\n" +
+            "        <dependency>\n" +
+            "            <groupId>org.springframework.cloud</groupId>\n" +
+            "            <artifactId>spring-cloud-starter-zipkin</artifactId>\n" +
+            "        </dependency>\n" +
+            "\n" +
             "        <dependency>\n" +
             "            <groupId>com.zaxxer</groupId>\n" +
             "            <artifactId>HikariCP</artifactId>\n" +
@@ -1030,7 +1042,6 @@ class Server {
             "            <groupId>mysql</groupId>\n" +
             "            <artifactId>mysql-connector-java</artifactId>\n" +
             "        </dependency>\n" +
-            "\n" +
             "        <dependency>\n" +
             "            <groupId>org.mybatis</groupId>\n" +
             "            <artifactId>mybatis</artifactId>\n" +
@@ -1039,6 +1050,7 @@ class Server {
             "            <groupId>org.mybatis</groupId>\n" +
             "            <artifactId>mybatis-spring</artifactId>\n" +
             "        </dependency>\n" +
+            "\n" +
             "        <dependency>\n" +
             "            <groupId>com.github.liuanxin</groupId>\n" +
             "            <artifactId>mybatis-page</artifactId>\n" +

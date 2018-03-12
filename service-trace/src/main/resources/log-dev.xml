@@ -5,11 +5,14 @@
     <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
 
     <logger name="com.sun" level="warn"/>
+    <logger name="org.xnio" level="warn"/>
     <logger name="org.apache" level="warn"/>
     <!--<logger name="com.github" level="warn"/>-->
+    <logger name="io.undertow" level="warn"/>
     <logger name="com.netflix" level="warn"/>
     <logger name="org.hibernate" level="warn"/>
     <logger name="org.springframework" level="warn"/>
+    <logger name="zipkin.autoconfigure" level="warn"/>
 
     <root level="debug">
         <appender-ref ref="CONSOLE"/>

@@ -51,3 +51,6 @@ eureka:
 #      path: /trade/**
 #      serviceId: trade
 #      stripPrefix: false
+
+# org.springframework.cloud.sleuth.zipkin2.ZipkinProperties
+spring.zipkin.base-url: http://127.0.0.1:9411
