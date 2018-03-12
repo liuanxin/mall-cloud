@@ -14,6 +14,9 @@ import java.util.Date;
 // @Component
 public class DynamicCronTask implements SchedulingConfigurer {
 
+    /** 默认是每小时运行一次 */
+    private static final String DEFAULT_CRON = "0 0 0/1 * * *";
+
     // @Autowired
     // private ProductClient productClient;
 
@@ -49,7 +52,7 @@ public class DynamicCronTask implements SchedulingConfigurer {
                 String cron = ""; // commonClient.getAbcCron();
                 if (U.isBlank(cron)) {
                     // 如果没有, 给一个默认值.
-                    cron = "0 0 0/1 * * *";
+                    cron = DEFAULT_CRON;
                 }
                 return new CronTrigger(cron).nextExecutionTime(triggerContext);
             }
