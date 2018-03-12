@@ -7,14 +7,14 @@ import org.springframework.scheduling.annotation.Scheduled;
 // @Component
 public class CronTask {
 
-    /** 默认是每分钟运行一次 */
-    private static final String DEFAULT_CRON = "0 */1 * * * *";
+    /** 每分钟运行一次 */
+    private static final String CRON = "0 */1 * * * *";
 
     // @Autowired
     // private OrderClient orderClient;
 
-    /** 每分钟 --> 取消下单已经超过了 24 小时的订单 */
-    @Scheduled(cron = DEFAULT_CRON)
+    /** 取消下单已经超过了 24 小时的订单 */
+    @Scheduled(cron = CRON)
     public void cancelOrder() {
         LogUtil.recordTime();
         try {
