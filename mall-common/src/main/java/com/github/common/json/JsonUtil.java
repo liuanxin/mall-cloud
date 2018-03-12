@@ -3,7 +3,6 @@ package com.github.common.json;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 
 import java.util.List;
 
@@ -23,7 +22,7 @@ public class JsonUtil {
             // 不确定的属性项上不要失败
             configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             // 提升序列化性能, map 中的 null 值不序列化
-            configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);
+            // configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);
             // 提升序列化性能, null 值不序列化
             // setSerializationInclusion(JsonInclude.Include.NON_NULL);
             // 允许字符串中包含 未加引号的控制字符(值小于 32 的 ASCII 字符, 包括制表符和换行字符)的功能.
