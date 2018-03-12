@@ -25,7 +25,7 @@ public class WebBeanInit {
     /**
      * 覆盖默认的 viewResolver<br>
      *
-     * @see org.springframework.boot.autoconfigure.freemarker.FreeMarkerAutoConfiguration.FreeMarkerWebConfiguration
+     * @see org.springframework.boot.autoconfigure.freemarker.FreeMarkerAutoConfiguration
      */
     @Bean(name = "freeMarkerViewResolver")
     public RenderViewResolver viewResolver() {

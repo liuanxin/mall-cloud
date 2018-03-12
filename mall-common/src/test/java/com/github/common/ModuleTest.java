@@ -367,6 +367,8 @@ class Server {
             "import org.springframework.boot.SpringApplication;\n" +
             "import org.springframework.boot.autoconfigure.SpringBootApplication;\n" +
             "import org.springframework.boot.builder.SpringApplicationBuilder;\n" +
+            // 2.0
+            // "import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;\n" +
             "import org.springframework.boot.web.support.SpringBootServletInitializer;\n" +
             "import org.springframework.cloud.client.discovery.EnableDiscoveryClient;\n" +
             "import org.springframework.context.ApplicationContext;\n" +
