@@ -155,12 +155,24 @@
 
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>web-publish</artifactId>
+                <artifactId>web-backend</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
+                <artifactId>web-manager</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>timing-task</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>service-trace</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <!-- 当前项目相关 -->
