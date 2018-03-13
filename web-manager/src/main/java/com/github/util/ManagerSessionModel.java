@@ -1,9 +1,7 @@
 package com.github.util;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import com.github.common.util.A;
+import lombok.*;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
@@ -33,10 +31,25 @@ class ManagerSessionModel implements Serializable {
     private Long id;
     /** 存放在 session 中的(用户名) */
     private String name;
-
-
+    // /** 存放在 session 中的权限 */
+    private List<Permission> permissionList;
 
     // ========== 存放在 session 中的数据 ==========
+
+    @Setter
+    @Getter
+    @ToString
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Accessors(chain = true)
+    private static class Permission implements Serializable {
+        private static final long serialVersionUID = 1L;
+
+        /** 权限路径 */
+        private String url;
+        /** 权限方法(get,head,post,put,delete), 多个用逗号隔开, 通配 * 表示匹配所有 */
+        private String method;
+    }
 
 
     /** 当前用户在指定域名下是否已登录. 已登录就返回 true */
@@ -49,24 +62,28 @@ class ManagerSessionModel implements Serializable {
     }
     /** 在指定域名下, 是否有对指定 url 的访问权限. 有就返回 true */
     boolean hasPermission(String url, String method) {
-//        if (A.isNotEmpty(permissionList)) {
-//            for (Permission permission : permissionList) {
-//                String permissionUrl = permission.getUrl();
-//                String permissionMethod = permission.getMethod().toUpperCase();
-//
-//                // 全字 或 通配. 通配是指: 如果配置的 url 是 /user/*, 传进来的是 /user/info 也可以通过
-//                if ((url.equals(permissionUrl) || url.matches(permissionUrl.replace("*", ".*"))) &&
-//                        // 全字 或 通配. 通配是指: 如果配置的 method 是 * 即可
-//                        (permissionMethod.contains(method.toUpperCase()) || "*".equals(permissionMethod))) {
-//                    return true;
-//                }
-//            }
-//        }
+        if (A.isNotEmpty(permissionList)) {
+            for (Permission permission : permissionList) {
+                String permissionUrl = permission.getUrl();
+                String permissionMethod = permission.getMethod().toUpperCase();
+
+                // 全字 或 通配. 通配是指: 如果配置的 url 是 /user/*, 传进来的是 /user/info 也可以通过
+                if ((url.equals(permissionUrl) || url.matches(permissionUrl.replace("*", ".*"))) &&
+                        // 全字 或 通配. 通配是指: 如果配置的 method 是 * 即可
+                        (permissionMethod.contains(method.toUpperCase()) || "*".equals(permissionMethod))) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
+
+    // 以下为静态方法
+
     // /** 将 域名、账号及权限 组装成放进 session 的数据对象 */
-    /*static ManagerSessionModel assemblyData(ManagerSessionModel sessionModel, String domain,
+    /*
+    static ManagerSessionModel assemblyData(ManagerSessionModel sessionModel, String domain,
                                         User account, List<com.github.erp.user.model.Permission> permissions) {
         if (U.isBlank(domain) || U.isBlank(account) || A.isEmpty(permissions)) {
             return sessionModel;
@@ -83,22 +100,12 @@ class ManagerSessionModel implements Serializable {
             session.getDomainInfoMap().put(domain, permissionList);
         }
         return session;
-    }*/
+    }
+    */
 
     /** 未登录时的默认用户信息 */
     static ManagerSessionModel defaultUser() {
         return new ManagerSessionModel().setId(DEFAULT_ID).setName(DEFAULT_NAME);
     }
 
-    @Setter
-    @Getter
-    @ToString
-    private static class Permission implements Serializable {
-        private static final long serialVersionUID = 1L;
-
-        /** 权限路径 */
-        private String url;
-        /** 权限方法(get,head,post,put,delete), 多个用逗号隔开, 通配 * 表示匹配所有 */
-        private String method;
-    }
 }

@@ -1,6 +1,5 @@
 package com.github.util;
 
-import com.github.common.exception.ForbiddenException;
 import com.github.common.exception.NotLoginException;
 import com.github.common.util.LogUtil;
 import com.github.common.util.RequestUtils;
@@ -33,15 +32,15 @@ public class BackendSessionUtil {
 
     // /** 登录之后调用此方法, 主要就是将 用户信息、可访问的 url 等放入 session */
     /*
-    public static void whenLogin(User account, List<Permission> permissionList) {
-        BackendSessionUtil sessionModel = BackendSessionUtil.assemblyData(
-                getSessionInfo(), RequestUtils.getDomain(), account, permissionList) ;
+    public static void whenLogin(User account) {
+        BackendSessionUtil sessionModel = BackendSessionUtil.assemblyData(account) ;
         if (U.isNotBlank(sessionModel)) {
             if (LogUtil.ROOT_LOG.isDebugEnabled()) {
-                LogUtil.ROOT_LOG.debug("put ({}) in session({})", sessionModel, RequestUtils.getSession().getId());
+                LogUtil.ROOT_LOG.debug("put ({}) in session({})",
+                        JsonUtil.toJson(sessionModel), RequestUtils.getSession().getId());
             }
+            RequestUtils.getSession().setAttribute(USER, sessionModel);
         }
-        RequestUtils.getSession().setAttribute(USER, sessionModel);
     }
     */
 
@@ -67,40 +66,14 @@ public class BackendSessionUtil {
         return getSessionInfoWithDefault().getName();
     }
 
-    /** 是否是超级管理员, 是则返回 true */
-    public static boolean isSuper() {
-        return getSessionInfoWithDefault().wasSuper();
-    }
-
     /** 验证用户是否有登录, 如果有则返回 true */
-    public static boolean hasLogin() {
+    private static boolean hasLogin() {
         return getSessionInfoWithDefault().wasLogin();
     }
     /** 验证登录, 未登录则抛出异常 */
     public static void checkLogin() {
         if (!hasLogin()) {
             throw new NotLoginException();
-        }
-    }
-
-    /** 是否有访问权限, 有则返回 true */
-    public static boolean hasPermission() {
-        // 没有登录当然也就表示没有权限了
-        checkLogin();
-        // 管理员直接放过权限检查
-        if (isSuper()) {
-            return true;
-        }
-
-        String url = RequestUtils.getRequest().getRequestURI();
-        String method = RequestUtils.getRequest().getMethod();
-        return getSessionInfo().hasPermission(url, method);
-    }
-
-    /** 检查权限, 无权限则抛出异常 */
-    public static void checkPermission() {
-        if (!hasPermission()) {
-            throw new ForbiddenException("您没有(" + RequestUtils.getRequest().getRequestURL().toString() + ")的访问权限");
         }
     }
 
