@@ -2,7 +2,7 @@ package com.github.common.util;
 
 import com.github.common.json.JsonUtil;
 import com.google.common.io.Files;
-import com.squareup.okhttp.*;
+import okhttp3.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,13 +14,12 @@ public class HttpOkClientUtil {
     private static final MediaType PNG = MediaType.parse("image/png");
     private static final MediaType JPG = MediaType.parse("image/jpeg");
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-    //private static final MediaType FORM = MediaType.parse("application/x-www-form-urlencoded");
-    private static final MediaType FORM = MediaType.parse("multipart/form-data");
+    // private static final MediaType FORM = MediaType.parse("application/x-www-form-urlencoded");
 
-    private static final OkHttpClient HTTP_CLIENT = new OkHttpClient();
-    static {
-        HTTP_CLIENT.setConnectTimeout(10, TimeUnit.SECONDS);
-    }
+    private static final OkHttpClient HTTP_CLIENT = new OkHttpClient().newBuilder()
+            .connectTimeout(10, TimeUnit.SECONDS)
+            .readTimeout(20, TimeUnit.SECONDS)
+            .build();
 
     public static String get(String url) {
         return get(url, null);
@@ -48,18 +47,21 @@ public class HttpOkClientUtil {
 
     public static String post(String url, Map<String, Object> params) {
         String formatParam = U.formatParam(params);
-        Request.Builder builder = new Request.Builder().post(RequestBody.create(FORM, formatParam));
+        RequestBody body = RequestBody.create(MultipartBody.FORM, formatParam);
+        Request.Builder builder = new Request.Builder().post(body);
         return handle(url, builder, formatParam, null);
     }
 
     public static String post(String url, String params) {
-        Request.Builder builder = new Request.Builder().post(RequestBody.create(FORM, params));
+        RequestBody body = RequestBody.create(MultipartBody.FORM, params);
+        Request.Builder builder = new Request.Builder().post(body);
         return handle(url, builder, params, null);
     }
 
     /** 向指定 url 进行 post 请求. 有参数和头 */
     public static String postWithHeader(String url, Map<String, Object> params, Map<String, Object> headers) {
-        Request.Builder builder = new Request.Builder().post(RequestBody.create(FORM, U.formatParam(params)));
+        RequestBody body = RequestBody.create(MultipartBody.FORM, U.formatParam(params));
+        Request.Builder builder = new Request.Builder().post(body);
         handlerHeader(builder, headers);
         return handle(url, builder, U.formatParam(params), U.formatParam(headers));
     }
@@ -73,7 +75,7 @@ public class HttpOkClientUtil {
     /** 向指定 url 上传 png 图片文件 */
     public static String postFile(String url, Map<String, Object> params, Map<String, File> files) {
         url = urlHttp(url);
-        MultipartBuilder builder = new MultipartBuilder().type(MultipartBuilder.FORM);
+        MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
         for (Map.Entry<String, Object> entry : params.entrySet()) {
             Object value = entry.getValue();
             if (U.isNotBlank(value)) {
@@ -137,30 +139,32 @@ public class HttpOkClientUtil {
 
         Request request = builder.url(url).build();
         String method = request.method();
-        String requestUrl = request.urlString();
+        String requestUrl = request.url().toString();
         try {
             long start = System.currentTimeMillis();
             ResponseBody response = HTTP_CLIENT.newCall(request).execute().body();
-            String result = response.string();
-            if (LogUtil.ROOT_LOG.isInfoEnabled()) {
-                long ms = System.currentTimeMillis() - start;
-                StringBuilder sbd = new StringBuilder();
-                sbd.append("OkHttp(").append(method).append(" ").append(requestUrl).append(")");
-                if (U.isNotBlank(params)) {
-                    sbd.append("params(").append(params).append(")");
+            if (response != null) {
+                String result = response.string();
+                if (LogUtil.ROOT_LOG.isInfoEnabled()) {
+                    long ms = System.currentTimeMillis() - start;
+                    StringBuilder sbd = new StringBuilder();
+                    sbd.append("OkHttp3(").append(method).append(" ").append(requestUrl).append(")");
+                    if (U.isNotBlank(params)) {
+                        sbd.append("params(").append(params).append(")");
+                    }
+                    if (U.isNotBlank(headers)) {
+                        sbd.append("headers(").append(headers).append(")");
+                    }
+                    sbd.append(" time(").append(ms).append("ms), return(").append(result).append(")");
+                    LogUtil.ROOT_LOG.info(sbd.toString());
                 }
-                if (U.isNotBlank(headers)) {
-                    sbd.append("headers(").append(headers).append(")");
-                }
-                sbd.append(" time(").append(ms).append("ms), return(").append(result).append(")");
-                LogUtil.ROOT_LOG.info(sbd.toString());
+                return result;
             }
-            return result;
         } catch (IOException e) {
             if (LogUtil.ROOT_LOG.isInfoEnabled()) {
                 LogUtil.ROOT_LOG.info("({} {}) exception", method, requestUrl, e);
             }
-            return null;
         }
+        return null;
     }
 }

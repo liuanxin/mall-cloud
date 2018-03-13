@@ -55,11 +55,8 @@
         <spring-cloud-sleuth.version>1.3.2.RELEASE</spring-cloud-sleuth.version>
 
         <commons-lang3.version>3.4</commons-lang3.version>
-        <commons-codec.version>1.10</commons-codec.version>
         <commons-fileupload.version>1.3.1</commons-fileupload.version>
 
-        <guava.version>22.0</guava.version>
-        <okhttp.version>2.7.5</okhttp.version>
         <poi-ooxml.version>3.15</poi-ooxml.version>
 
         <hikaricp.version>2.7.1</hikaricp.version>
@@ -194,11 +191,6 @@
             </dependency>
 
 
-            <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-                <version>${guava.version}</version>
-            </dependency>
 
             <dependency>
                 <groupId>org.apache.commons</groupId>
@@ -206,22 +198,10 @@
                 <version>${commons-lang3.version}</version>
             </dependency>
             <dependency>
-                <groupId>commons-codec</groupId>
-                <artifactId>commons-codec</artifactId>
-                <version>${commons-codec.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>commons-fileupload</groupId>
                 <artifactId>commons-fileupload</artifactId>
                 <version>${commons-fileupload.version}</version>
             </dependency>
-
-            <dependency>
-                <groupId>com.squareup.okhttp</groupId>
-                <artifactId>okhttp</artifactId>
-                <version>${okhttp.version}</version>
-            </dependency>
-
             <dependency>
                 <groupId>org.apache.poi</groupId>
                 <artifactId>poi-ooxml</artifactId>
