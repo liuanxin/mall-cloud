@@ -31,7 +31,7 @@
     </dependencies>
 
     <build>
-        <finalName>web-proxy-8686</finalName>
+        <finalName>web-backend-8686</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

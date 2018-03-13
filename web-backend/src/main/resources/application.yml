@@ -4,7 +4,6 @@ online: false
 logging.config: classpath:log-dev.xml
 
 server.port: 8686
-
 spring.application.name: web-backend
 
 spring:
