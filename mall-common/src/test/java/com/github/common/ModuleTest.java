@@ -1036,10 +1036,10 @@ class Server {
             "            <groupId>org.springframework.cloud</groupId>\n" +
             "            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>\n" +
             "        </dependency>\n" +
-            "        <dependency>\n" +
-            "            <groupId>org.springframework.cloud</groupId>\n" +
-            "            <artifactId>spring-cloud-starter-zipkin</artifactId>\n" +
-            "        </dependency>\n" +
+//            "        <dependency>\n" +
+//            "            <groupId>org.springframework.cloud</groupId>\n" +
+//            "            <artifactId>spring-cloud-starter-zipkin</artifactId>\n" +
+//            "        </dependency>\n" +
             "\n" +
             "        <dependency>\n" +
             "            <groupId>com.zaxxer</groupId>\n" +
