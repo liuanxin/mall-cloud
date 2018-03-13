@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>web-proxy</artifactId>
+    <artifactId>web-backend</artifactId>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
