@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <property name="FILE_PATH" value="${user.home}/logs/timing-task-test"/>
-    <property name="LOG_PATTERN" value="[%X{receiveTime}%d] [${PID:- } %t\\(%logger\\) : %p] %class{30}#%method\\(%file:%line\\)%n%m%n%n"/>
+    <property name="FILE_PATH" value="${user.home}/logs/web-test"/>
+    <property name="LOG_PATTERN" value="[%X{receiveTime}%d] [${PID:- } %t\\(%logger\\) : %p]%X{requestInfo} %class{30}#%method\\(%file:%line\\)%n%m%n%n"/>
 
     <appender name="PROJECT" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${FILE_PATH}.log</file>
@@ -19,21 +19,15 @@
         </encoder>
     </appender>
 
-    <logger name="zipkin.autoconfigure" level="warn"/>
-    <logger name="io.undertow" level="warn"/>
+    <logger name="freemarker" level="warn"/>
 
+    <logger name="com.github.common.mvc" level="warn"/>
     <logger name="com.netflix" level="warn"/>
-    <!--<logger name="com.github" level="warn"/>-->
-    <logger name="com.zaxxer" level="warn"/>
     <logger name="com.sun" level="warn"/>
 
-    <logger name="org.springframework" level="warn"/>
-    <logger name="org.hibernate" level="warn"/>
-    <logger name="org.mybatis" level="warn"/>
     <logger name="org.apache" level="warn"/>
-    <logger name="org.jboss" level="warn"/>
-    <logger name="org.xnio" level="warn"/>
-    <logger name="org.jooq" level="warn"/>
+    <logger name="org.hibernate" level="warn"/>
+    <logger name="org.springframework" level="warn"/>
 
     <root level="debug">
         <appender-ref ref="PROJECT"/>

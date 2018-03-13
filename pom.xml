@@ -33,8 +33,10 @@
         <!-- 订单模块 -->
         <module>module-3-order</module>
 
-        <!-- 给前端项目调用, 发布成 web 项目 -->
-        <module>web-publish</module>
+        <!-- 路由其他模块的项目, 前端调用方 -->
+        <module>web-backend</module>
+        <!-- 后台服务项目 -->
+        <module>web-manager</module>
         <!-- 定时任务服务 -->
         <module>timing-task</module>
 
@@ -173,7 +175,7 @@
             </dependency>
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-sleuth-dependencies</artifactId>
+                <artifactId>spring-cloud-sleuth</artifactId>
                 <version>${spring-cloud-sleuth.version}</version>
                 <type>pom</type>
                 <scope>import</scope>

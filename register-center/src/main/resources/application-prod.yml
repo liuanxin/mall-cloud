@@ -11,7 +11,6 @@ eureka:
     lease-renewal-interval-in-seconds: 5
     lease-expiration-duration-in-seconds: 15
   server:
-    enable-self-preservation: false
     eviction-interval-timer-in-ms: 4000
   client:
     register-with-eureka: false
