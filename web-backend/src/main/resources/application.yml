@@ -52,6 +52,8 @@ zuul:
       serviceId: trade
       stripPrefix: false
 
-# org.springframework.cloud.sleuth.zipkin2.ZipkinProperties
-spring.zipkin.base-url: http://127.0.0.1:9411
-
+## org.springframework.cloud.sleuth.zipkin2.ZipkinProperties
+#spring:
+#  zipkin.base-url: http://127.0.0.1:9411
+#  # 抽样比例, 默认是 10%, 如果 值是 1 则表示 100%, 分页式追踪数据量可能会非常大
+#  sleuth.sampler.percentage: 0.1

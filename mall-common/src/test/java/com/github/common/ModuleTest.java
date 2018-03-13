@@ -774,8 +774,11 @@ class Server {
             "    # 服务端在收到最后一个心跳后的等待时间. 超出将移除该实例, 默认 90 秒, 此值至少要大于 lease-renewal-interval-in-seconds\n" +
             "    lease-expiration-duration-in-seconds: 60\n" +
             "\n" +
-            "# org.springframework.cloud.sleuth.zipkin2.ZipkinProperties \n" +
-            "spring.zipkin.base-url: http://127.0.0.1:9411\n";
+            "## org.springframework.cloud.sleuth.zipkin2.ZipkinProperties\n" +
+            "#spring:\n" +
+            "#  zipkin.base-url: http://127.0.0.1:9411\n" +
+            "#  # 抽样比例, 默认是 10%%, 如果 值是 1 则表示 100%%, 分页式追踪数据量可能会非常大\n" +
+            "#  sleuth.sampler.percentage: 0.1\n";
 
     private static final String APPLICATION_TEST_YML = "\n" +
             "online: false\n" +
@@ -814,7 +817,9 @@ class Server {
             "    lease-renewal-interval-in-seconds: 10\n" +
             "    lease-expiration-duration-in-seconds: 30\n" +
             "\n" +
-            "spring.zipkin.base-url: http://zipkin-server:9411\n";
+            "#spring:\n" +
+            "#  zipkin.base-url: http://127.0.0.1:9411\n" +
+            "#  sleuth.sampler.percentage: 0.1\n";
 
     private static final String APPLICATION_PROD_YML = "\n" +
             "online: true\n" +
@@ -853,7 +858,9 @@ class Server {
             "    lease-renewal-interval-in-seconds: 5\n" +
             "    lease-expiration-duration-in-seconds: 15\n" +
             "\n" +
-            "spring.zipkin.base-url: http://zipkin-server:9411\n";
+            "#spring:\n" +
+            "#  zipkin.base-url: http://127.0.0.1:9411\n" +
+            "#  sleuth.sampler.percentage: 0.1\n";
 
     private static final String CONFIG = "\n"+
             "# 当前文件是主要为了抑制 <No URLs will be polled as dynamic configuration sources> 这个警告. 无其他用处\n"+

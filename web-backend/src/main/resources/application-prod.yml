@@ -42,4 +42,6 @@ zuul:
       serviceId: trade
       stripPrefix: false
 
-spring.zipkin.base-url: http://127.0.0.1:9411
+#spring:
+#  zipkin.base-url: http://127.0.0.1:9411
+#  sleuth.sampler.percentage: 0.1
