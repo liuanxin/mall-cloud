@@ -20,6 +20,7 @@ public class ShowSqlInterceptor implements StatementInterceptor {
     @Override
     public ResultSetInternalMethods preProcess(String sql, Statement statement,
                                                Connection connection) throws SQLException {
+        TIME.remove();
         TIME.set(System.currentTimeMillis());
         return null;
     }
