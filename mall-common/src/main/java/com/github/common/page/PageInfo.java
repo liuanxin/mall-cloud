@@ -44,14 +44,20 @@ public class PageInfo<T> implements Serializable {
     @ApiReturn(desc = "当前页的数据")
     private List<T> list;
 
+    static <T> PageInfo<T> emptyReturn() {
+        return new PageInfo<T>(0, Collections.emptyList());
+    }
+    static <T> PageInfo<T> returnPage(int total, List<T> list) {
+        return new PageInfo<T>(total, list);
+    }
+
     /** 在 Controller 中调用 --> 组装不同的 vo 时使用此方法 */
-    @SuppressWarnings("unchecked")
     public static <S,T> PageInfo<T> convert(PageInfo<S> pageInfo) {
         if (U.isBlank(pageInfo)) {
-            return new PageInfo(0, Collections.emptyList());
+            return emptyReturn();
         } else {
             // 只要总条数
-            PageInfo info = new PageInfo();
+            PageInfo<T> info = new PageInfo<T>();
             info.setTotal(pageInfo.getTotal());
             return info;
         }

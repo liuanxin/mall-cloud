@@ -5,7 +5,6 @@ import com.github.liuanxin.page.model.PageBounds;
 import com.github.liuanxin.page.model.PageList;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -38,14 +37,13 @@ public final class Pages {
     }
 
     /** 在 service 的实现类中调用 --> 在 repository 方法上的返回类型是 List, service 上的返回类型是 PageInfo, 使用此方法进行转换 */
-    @SuppressWarnings("unchecked")
-    public static <T> PageInfo<T> returnList(List<T> list) {
+    public static <T> PageInfo<T> returnPage(List<T> list) {
         if (A.isEmpty(list)) {
-            return new PageInfo(0, Collections.emptyList());
+            return PageInfo.emptyReturn();
         } else if (list instanceof PageList) {
-            return new PageInfo(((PageList) list).getTotal(), new ArrayList(list));
+            return PageInfo.returnPage(((PageList) list).getTotal(), new ArrayList<T>(list));
         } else {
-            return new PageInfo(list.size(), list);
+            return PageInfo.returnPage(list.size(), list);
         }
     }
 }
