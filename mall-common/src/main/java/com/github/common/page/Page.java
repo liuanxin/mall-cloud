@@ -23,7 +23,7 @@ import java.io.Serializable;
  * public PageInfo page(xxx, Page page) {
  *     PageBounds pageBounds = Pages.param(page);
  *     List&lt;XXX> xxxList = xxxMapper.selectByExample(xxxxx, pageBounds);
- *     return Pages.returnList(xxxList);
+ *     return Pages.returnPage(xxxList);
  * }
  *
  * 这么做的目的是分页包只需要在服务端引入即可

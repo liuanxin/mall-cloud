@@ -183,7 +183,7 @@ class Client {
             "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
             "            LogUtil.ROOT_LOG.debug(\"调用断路器\");\n" +
             "        }\n" +
-            "        return Pages.returnList(null);\n" +
+            "        return Pages.returnPage(null);\n" +
             "    }\n" +
             "}\n";
 
@@ -726,7 +726,7 @@ class Server {
             "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
             "            LogUtil.ROOT_LOG.debug(\"调用实现类\");\n" +
             "        }\n" +
-            "        return Pages.returnList(null);\n" +
+            "        return Pages.returnPage(null);\n" +
             "    }\n" +
             "\n" +
             "    @ApiIgnore\n" +

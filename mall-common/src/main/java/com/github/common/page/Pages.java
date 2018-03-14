@@ -21,7 +21,7 @@ import java.util.List;
  * public PageInfo page(xxx, Page page) {
  *     PageBounds pageBounds = Pages.param(page);
  *     List&lt;XXX> xxxList = xxxMapper.selectByExample(xxxxx, pageBounds);
- *     return Pages.returnList(xxxList);
+ *     return Pages.returnPage(xxxList);
  * }
  *
  * <span style="color:red">Controller 中不要使用此类</span>, mybatis 的分页插件只需要在服务端引入.

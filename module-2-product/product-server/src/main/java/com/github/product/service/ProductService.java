@@ -30,7 +30,7 @@ public class ProductService implements ProductInterface {
         if (LogUtil.ROOT_LOG.isDebugEnabled()) {
             LogUtil.ROOT_LOG.debug("调用实现类");
         }
-        return Pages.returnList(null);
+        return Pages.returnPage(null);
     }
 
     @ApiIgnore
