@@ -19,6 +19,6 @@ public class UserFallback implements UserClient {
         if (LogUtil.ROOT_LOG.isDebugEnabled()) {
             LogUtil.ROOT_LOG.debug("调用断路器");
         }
-        return Pages.returnList(null);
+        return Pages.returnPage(null);
     }
 }

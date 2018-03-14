@@ -2,13 +2,11 @@ package com.github.common.resource;
 
 import com.github.common.util.A;
 import com.github.common.util.U;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 public final class CollectEnumUtil {
@@ -20,23 +18,17 @@ public final class CollectEnumUtil {
     /** 在 enum 中返回给前台的下拉数据的值, 如果没有将会以 name() 为值 */
     private static final String VALUE = "getValue";
 
-    private static List<Map<Object, Object>> cacheList = null;
-    private static Map<String, Map<Object, Object>> cacheMap = Maps.newHashMap();
+    private static Map<String, Map<Object, Object>> cacheMap = Maps.newLinkedHashMap();
 
     /** 获取所有枚举的说明 */
-    public static List<Map<Object, Object>> enumList(Map<String, Object> enums) {
-        if (A.isNotEmpty(cacheList)) {
-            return cacheList;
+    public static Map<String, Map<Object, Object>> enumMap(Map<String, Object> enums) {
+        if (A.isNotEmpty(cacheMap)) {
+            return cacheMap;
         }
-        List<Map<Object, Object>> enumList = Lists.newArrayList();
         for (String type : enums.keySet()) {
-            Map<Object, Object> enumInfo = enumInfo(type, enums);
-            if (A.isNotEmpty(enumInfo)) {
-                enumList.add(A.maps(type, enumInfo));
-            }
+            enumInfo(type, enums);
         }
-        cacheList = enumList;
-        return enumList;
+        return cacheMap;
     }
 
     /** 根据枚举的名字获取单个枚举的说明 */
@@ -68,7 +60,7 @@ public final class CollectEnumUtil {
             // ignore
         }
 
-        Map<Object, Object> map = A.newLinkedHashMap();
+        Map<Object, Object> map = Maps.newHashMap();
         for (Object anEnum : ((Class) enumClass).getEnumConstants()) {
             // 没有 getCode 方法就使用枚举的 ordinal
             Object key = U.getMethod(anEnum, CODE);

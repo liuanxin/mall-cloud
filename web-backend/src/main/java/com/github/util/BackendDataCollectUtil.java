@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.Set;
 
 /** 从各模块中收集数据的工具类 */
-public final class ManagerDataCollectUtil {
+public final class BackendDataCollectUtil {
 
     private static final List<Class[]> ALL_MODEL_ENUM = Lists.newArrayList();
     static {

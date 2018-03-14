@@ -2,8 +2,7 @@ package com.github.global.enums;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.github.common.util.A;
-import com.github.common.util.U;
+import com.github.common.Const;
 
 import java.util.Map;
 
@@ -27,25 +26,14 @@ public enum Gender {
         return code;
     }
 
-
-    private static final String CODE = "code";
-    /** 序列化给前端时. 默认返回 name(), 如果只想给前端返回数值, 把注解挪到 getCode 即可 */
+    /** 序列化给前端时, 如果只想给前端返回数值, 把注解挪到 getCode 即可 */
     @JsonValue
     public Map<String, String> serializer() {
-        return A.maps(
-                CODE, code,    // 前端传递这个, 数据库也存这个
-                "value", value // 前端显示这个
-        );
+        return Const.serializerEnum(code, value);
     }
-    /** 数据反序列化回来时 */
+    /** 数据反序列化. 如 male、0、男、{"code": 0, "value": "男"} 都可以反序列化为 Gender.Male 值 */
     @JsonCreator
     public static Gender deserializer(Object obj) {
-        Object tmp;
-        if (obj instanceof Map) {
-            tmp = ((Map) obj).get(CODE);
-        } else {
-            tmp = obj.toString();
-        }
-        return U.toEnum(Gender.class, tmp);
+        return Const.enumDeserializer(obj, Gender.class);
     }
 }
