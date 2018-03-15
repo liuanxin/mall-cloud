@@ -395,7 +395,7 @@ class Server {
 
     private static final String CONFIG_DATA = "package " + PACKAGE + ".%s.config;\n" +
             "\n" +
-            "import " + PACKAGE + ".common.resource.CollectMybatisTypeHandlerUtil;\n" +
+            "import " + PACKAGE + ".common.resource.CollectTypeHandlerUtil;\n" +
             "import " + PACKAGE + ".common.resource.CollectResourceUtil;\n" +
             "import " + PACKAGE + ".common.util.A;\n" +
             "import " + PACKAGE + ".global.constant.GlobalConst;\n" +
@@ -419,7 +419,7 @@ class Server {
             "    ));\n" +
             "    \n" +
             "    /** 要加载的 mybatis 类型处理器的目录 */\n" +
-            "    static final TypeHandler[] HANDLER_ARRAY = CollectMybatisTypeHandlerUtil.handler(A.maps(\n" +
+            "    static final TypeHandler[] HANDLER_ARRAY = CollectTypeHandlerUtil.typeHandler(A.maps(\n" +
             "            GlobalConst.MODULE_NAME, GlobalConst.class,\n" +
             "            %sConst.MODULE_NAME, %sConfigData.class\n" +
             "    ));\n" +
@@ -461,7 +461,7 @@ class Server {
             "        sessionFactory.setDataSource(dataSource);\n" +
             "        // 装载 xml 实现\n" +
             "        sessionFactory.setMapperLocations(%sConfigData.RESOURCE_ARRAY);\n" +
-            "        // 装载 handler 实现\n" +
+            "        // 装载 typeHandler 实现\n" +
             "        sessionFactory.setTypeHandlers(%sConfigData.HANDLER_ARRAY);\n" +
             "        // mybatis 的分页插件\n" +
             "        sessionFactory.setPlugins(new Interceptor[] { new PageInterceptor(\"mysql\") });\n" +

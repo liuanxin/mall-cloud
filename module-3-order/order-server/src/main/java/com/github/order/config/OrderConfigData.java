@@ -1,6 +1,6 @@
 package com.github.order.config;
 
-import com.github.common.resource.CollectMybatisTypeHandlerUtil;
+import com.github.common.resource.CollectTypeHandlerUtil;
 import com.github.common.resource.CollectResourceUtil;
 import com.github.common.util.A;
 import com.github.global.constant.GlobalConst;
@@ -25,7 +25,7 @@ final class OrderConfigData {
     ));
     
     /** 要加载的 mybatis 类型处理器的目录 */
-    static final TypeHandler[] HANDLER_ARRAY = CollectMybatisTypeHandlerUtil.handler(A.maps(
+    static final TypeHandler[] HANDLER_ARRAY = CollectTypeHandlerUtil.typeHandler(A.maps(
             GlobalConst.MODULE_NAME, GlobalConst.class,
             OrderConst.MODULE_NAME, OrderConfigData.class
     ));

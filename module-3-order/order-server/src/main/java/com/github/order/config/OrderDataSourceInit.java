@@ -35,7 +35,7 @@ public class OrderDataSourceInit {
         sessionFactory.setDataSource(dataSource);
         // 装载 xml 实现
         sessionFactory.setMapperLocations(OrderConfigData.RESOURCE_ARRAY);
-        // 装载 handler 实现
+        // 装载 typeHandler 实现
         sessionFactory.setTypeHandlers(OrderConfigData.HANDLER_ARRAY);
         // mybatis 的分页插件
         sessionFactory.setPlugins(new Interceptor[] { new PageInterceptor("mysql") });

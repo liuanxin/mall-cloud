@@ -91,7 +91,7 @@ public final class Const {
     public static String enumPath(String moduleName) {
         return BASE_PACKAGE + "." + moduleName.replace('-', '.') + ".enums";
     }
-    /** 指定模块存放 handler 的包名 */
+    /** 指定模块存放 typeHandler 的包名 */
     public static String handlerPath(String moduleName) {
         return BASE_PACKAGE + "." + moduleName.replace('-', '.') + ".handler";
     }

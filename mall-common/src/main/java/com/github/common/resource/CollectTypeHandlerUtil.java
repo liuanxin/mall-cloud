@@ -18,14 +18,14 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 /** 收集 mybatis 的类型处理工具类 */
-public final class CollectMybatisTypeHandlerUtil {
+public final class CollectTypeHandlerUtil {
 
     /**
      * 获取多个包底下 mybatis 要加载的 类型处理类
      *
      * key 表示模块名(包含在类型处理所在类的包名上), value 表示枚举类所在包的类(用来获取 ClassLoader)
      */
-    public static TypeHandler[] handler(Map<String, Class> moduleMap) {
+    public static TypeHandler[] typeHandler(Map<String, Class> moduleMap) {
         List<TypeHandler> handlerList = Lists.newArrayList();
         for (Map.Entry<String, Class> entry : moduleMap.entrySet()) {
             // 将模块里面的 mybatis 类型处理器都收集起来装载进 mybatis 上下文
