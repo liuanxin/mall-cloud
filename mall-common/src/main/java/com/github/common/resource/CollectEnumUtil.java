@@ -10,6 +10,7 @@ import com.google.common.collect.Sets;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -95,7 +96,7 @@ public final class CollectEnumUtil {
     public static Class[] getEnumClass(Map<String, Class> enumMap) {
         Set<Class> set = Sets.newHashSet();
         for (Map.Entry<String, Class> entry : enumMap.entrySet()) {
-            Class[] enums = Loader.getEnumArray(entry.getValue(), Const.enumPath(entry.getKey()));
+            List<Class> enums = LoaderClass.getEnumArray(entry.getValue(), Const.enumPath(entry.getKey()));
             for (Class anEnum : enums) {
                 if (U.isNotBlank(anEnum) && anEnum.isEnum()) {
                     // 将每个模块里面的枚举都收集起来, 然后会放入到渲染上下文里面去
@@ -114,7 +115,7 @@ public final class CollectEnumUtil {
     private static Map<String, Class> getEnumMap(Map<String, Class> enumMap) {
         Map<String, Class> returnMap = Maps.newHashMap();
         for (Map.Entry<String, Class> entry : enumMap.entrySet()) {
-            Class[] enums = Loader.getEnumArray(entry.getValue(), Const.enumPath(entry.getKey()));
+            List<Class> enums = LoaderClass.getEnumArray(entry.getValue(), Const.enumPath(entry.getKey()));
             for (Class anEnum : enums) {
                 if (U.isNotBlank(anEnum) && anEnum.isEnum()) {
                     // 将每个模块里面的枚举都收集起来供请求接口使用
