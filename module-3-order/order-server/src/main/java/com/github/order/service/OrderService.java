@@ -28,7 +28,7 @@ public class OrderService implements OrderInterface {
                          @ApiParam(desc = "当前页数") Integer page,
                          @ApiParam(desc = "每页条数") Integer limit) {
         if (LogUtil.ROOT_LOG.isDebugEnabled()) {
-            LogUtil.ROOT_LOG.debug("调用实现类");
+            LogUtil.ROOT_LOG.debug("调用实现类" + xx + ", page:" + page + ", limit:" + limit);
         }
         return Pages.returnPage(null);
     }

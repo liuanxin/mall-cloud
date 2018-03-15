@@ -15,12 +15,12 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-public final class Loader {
+final class Loader {
 
     /**
      * 基于指定的类(会基于此类来获取类加载器), 在指定的包名下获取所有的枚举
      */
-    public static Class[] getEnumArray(Class clazz, String classPackage) {
+    static Class[] getEnumArray(Class clazz, String classPackage) {
         List<Class> enumList = getClassList(clazz, classPackage, true);
         return enumList.toArray(new Class[enumList.size()]);
     }

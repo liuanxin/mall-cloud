@@ -1,9 +1,10 @@
 package com.github.common.resource;
 
-import com.google.common.collect.Lists;
+import com.github.common.Const;
+import com.github.common.util.A;
 import com.github.common.util.LogUtil;
 import com.github.common.util.U;
-import com.github.common.util.A;
+import com.google.common.collect.Lists;
 import org.apache.ibatis.type.TypeHandler;
 
 import java.io.File;
@@ -12,15 +13,32 @@ import java.net.JarURLConnection;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-public final class LoaderHandler {
+/** 收集 mybatis 的类型处理工具类 */
+public final class CollectMybatisTypeHandlerUtil {
 
     /**
-     * 基于指定的类(会基于此类来获取类加载器), 在指定的包名下获取 mybatis 的类型处理器
+     * 获取多个包底下 mybatis 要加载的 类型处理类
+     *
+     * key 表示模块名(包含在类型处理所在类的包名上), value 表示枚举类所在包的类(用来获取 ClassLoader)
      */
-    public static TypeHandler[] getHandleArray(Class clazz, String classPackage) {
+    public static TypeHandler[] handler(Map<String, Class> moduleMap) {
+        List<TypeHandler> handlerList = Lists.newArrayList();
+        for (Map.Entry<String, Class> entry : moduleMap.entrySet()) {
+            // 将模块里面的 mybatis 类型处理器都收集起来装载进 mybatis 上下文
+            handlerList.addAll(getHandleArray(entry.getValue(), Const.handlerPath(entry.getKey())));
+        }
+        if (LogUtil.ROOT_LOG.isDebugEnabled()) {
+            LogUtil.ROOT_LOG.debug("mybatis load type handle:({})", A.toStr(handlerList));
+        }
+        return handlerList.toArray(new TypeHandler[handlerList.size()]);
+    }
+
+    /** 基于指定的类(用来获取 ClassLoader), 在指定的包名下获取 mybatis 的类型处理器 */
+    private static List<TypeHandler> getHandleArray(Class clazz, String classPackage) {
         if (LogUtil.ROOT_LOG.isTraceEnabled()) {
             LogUtil.ROOT_LOG.trace("{} in ({})", clazz, clazz.getProtectionDomain().getCodeSource().getLocation());
         }
@@ -60,9 +78,8 @@ public final class LoaderHandler {
                 }
             }
         }
-        return handlerList.toArray(new TypeHandler[handlerList.size()]);
+        return handlerList;
     }
-
     private static TypeHandler getTypeHandler(String name, String classPackage) {
         if (U.isNotBlank(name)) {
             String className = classPackage + "." + name.replace(".class", "");

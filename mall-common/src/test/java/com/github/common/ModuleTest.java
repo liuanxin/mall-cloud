@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.github.common.ModuleTest.PACKAGE;
+import static com.github.common.ModuleTest.*;
 
 public class ModuleTest {
 
@@ -142,7 +142,7 @@ class Parent {
                 "    </modules>\n" +
                 "</project>\n";
         String pom = String.format(PARENT_POM, moduleName, comment, model, client, server);
-        ModuleTest.writeFile(new File(module, "pom.xml"), pom);
+        writeFile(new File(module, "pom.xml"), pom);
     }
 }
 
@@ -152,14 +152,14 @@ class Client {
             "\n" +
             "import " + PACKAGE + ".%s.service.%sInterface;\n" +
             "import " + PACKAGE + ".%s.constant.%sConst;\n" +
-            (ModuleTest.fallback ? "import " + PACKAGE + ".%s.hystrix.%sFallback;\n" : "") +
+            (fallback ? "import " + PACKAGE + ".%s.hystrix.%sFallback;\n" : "") +
             "import org.springframework.cloud.netflix.feign.FeignClient;\n" +
             "\n" +
             "/**\n" +
             " * %s相关的调用接口\n" +
-            ModuleTest.AUTHOR +
+            AUTHOR +
             " */\n" +
-            "@FeignClient(value = %sConst.MODULE_NAME" + (ModuleTest.fallback ? ", fallback = %sFallback.class" : "") + ")\n" +
+            "@FeignClient(value = %sConst.MODULE_NAME" + (fallback ? ", fallback = %sFallback.class" : "") + ")\n" +
             "public interface %sClient extends %sInterface {\n" +
             "}\n";
 
@@ -173,7 +173,7 @@ class Client {
             "\n" +
             "/**\n" +
             " * %s相关的断路器\n" +
-            ModuleTest.AUTHOR +
+            AUTHOR +
             " */\n" +
             "@Component\n" +
             "public class %sFallback implements %sClient {\n" +
@@ -222,19 +222,19 @@ class Client {
     static void generateClient(String moduleName, String packageName, String client,
                               String module, String comment) throws IOException {
         String parentPackageName = packageName.replace("-", ".");
-        String clazzName = ModuleTest.capitalize(parentPackageName);
+        String clazzName = capitalize(parentPackageName);
 
         File modelPath = new File(module + "/" + client + "/src/main/java");
         modelPath.mkdirs();
         String modelPom = String.format(POM, moduleName, packageName, comment, packageName);
-        ModuleTest.writeFile(new File(module + "/" + client, "pom.xml"), modelPom);
+        writeFile(new File(module + "/" + client, "pom.xml"), modelPom);
 
-        File modelSourcePath = new File(modelPath, ModuleTest.PACKAGE_PATH + "/" + parentPackageName.replaceAll("\\.", "/"));
+        File modelSourcePath = new File(modelPath, PACKAGE_PATH + "/" + parentPackageName.replaceAll("\\.", "/"));
         File model_client = new File(modelSourcePath, "client");
         model_client.mkdirs();
 
         String constModel;
-        if (ModuleTest.fallback) {
+        if (fallback) {
             constModel = String.format(CLIENT, parentPackageName,
                     parentPackageName, clazzName, parentPackageName, clazzName,
                     parentPackageName, clazzName, comment, clazzName, clazzName,
@@ -244,13 +244,13 @@ class Client {
             modelHystrix.mkdirs();
             String interfaceModel = String.format(FALLBACK, parentPackageName,
                     parentPackageName, clazzName, comment, clazzName, clazzName);
-            ModuleTest.writeFile(new File(modelHystrix, clazzName + "Fallback.java"), interfaceModel);
+            writeFile(new File(modelHystrix, clazzName + "Fallback.java"), interfaceModel);
         } else {
             constModel = String.format(CLIENT, parentPackageName,
                     parentPackageName, clazzName, parentPackageName, clazzName,
                     comment, clazzName, clazzName, clazzName, clazzName);
         }
-        ModuleTest.writeFile(new File(model_client, clazzName + "Client.java"), constModel);
+        writeFile(new File(model_client, clazzName + "Client.java"), constModel);
     }
 }
 
@@ -260,7 +260,7 @@ class Model {
             "\n" +
             "/**\n" +
             " * %s模块相关的常数设置类\n" +
-            ModuleTest.AUTHOR +
+            AUTHOR +
             " */\n" +
             "public final class %sConst {\n" +
             "\n" +
@@ -284,7 +284,7 @@ class Model {
             "\n" +
             "/**\n" +
             " * %s相关的接口\n" +
-            ModuleTest.AUTHOR +
+            AUTHOR +
             " */\n" +
             "public interface %sInterface {\n" +
             "    \n" +
@@ -334,14 +334,14 @@ class Model {
     static void generateModel(String moduleName, String packageName, String model,
                               String module, String comment) throws IOException {
         packageName = packageName.replace("-", ".");
-        String clazzName = ModuleTest.capitalize(packageName);
+        String clazzName = capitalize(packageName);
 
         File modelPath = new File(module + "/" + model + "/src/main/java");
         modelPath.mkdirs();
         String modelPom = String.format(POM, moduleName, model, comment);
-        ModuleTest.writeFile(new File(module + "/" + model, "pom.xml"), modelPom);
+        writeFile(new File(module + "/" + model, "pom.xml"), modelPom);
 
-        File modelSourcePath = new File(modelPath, ModuleTest.PACKAGE_PATH + "/" + packageName.replaceAll("\\.", "/"));
+        File modelSourcePath = new File(modelPath, PACKAGE_PATH + "/" + packageName.replaceAll("\\.", "/"));
         File model_config = new File(modelSourcePath, "constant");
         File model_interface = new File(modelSourcePath, "service");
         model_config.mkdirs();
@@ -350,11 +350,11 @@ class Model {
         new File(modelSourcePath, "model").mkdirs();
         String constModel = String.format(CONST, packageName, comment, clazzName,
                 packageName, comment, clazzName.toUpperCase());
-        ModuleTest.writeFile(new File(model_config, clazzName + "Const.java"), constModel);
+        writeFile(new File(model_config, clazzName + "Const.java"), constModel);
 
         String interfaceModel = String.format(INTERFACE, packageName, packageName, clazzName,
                 comment, clazzName, clazzName, clazzName.toUpperCase());
-        ModuleTest.writeFile(new File(model_interface, clazzName + "Interface.java"), interfaceModel);
+        writeFile(new File(model_interface, clazzName + "Interface.java"), interfaceModel);
     }
 }
 
@@ -395,22 +395,17 @@ class Server {
 
     private static final String CONFIG_DATA = "package " + PACKAGE + ".%s.config;\n" +
             "\n" +
-            "import " + PACKAGE + ".common.Const;\n" +
-            "import " + PACKAGE + ".common.resource.CollectHandlerUtil;\n" +
+            "import " + PACKAGE + ".common.resource.CollectMybatisTypeHandlerUtil;\n" +
             "import " + PACKAGE + ".common.resource.CollectResourceUtil;\n" +
-            "import " + PACKAGE + ".common.resource.LoaderHandler;\n" +
-            "import " + PACKAGE + ".common.resource.LoaderResource;\n" +
+            "import " + PACKAGE + ".common.util.A;\n" +
             "import " + PACKAGE + ".global.constant.GlobalConst;\n" +
             "import " + PACKAGE + ".%s.constant.%sConst;\n" +
-            "import com.google.common.collect.Lists;\n" +
             "import org.apache.ibatis.type.TypeHandler;\n" +
             "import org.springframework.core.io.Resource;\n" +
             "\n" +
-            "import java.util.List;\n" +
-            "\n" +
             "/**\n" +
             " * %s模块的配置数据. 主要是 mybatis 的多配置目录和类型处理器\n" +
-            ModuleTest.AUTHOR +
+            AUTHOR +
             " */\n" +
             "final class %sConfigData {\n" +
             "\n" +
@@ -418,21 +413,16 @@ class Server {
             "            %sConst.MODULE_NAME + \"/*.xml\",\n" +
             "            %sConst.MODULE_NAME + \"-custom/*.xml\"\n" +
             "    };\n" +
-            "    private static final List<Resource[]> RESOURCES = Lists.newArrayList();\n" +
-            "    static {\n" +
-            "        RESOURCES.add(LoaderResource.getResourceArray(%sConfigData.class, RESOURCE_PATH));\n" +
-            "    }\n" +
-            "\n" +
-            "    private static final List<TypeHandler[]> HANDLERS = Lists.newArrayList();\n" +
-            "    static {\n" +
-            "        HANDLERS.add(LoaderHandler.getHandleArray(GlobalConst.class, Const.handlerPath(GlobalConst.MODULE_NAME)));\n" +
-            "        HANDLERS.add(LoaderHandler.getHandleArray(%sConfigData.class, Const.handlerPath(%sConst.MODULE_NAME)));\n" +
-            "    }\n" +
-            "\n" +
             "    /** 要加载的 mybatis 的配置文件目录 */\n" +
-            "    static final Resource[] RESOURCE_ARRAY = CollectResourceUtil.resource(RESOURCES);\n" +
+            "    static final Resource[] RESOURCE_ARRAY = CollectResourceUtil.resource(A.maps(\n" +
+            "            %sConfigData.class, RESOURCE_PATH\n" +
+            "    ));\n" +
+            "    \n" +
             "    /** 要加载的 mybatis 类型处理器的目录 */\n" +
-            "    static final TypeHandler[] HANDLER_ARRAY = CollectHandlerUtil.handler(HANDLERS);\n" +
+            "    static final TypeHandler[] HANDLER_ARRAY = CollectMybatisTypeHandlerUtil.handler(A.maps(\n" +
+            "            GlobalConst.MODULE_NAME, GlobalConst.class,\n" +
+            "            %sConst.MODULE_NAME, %sConfigData.class\n" +
+            "    ));\n" +
             "}\n";
 
     private static final String DATA_SOURCE = "package " + PACKAGE + ".%s.config;\n" +
@@ -456,7 +446,7 @@ class Server {
             " * @see org.mybatis.spring.annotation.MapperScannerRegistrar#registerBeanDefinitions\n" +
             " * @see org.mybatis.spring.mapper.MapperScannerConfigurer#postProcessBeanDefinitionRegistry\n" +
             " * @see org.mybatis.spring.mapper.ClassPathMapperScanner\n" +
-            ModuleTest.AUTHOR +
+            AUTHOR +
             " */\n" +
             "@Configuration\n" +
             "@MapperScan(basePackages = Const.BASE_PACKAGE)\n" +
@@ -520,7 +510,7 @@ class Server {
             " * @see org.springframework.boot.autoconfigure.web.ErrorController\n" +
             " * @see org.springframework.boot.autoconfigure.web.ErrorProperties\n" +
             " * @see org.springframework.boot.autoconfigure.web.ErrorMvcAutoConfiguration\n" +
-            ModuleTest.AUTHOR +
+            AUTHOR +
             " */\n" +
             "@RestControllerAdvice\n" +
             "public class %sGlobalException {\n" +
@@ -614,7 +604,7 @@ class Server {
             "\n" +
             "/**\n" +
             " * %s模块的 web 拦截器\n" +
-            ModuleTest.AUTHOR +
+            AUTHOR +
             " */\n" +
             "public class %sInterceptor implements HandlerInterceptor {\n" +
             "\n" +
@@ -658,7 +648,7 @@ class Server {
             "\n" +
             "/**\n" +
             " * %s模块的配置数据. 主要是 mybatis 的多配置目录和类型处理器\n" +
-            ModuleTest.AUTHOR +
+            AUTHOR +
             " */\n" +
             "@Configuration\n" +
             "public class %sWebConfig extends WebMvcConfigurationSupport {\n" +
@@ -712,7 +702,7 @@ class Server {
             "\n" +
             "/**\n" +
             " * %s模块的接口实现类\n" +
-            ModuleTest.AUTHOR +
+            AUTHOR +
             " */\n" +
             "@ApiGroup({ %sConst.MODULE_INFO })\n" +
             "@RestController\n" +
@@ -724,7 +714,7 @@ class Server {
             "                         @ApiParam(desc = \"当前页数\") Integer page,\n" +
             "                         @ApiParam(desc = \"每页条数\") Integer limit) {\n" +
             "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
-            "            LogUtil.ROOT_LOG.debug(\"调用实现类\");\n" +
+            "            LogUtil.ROOT_LOG.debug(\"调用实现类\" + xx + \", page:\" + page + \", limit:\" + limit);\n" +
             "        }\n" +
             "        return Pages.returnPage(null);\n" +
             "    }\n" +
@@ -758,7 +748,7 @@ class Server {
             "    minimumIdle: 1\n" +
             "    maximumPoolSize: 1\n" +
             "\n" +
-            "register.center: http://127.0.0.1:" + ModuleTest.REGISTER_CENTER_PORT + "/eureka/\n" +
+            "register.center: http://127.0.0.1:" + REGISTER_CENTER_PORT + "/eureka/\n" +
             "eureka:\n" +
             "  client:\n" +
             "    # 开启健康检查(需要 spring-boot-starter-actuator 包)\n" +
@@ -806,8 +796,8 @@ class Server {
             "      cachePrepStmts: true\n" +
             "      useServerPrepStmts: true\n" +
             "\n" +
-            "register.center: http://test1:" + ModuleTest.REGISTER_CENTER_PORT + "/eureka/,http://test2:" +
-            ModuleTest.REGISTER_CENTER_PORT + "/eureka/,http://test3:" + ModuleTest.REGISTER_CENTER_PORT + "/eureka/\n" +
+            "register.center: http://test1:" + REGISTER_CENTER_PORT + "/eureka/,http://test2:" +
+            REGISTER_CENTER_PORT + "/eureka/,http://test3:" + REGISTER_CENTER_PORT + "/eureka/\n" +
             "eureka:\n" +
             "  client:\n" +
             "    healthcheck.enabled: true\n" +
@@ -847,8 +837,8 @@ class Server {
             "      cachePrepStmts: true\n" +
             "      useServerPrepStmts: true\n" +
             "\n" +
-            "register.center: http://prod1:" + ModuleTest.REGISTER_CENTER_PORT + "/eureka/,http://prod2:" +
-            ModuleTest.REGISTER_CENTER_PORT + "/eureka/,http://prod3:" + ModuleTest.REGISTER_CENTER_PORT + "/eureka/\n" +
+            "register.center: http://prod1:" + REGISTER_CENTER_PORT + "/eureka/,http://prod2:" +
+            REGISTER_CENTER_PORT + "/eureka/,http://prod3:" + REGISTER_CENTER_PORT + "/eureka/\n" +
             "eureka:\n" +
             "  client:\n" +
             "    healthcheck.enabled: true\n" +
@@ -1093,7 +1083,7 @@ class Server {
             "\n" +
             "/**\n" +
             " * %s模块生成 enumHandle 的工具类\n" +
-            ModuleTest.AUTHOR +
+            AUTHOR +
             " */\n" +
             "public class %sGenerateEnumHandler {\n" +
             "\n" +
@@ -1106,15 +1096,15 @@ class Server {
     static void generateServer(String moduleName, String packageName, String model,
                                String server, String module, String port, String comment) throws IOException {
         String parentPackageName = packageName.replace("-", ".");
-        String clazzName = ModuleTest.capitalize(parentPackageName);
+        String clazzName = capitalize(parentPackageName);
 
         File servmallath = new File(module + "/" + server + "/src/main/java");
         servmallath.mkdirs();
 
         String servmallom = String.format(SERVER_POM, moduleName, server, comment, model, server + "-" + port);
-        ModuleTest.writeFile(new File(module + "/" + server, "pom.xml"), servmallom);
+        writeFile(new File(module + "/" + server, "pom.xml"), servmallom);
 
-        File packagePath = new File(servmallath + "/" + ModuleTest.PACKAGE_PATH);
+        File packagePath = new File(servmallath + "/" + PACKAGE_PATH);
         File sourcePath = new File(packagePath + "/" + parentPackageName.replaceAll("\\.", "/"));
         File configPath = new File(sourcePath, "config");
         File servicePath = new File(sourcePath, "service");
@@ -1124,60 +1114,60 @@ class Server {
         new File(sourcePath, "repository").mkdirs();
 
         String application = String.format(APPLICATION, clazzName, clazzName, clazzName);
-        ModuleTest.writeFile(new File(packagePath, clazzName + "Application.java"), application);
+        writeFile(new File(packagePath, clazzName + "Application.java"), application);
 
         String configData = String.format(CONFIG_DATA, parentPackageName, parentPackageName, clazzName, comment,
                 clazzName, clazzName, clazzName, clazzName, clazzName, clazzName);
-        ModuleTest.writeFile(new File(configPath, clazzName + "ConfigData.java"), configData);
+        writeFile(new File(configPath, clazzName + "ConfigData.java"), configData);
 
         String dataSource = String.format(DATA_SOURCE, parentPackageName, clazzName, clazzName, clazzName);
-        ModuleTest.writeFile(new File(configPath, clazzName + "DataSourceInit.java"), dataSource);
+        writeFile(new File(configPath, clazzName + "DataSourceInit.java"), dataSource);
 
         String exception = String.format(EXCEPTION, parentPackageName, clazzName, comment);
-        ModuleTest.writeFile(new File(configPath, clazzName + "GlobalException.java"), exception);
+        writeFile(new File(configPath, clazzName + "GlobalException.java"), exception);
 
         String interceptor = String.format(INTERCEPTOR, parentPackageName, comment, clazzName, clazzName);
-        ModuleTest.writeFile(new File(configPath, clazzName + "Interceptor.java"), interceptor);
+        writeFile(new File(configPath, clazzName + "Interceptor.java"), interceptor);
 
         String war = String.format(WEB_CONFIG, parentPackageName, comment, clazzName, clazzName);
-        ModuleTest.writeFile(new File(configPath, clazzName + "WebConfig.java"), war);
+        writeFile(new File(configPath, clazzName + "WebConfig.java"), war);
 
         String service = String.format(SERVICE, parentPackageName, parentPackageName, clazzName,
                 comment, clazzName, clazzName, clazzName, comment, clazzName.toUpperCase(), parentPackageName);
-        ModuleTest.writeFile(new File(servicePath, clazzName + "Service.java"), service);
+        writeFile(new File(servicePath, clazzName + "Service.java"), service);
 
 
         File resourcePath = new File(module + "/" + server + "/src/main/resources");
         resourcePath.mkdirs();
 
         String applicationYml = String.format(APPLICATION_YML, port, packageName);
-        ModuleTest.writeFile(new File(resourcePath, "application.yml"), applicationYml);
+        writeFile(new File(resourcePath, "application.yml"), applicationYml);
         String applicationTestYml = String.format(APPLICATION_TEST_YML, port,
                 packageName, packageName, packageName, packageName);
-        ModuleTest.writeFile(new File(resourcePath, "application-test.yml"), applicationTestYml);
+        writeFile(new File(resourcePath, "application-test.yml"), applicationTestYml);
         String applicationProdYml = String.format(APPLICATION_PROD_YML, port,
                 packageName, packageName, packageName, packageName);
-        ModuleTest.writeFile(new File(resourcePath, "application-prod.yml"), applicationProdYml);
+        writeFile(new File(resourcePath, "application-prod.yml"), applicationProdYml);
 
-        ModuleTest.writeFile(new File(resourcePath, "config.properties"), CONFIG);
+        writeFile(new File(resourcePath, "config.properties"), CONFIG);
         String logXml = LOG_XML.replaceAll("~MODULE_NAME~", parentPackageName);
-        ModuleTest.writeFile(new File(resourcePath, "log-dev.xml"), logXml);
+        writeFile(new File(resourcePath, "log-dev.xml"), logXml);
         String testXml = LOG_TEST_XML.replaceAll("~MODULE_NAME~", parentPackageName);
-        ModuleTest.writeFile(new File(resourcePath, "log-test.xml"), testXml);
+        writeFile(new File(resourcePath, "log-test.xml"), testXml);
         String prodXml = LOG_PROD_XML.replaceAll("~MODULE_NAME~", parentPackageName);
-        ModuleTest.writeFile(new File(resourcePath, "log-prod.xml"), prodXml);
+        writeFile(new File(resourcePath, "log-prod.xml"), prodXml);
 
 
         File testParent = new File(module + "/" + server + "/src/test/java/" +
-                ModuleTest.PACKAGE_PATH + "/" + parentPackageName.replace('.', '/'));
+                PACKAGE_PATH + "/" + parentPackageName.replace('.', '/'));
         testParent.mkdirs();
 
         File testResource = new File(module + "/" + server + "/src/test/resources");
         testResource.mkdirs();
-        ModuleTest.writeFile(new File(testResource, packageName + ".sql"), "");
+        writeFile(new File(testResource, packageName + ".sql"), "");
 
         String test = String.format(TEST_ENUM_HANDLE, parentPackageName,
                 parentPackageName, clazzName, comment, clazzName, clazzName);
-        ModuleTest.writeFile(new File(testParent, clazzName + "GenerateEnumHandler.java"), test);
+        writeFile(new File(testParent, clazzName + "GenerateEnumHandler.java"), test);
     }
 }

@@ -32,7 +32,7 @@ public class ManagerBeanInit {
         RenderViewResolver resolver = new RenderViewResolver();
         resolver.putVariable(online)
                 .putClass(ManagerSessionUtil.class)
-                .putEnum(ManagerDataCollectUtil.ENUM_CLASS);
+                .putEnum(ManagerDataCollectUtil.VIEW_ENUM_ARRAY);
         properties.applyToViewResolver(resolver);
         return resolver;
     }

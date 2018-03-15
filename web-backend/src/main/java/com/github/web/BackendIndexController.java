@@ -1,7 +1,6 @@
 package com.github.web;
 
 import com.github.common.json.JsonResult;
-import com.github.common.resource.CollectEnumUtil;
 import com.github.common.util.SecurityCodeUtil;
 import com.github.common.util.U;
 import com.github.util.BackendDataCollectUtil;
@@ -26,8 +25,8 @@ public class BackendIndexController {
     @ResponseBody
     public JsonResult enumList(String type) {
         return U.isBlank(type) ?
-                JsonResult.success("枚举列表", CollectEnumUtil.enumMap(BackendDataCollectUtil.ENUMS)) :
-                JsonResult.success("枚举信息", CollectEnumUtil.enumInfo(type, BackendDataCollectUtil.ENUMS));
+                JsonResult.success("枚举列表", BackendDataCollectUtil.ALL_ENUM_INFO) :
+                JsonResult.success("枚举信息", BackendDataCollectUtil.singleEnumInfo(type));
     }
 
     @GetMapping("/code")
