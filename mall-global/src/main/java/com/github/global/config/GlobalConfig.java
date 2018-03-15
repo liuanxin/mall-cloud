@@ -1,6 +1,6 @@
 package com.github.global.config;
 
-import com.github.common.util.ApplicationContextUtil;
+import com.github.common.util.ApplicationContexts;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 public class GlobalConfig {
 
     @Bean
-    public ApplicationContextUtil setupApplicationContext() {
-        return new ApplicationContextUtil();
+    public ApplicationContexts setupApplicationContext() {
+        return new ApplicationContexts();
     }
 }
