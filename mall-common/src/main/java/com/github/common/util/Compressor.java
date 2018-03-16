@@ -65,24 +65,24 @@ public final class Compressor {
     private static final Pattern SCRIPT_PLACE_REGEX = compile(SCRIPT_PLACE);
 
     /** js 代码中的字符串 // 匹配 */
-    private static final Pattern SCRIPT_STR_SINGLE_REGEX = compile("\".*?(//).*?\"");
-    private static final Pattern SCRIPT_STR_SINGLE_APOSTROPHE_REGEX = compile("'.*?(//).*?'");
+    private static final Pattern SCRIPT_STR_SINGLE_REGEX = compile("(\".*?)(//)(.*?\")");
+    private static final Pattern SCRIPT_STR_SINGLE_APOSTROPHE_REGEX = compile("('.*?)(//)(.*?')");
     /** js 代码中的单行注释字符串占位符 */
     private static final String SCRIPT_STR_SINGLE_PLACE = place("script_str_single");
     /** js 代码中的单行注释字符串标签 */
     private static final Pattern SCRIPT_STR_SINGLE_PLACE_REGEX = compile(SCRIPT_STR_SINGLE_PLACE);
 
     /** js 代码中的字符串 /* 匹配 */
-    private static final Pattern SCRIPT_STR_MULTI_START_REGEX = compile("\".*?(/\\*).*?\"");
-    private static final Pattern SCRIPT_STR_MULTI_START_APOSTROPHE_REGEX = compile("'.*?(/\\*).*?'");
+    private static final Pattern SCRIPT_STR_MULTI_START_REGEX = compile("(\".*?)(/\\*)(.*?\")");
+    private static final Pattern SCRIPT_STR_MULTI_START_APOSTROPHE_REGEX = compile("('.*?)(/\\*)(.*?')");
     /** js 代码中的多行注释开始字符串占位符 */
     private static final String SCRIPT_STR_MULTI_START_PLACE = place("script_str_multi_start");
     /** js 代码中的多行注释开始字符串标签 */
     private static final Pattern SCRIPT_STR_MULTI_START_PLACE_REGEX = compile(SCRIPT_STR_MULTI_START_PLACE);
 
     /** js 代码中的字符串 * / 匹配 */
-    private static final Pattern SCRIPT_STR_MULTI_END_REGEX = compile("\".*?(\\*/).*?\"");
-    private static final Pattern SCRIPT_STR_MULTI_END_APOSTROPHE_REGEX = compile("'.*?(\\*/).*?'");
+    private static final Pattern SCRIPT_STR_MULTI_END_REGEX = compile("(\".*?)(\\*/)(.*?\")");
+    private static final Pattern SCRIPT_STR_MULTI_END_APOSTROPHE_REGEX = compile("('.*?)(\\*/)(.*?')");
     /** js 代码中的多行注释结束字符串占位符 */
     private static final String SCRIPT_STR_MULTI_END_PLACE = place("script_str_multi_end");
     /** js 代码中的多行注释结束字符串标签 */
@@ -156,6 +156,13 @@ public final class Compressor {
         }
         return flag ? match.replaceAll("$1" + Matcher.quoteReplacement(SCRIPT_PLACE) + "$3") : html;
     }
+    private static String replaceComment(Pattern pattern, String place, String content) {
+        Matcher matcher = pattern.matcher(content);
+        if (matcher.find()) {
+            content = matcher.replaceAll("$1" + Matcher.quoteReplacement(place) + "$3");
+        }
+        return content;
+    }
     private static String receiveJs(String html, List<String> ignoreList) {
         if (U.isNotBlank(html) && A.isNotEmpty(ignoreList)) {
             String place;
@@ -163,14 +170,14 @@ public final class Compressor {
                 place = ignoreList.remove(0);
                 if (U.isNotBlank(place)) {
                     // 把 js 字符串中 // 或 /* */ 替换掉
-                    place = replaceAll(SCRIPT_STR_SINGLE_REGEX, SCRIPT_STR_SINGLE_PLACE, place);
-                    place = replaceAll(SCRIPT_STR_SINGLE_APOSTROPHE_REGEX, SCRIPT_STR_SINGLE_PLACE, place);
+                    place = replaceComment(SCRIPT_STR_SINGLE_REGEX, SCRIPT_STR_SINGLE_PLACE, place);
+                    place = replaceComment(SCRIPT_STR_SINGLE_APOSTROPHE_REGEX, SCRIPT_STR_SINGLE_PLACE, place);
 
-                    place = replaceAll(SCRIPT_STR_MULTI_START_REGEX, SCRIPT_STR_MULTI_START_PLACE, place);
-                    place = replaceAll(SCRIPT_STR_MULTI_START_APOSTROPHE_REGEX, SCRIPT_STR_MULTI_START_PLACE, place);
+                    place = replaceComment(SCRIPT_STR_MULTI_START_REGEX, SCRIPT_STR_MULTI_START_PLACE, place);
+                    place = replaceComment(SCRIPT_STR_MULTI_START_APOSTROPHE_REGEX, SCRIPT_STR_MULTI_START_PLACE, place);
 
-                    place = replaceAll(SCRIPT_STR_MULTI_END_REGEX, SCRIPT_STR_MULTI_END_PLACE, place);
-                    place = replaceAll(SCRIPT_STR_MULTI_END_APOSTROPHE_REGEX, SCRIPT_STR_MULTI_END_PLACE, place);
+                    place = replaceComment(SCRIPT_STR_MULTI_END_REGEX, SCRIPT_STR_MULTI_END_PLACE, place);
+                    place = replaceComment(SCRIPT_STR_MULTI_END_APOSTROPHE_REGEX, SCRIPT_STR_MULTI_END_PLACE, place);
 
                     // 去掉 js 中的 多行 及 单行 注释
                     place = replaceJsAnnotation(place);
