@@ -421,24 +421,27 @@ public final class U {
      * @return 如果属性是枚举则调用枚举的 getValue 方法, 如果是日期则格式化, 否则返回此属性值的 toString 方法
      */
     public static String getField(Object data, String field) {
-        if (isBlank(field)) {
+        if (isBlank(data) || isBlank(field)) {
             return EMPTY;
         }
 
-        Object value = getMethod(data, fieldToMethod(field));
+        Object value;
+        if (data instanceof Map) {
+            value = ((Map) data).get(field);
+        } else {
+            value = getMethod(data, fieldToMethod(field));
+        }
+
         if (isBlank(value)) {
             return EMPTY;
-        }
-        else if (value.getClass().isEnum()) {
+        } else if (value.getClass().isEnum()) {
             // 如果是枚举, 则调用其 getValue 方法, getValue 没有值则使用枚举的 name
             Object enumValue = getMethod(value, "getValue");
             return getNil(enumValue != null ? enumValue : value.toString());
-        }
-        else if (value instanceof Date) {
+        } else if (value instanceof Date) {
             // 如果是日期, 则格式化
             return getNil(DateUtil.formatFull((Date) value));
-        }
-        else {
+        } else {
             return getNil(value);
         }
     }

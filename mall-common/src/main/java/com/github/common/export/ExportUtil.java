@@ -1,11 +1,16 @@
-package com.github.common.util;
+package com.github.common.export;
 
+import com.github.common.util.A;
+import com.github.common.util.RequestUtils;
+import com.github.common.util.U;
+import com.google.common.collect.Maps;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -13,35 +18,120 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/** 文件导出. 在 Controller 中调用 */
+/**
+ * <pre>
+ * 文件导出. 在 Controller 中调用. 如下示例
+ *
+ * &#064;Getter
+ * &#064;Setter
+ * public class XX {
+ *     &#064;ExportColumn("名称")
+ *     private String name;
+ *
+ *     &#064;ExportColumn("数量")
+ *     private Integer num;
+ *
+ *     &#064;ExportColumn("时间")
+ *     private Date time;   // 时间导出时会格式化成 yyyy-MM-dd HH:mm:ss
+ *
+ *     &#064;ExportColumn("类型")
+ *     private XXType type; // 枚举导出时会调用其 getValue 方法, 没有值则使用枚举的 name
+ * }
+ *
+ *
+ * &#064;GetMapping("/xx-export")
+ * public void xxx(String type, ..., HttpServletResponse response) throws IOException {
+ *     // 查询要导出的数据
+ *     List<XX> xxList = xxService.xxx(...);
+ *
+ *     // {@link ExportUtil#export(String, String, List, HttpServletResponse)}
+ *     ExportUtil.export(type, "文件名", xxList, response);
+ * }
+ * 其中 type 可以是 xls03、xls07、csv 三种(忽略大小写)
+ *
+ *
+ * 如果不想在实体中使用 ExportColumn 注解, 可以自己构建一个 {"字段名": "标题"} 的 map,
+ * 调用 {@link ExportUtil#export(String, String, LinkedHashMap, List, HttpServletResponse)} 即可
+ * </pre>
+ */
 public final class ExportUtil {
 
-    /**
-     * 导出 txt 格式文件! 在 Controller 中调用!
-     *
-     * @param name     导出的文件名(不带后缀)
-     * @param content  文件内容
-     */
-    public static void exportTxt(String name, String content, HttpServletResponse response) throws IOException {
-        // 导出的文件名
-        String fileName = encodeName(name) + ".txt";
+    private enum Type {
+        Xls03, Xls07, Csv
+    }
 
-        response.setContentType("application/octet-stream; charset=utf-8");
-        // 导出 txt
-        response.setContentType("text/plain");
-        response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
-        response.getOutputStream().write(content.getBytes(StandardCharsets.UTF_8));
+    /** 从类上收集导出的标题(在字段上标的 &#064;ExportColumn 注解) */
+    public static LinkedHashMap<String, String> collectTitle(Class clazz) {
+        LinkedHashMap<String, String> titleMap = Maps.newLinkedHashMap();
+        if (U.isNotBlank(clazz)) {
+            Field[] fields = clazz.getDeclaredFields();
+            if (A.isNotEmpty(fields)) {
+                for (Field field : fields) {
+                    String name = field.getName();
+                    String value = field.getName();
+                    ExportColumn column = field.getAnnotation(ExportColumn.class);
+                    if (U.isNotBlank(column)) {
+                        String columnValue = column.value();
+                        if (U.isNotBlank(columnValue)) {
+                            value = columnValue;
+                        }
+                    }
+                    titleMap.put(name, value);
+                }
+            }
+        }
+        return titleMap;
     }
 
     /**
-     * 导出 csv 格式文件! 在 Controller 中调用!
+     * 导出文件! 在 Controller 中调用!
+     *
+     * @param type 文件类型, 现在有 xls03、xls07、csv 三种, 不在这三种中则默认是 xls07
+     * @param name 导出时的文件名
+     * @param dataList 导出的数据(数组中的每个 object 都是一行, 并且每个字段上有使用 &#064;ExportColumn 注解来说明导出的列名)
+     */
+    public static <T> void export(String type, String name, List<T> dataList,
+                                  HttpServletResponse response) throws IOException {
+        LinkedHashMap<String, String> titleMap = null;
+        if (A.isNotEmpty(dataList)) {
+            titleMap = collectTitle(dataList.get(0).getClass());
+        }
+        export(type, name, titleMap, dataList, response);
+    }
+
+    /**
+     * 导出文件! 在 Controller 中调用!
+     *
+     * @param type 文件类型, 现在有 xls03、xls07、csv 三种, 不在这三种中则默认是 xls07
+     * @param name 导出时的文件名
+     * @param titleMap 标题(key 为英文, value 为标题内容)
+     * @param dataList 导出的数据(数组中的每个 object 都是一行, object 中的属性名与标题中的 key 相对)
+     */
+    public static void export(String type, String name, LinkedHashMap<String, String> titleMap,
+                              List<?> dataList, HttpServletResponse response) throws IOException {
+        Type exportType = U.toEnum(Type.class, type);
+        if (U.isBlank(exportType)) {
+            exportType = Type.Xls07;
+        }
+
+        if (exportType == Type.Xls03) {
+            export03Excel(name, titleMap, dataList, response);
+        } else if (exportType == Type.Csv) {
+            exportCsv(name, titleMap, dataList, response);
+        } else {
+            export07Excel(name, titleMap, dataList, response);
+        }
+    }
+
+    /**
+     * 导出 csv 格式文件
      *
      * @param name     导出的文件名(不带后缀)
      * @param titleMap 标题(key 为英文, value 为标题内容)
      * @param dataList 导出的数据(数组中的每个 object 都是一行, object 中的属性名与标题中的 key 相对)
      */
-    public static void exportCsv(String name, LinkedHashMap<String, String> titleMap,
-                                 List<?> dataList, HttpServletResponse response) throws IOException {
+    private static void exportCsv(String name, LinkedHashMap<String, String> titleMap,
+                                  List<?> dataList, HttpServletResponse response) throws IOException {
         // 导出的文件名
         String fileName = encodeName(name) + ".csv";
 
@@ -85,26 +175,26 @@ public final class ExportUtil {
     }
 
     /**
-     * 导出 2003 excel 文件! 在 Controller 中调用!
+     * 导出 2003 excel 文件
      *
      * @param name     导出的文件名(不带后缀)
      * @param titleMap 标题(key 为英文, value 为标题内容)
      * @param dataList 导出的数据(数组中的每个 object 都是一行, object 中的属性名与标题中的 key 相对)
      */
-    public static void export03Excel(String name, LinkedHashMap<String, String> titleMap,
-                                     List<?> dataList, HttpServletResponse response) throws IOException {
+    private static void export03Excel(String name, LinkedHashMap<String, String> titleMap,
+                                      List<?> dataList, HttpServletResponse response) throws IOException {
         exportExcel(false, name, titleMap, dataList, response);
     }
 
     /**
-     * 导出 2007 excel 文件! 在 Controller 中调用!
+     * 导出 2007 excel 文件
      *
      * @param name     导出的文件名(不带后缀)
      * @param titleMap 标题(key 为英文, value 为标题内容)
      * @param dataList 导出的数据(数组中的每个 object 都是一行, object 中的属性名与标题中的 key 相对)
      */
-    public static void export07Excel(String name, LinkedHashMap<String, String> titleMap,
-                                     List<?> dataList, HttpServletResponse response) throws IOException {
+    private static void export07Excel(String name, LinkedHashMap<String, String> titleMap,
+                                      List<?> dataList, HttpServletResponse response) throws IOException {
         exportExcel(true, name, titleMap, dataList, response);
     }
 
@@ -154,7 +244,7 @@ public final class ExportUtil {
          * @param dataMap  以「sheet 名」为 key, 对应的数据为 value(每一行的数据为一个 Object)
          */
         private static Workbook handle(boolean excel07, LinkedHashMap<String, String> titleMap,
-                                      LinkedHashMap<String, List<?>> dataMap) {
+                                       LinkedHashMap<String, List<?>> dataMap) {
             // 声明一个工作薄. HSSFWorkbook 是 Office 2003 的版本, XSSFWorkbook 是 2007
             Workbook workbook = excel07 ? new XSSFWorkbook() : new HSSFWorkbook();
             // 没有数据, 或者没有标题, 都直接返回
