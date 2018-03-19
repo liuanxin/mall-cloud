@@ -42,7 +42,7 @@ import java.util.Map;
  * &#064;GetMapping("/xx-export")
  * public void xxx(String type, ..., HttpServletResponse response) throws IOException {
  *     // 查询要导出的数据
- *     List<XX> xxList = xxService.xxx(...);
+ *     List&lt;XX&gt; xxList = xxService.xxx(...);
  *
  *     // {@link ExportUtil#export(String, String, List, HttpServletResponse)}
  *     ExportUtil.export(type, "文件名", xxList, response);
