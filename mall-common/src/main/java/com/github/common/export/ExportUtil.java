@@ -288,11 +288,11 @@ public final class ExportUtil {
                         row.setHeightInPoints(ROW_HEIGHT);
                         // 每个 sheet 的标题行
                         for (String header : titleMap.values()) {
-                            // 宽度自适应
-                            sheet.autoSizeColumn(cellIndex);
                             cell = row.createCell(cellIndex);
                             cell.setCellStyle(headStyle);
                             cell.setCellValue(U.getNil(header));
+                            // 宽度自适应
+                            sheet.autoSizeColumn(cellIndex);
                             cellIndex++;
                         }
                         // 冻结第一行
