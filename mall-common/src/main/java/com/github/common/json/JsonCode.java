@@ -13,7 +13,7 @@ public enum JsonCode {
     NOT_LOGIN(401, "未登录, 导到登录页"),
 
     /** 提示用户无权限. 处理跟 失败 是一样的 */
-    NOT_PERMISSION(403, "无权限, 提示用户无权限");
+    NOT_PERMISSION(403, "无权限, 提示用户无权限(输出 msg 即可)");
 
     int flag;
     String msg;
