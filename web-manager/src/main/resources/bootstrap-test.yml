@@ -1,10 +1,11 @@
 
 online: false
 
-logging.config: classpath:log-dev.xml
+logging.config: classpath:log-test.xml
 
-server.port: 8686
-spring.application.name: web-backend
+server.port: 8787
+
+spring.application.name: web-manager
 
 spring:
   mvc.throw-exception-if-no-handler-found: true
@@ -21,25 +22,6 @@ eureka:
     lease-expiration-duration-in-seconds: 30
 
 # feign.hystrix.enabled: true
-
-zuul:
-  routes:
-    common:
-      path: /common/**
-      serviceId: common
-      stripPrefix: false
-    user:
-      path: /user/**
-      serviceId: user
-      stripPrefix: false
-    product:
-      path: /product/**
-      serviceId: product
-      stripPrefix: false
-    trade:
-      path: /trade/**
-      serviceId: trade
-      stripPrefix: false
 
 #spring:
 #  zipkin.base-url: http://127.0.0.1:9411

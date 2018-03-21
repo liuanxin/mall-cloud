@@ -4,6 +4,7 @@ online: false
 logging.config: classpath:log-dev.xml
 
 server.port: 8787
+
 spring.application.name: web-manager
 
 spring:

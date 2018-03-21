@@ -32,7 +32,7 @@ public class UserGlobalException {
 
     /** 业务异常 */
     @ExceptionHandler(ServiceException.class)
-    public JsonResult serviceException(ServiceException e) {
+    public JsonResult service(ServiceException e) {
         if (LogUtil.ROOT_LOG.isDebugEnabled()) {
             LogUtil.ROOT_LOG.debug(e.getMessage(), e);
         }
@@ -40,7 +40,7 @@ public class UserGlobalException {
     }
     /** 未登录 */
     @ExceptionHandler(NotLoginException.class)
-    public JsonResult noLogin(NotLoginException e) {
+    public JsonResult notLogin(NotLoginException e) {
         if (LogUtil.ROOT_LOG.isDebugEnabled()) {
             LogUtil.ROOT_LOG.debug(e.getMessage(), e);
         }
@@ -48,7 +48,7 @@ public class UserGlobalException {
     }
     /** 无权限 */
     @ExceptionHandler(ForbiddenException.class)
-    public JsonResult notFound(ForbiddenException e) {
+    public JsonResult forbidden(ForbiddenException e) {
         if (LogUtil.ROOT_LOG.isDebugEnabled()) {
             LogUtil.ROOT_LOG.debug(e.getMessage(), e);
         }
@@ -56,7 +56,7 @@ public class UserGlobalException {
     }
 
     @ExceptionHandler(NoHandlerFoundException.class)
-    public JsonResult forbidden(NoHandlerFoundException e) {
+    public JsonResult noHandler(NoHandlerFoundException e) {
         if (LogUtil.ROOT_LOG.isDebugEnabled()) {
             LogUtil.bind(RequestUtils.logContextInfo());
             LogUtil.ROOT_LOG.debug(e.getMessage(), e);
@@ -79,7 +79,7 @@ public class UserGlobalException {
         return JsonResult.fail("不支持此种请求方式!" + msg);
     }
     @ExceptionHandler(MaxUploadSizeExceededException.class)
-    public JsonResult notFound(MaxUploadSizeExceededException e) {
+    public JsonResult uploadSizeExceeded(MaxUploadSizeExceededException e) {
         if (LogUtil.ROOT_LOG.isDebugEnabled()) {
             LogUtil.ROOT_LOG.debug("文件太大: " + e.getMessage(), e);
         }
@@ -89,7 +89,7 @@ public class UserGlobalException {
 
     /** 未知的所有其他异常 */
     @ExceptionHandler(Throwable.class)
-    public JsonResult exception(Throwable e) {
+    public JsonResult other(Throwable e) {
         if (LogUtil.ROOT_LOG.isErrorEnabled()) {
             LogUtil.ROOT_LOG.error("有错误: " + e.getMessage(), e);
         }

@@ -264,7 +264,7 @@ class Model {
             " */\n" +
             "public final class %sConst {\n" +
             "\n" +
-            "    /** 当前模块名. 要与 application.yml 中的一致 */\n" +
+            "    /** 当前模块名. 要与 bootstrap.yml 中的一致 */\n" +
             "    public static final String MODULE_NAME = \"%s\";\n" +
             "\n" +
             "    /** 当前模块说明. 当用在文档中时有用 */\n" +
@@ -520,7 +520,7 @@ class Server {
             "\n" +
             "    /** 业务异常 */\n" +
             "    @ExceptionHandler(ServiceException.class)\n" +
-            "    public JsonResult serviceException(ServiceException e) {\n" +
+            "    public JsonResult service(ServiceException e) {\n" +
             "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
             "            LogUtil.ROOT_LOG.debug(e.getMessage(), e);\n" +
             "        }\n" +
@@ -528,7 +528,7 @@ class Server {
             "    }\n" +
             "    /** 未登录 */\n" +
             "    @ExceptionHandler(NotLoginException.class)\n" +
-            "    public JsonResult noLogin(NotLoginException e) {\n" +
+            "    public JsonResult notLogin(NotLoginException e) {\n" +
             "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
             "            LogUtil.ROOT_LOG.debug(e.getMessage(), e);\n" +
             "        }\n" +
@@ -536,7 +536,7 @@ class Server {
             "    }\n" +
             "    /** 无权限 */\n" +
             "    @ExceptionHandler(ForbiddenException.class)\n" +
-            "    public JsonResult notFound(ForbiddenException e) {\n" +
+            "    public JsonResult forbidden(ForbiddenException e) {\n" +
             "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
             "            LogUtil.ROOT_LOG.debug(e.getMessage(), e);\n" +
             "        }\n" +
@@ -544,7 +544,7 @@ class Server {
             "    }\n" +
             "\n" +
             "    @ExceptionHandler(NoHandlerFoundException.class)\n" +
-            "    public JsonResult forbidden(NoHandlerFoundException e) {\n" +
+            "    public JsonResult noHandler(NoHandlerFoundException e) {\n" +
             "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
             "            LogUtil.bind(RequestUtils.logContextInfo());\n" +
             "            LogUtil.ROOT_LOG.debug(e.getMessage(), e);\n" +
@@ -567,7 +567,7 @@ class Server {
             "        return JsonResult.fail(\"不支持此种请求方式!\" + msg);\n" +
             "    }\n" +
             "    @ExceptionHandler(MaxUploadSizeExceededException.class)\n" +
-            "    public JsonResult notFound(MaxUploadSizeExceededException e) {\n" +
+            "    public JsonResult uploadSizeExceeded(MaxUploadSizeExceededException e) {\n" +
             "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
             "            LogUtil.ROOT_LOG.debug(\"文件太大: \" + e.getMessage(), e);\n" +
             "        }\n" +
@@ -577,7 +577,7 @@ class Server {
             "\n" +
             "    /** 未知的所有其他异常 */\n" +
             "    @ExceptionHandler(Throwable.class)\n" +
-            "    public JsonResult exception(Throwable e) {\n" +
+            "    public JsonResult other(Throwable e) {\n" +
             "        if (LogUtil.ROOT_LOG.isErrorEnabled()) {\n" +
             "            LogUtil.ROOT_LOG.error(\"有错误: \" + e.getMessage(), e);\n" +
             "        }\n" +
@@ -1141,13 +1141,13 @@ class Server {
         resourcePath.mkdirs();
 
         String applicationYml = String.format(APPLICATION_YML, port, packageName);
-        writeFile(new File(resourcePath, "application.yml"), applicationYml);
+        writeFile(new File(resourcePath, "bootstrap.yml"), applicationYml);
         String applicationTestYml = String.format(APPLICATION_TEST_YML, port,
                 packageName, packageName, packageName, packageName);
-        writeFile(new File(resourcePath, "application-test.yml"), applicationTestYml);
+        writeFile(new File(resourcePath, "bootstrap-test.yml"), applicationTestYml);
         String applicationProdYml = String.format(APPLICATION_PROD_YML, port,
                 packageName, packageName, packageName, packageName);
-        writeFile(new File(resourcePath, "application-prod.yml"), applicationProdYml);
+        writeFile(new File(resourcePath, "bootstrap-prod.yml"), applicationProdYml);
 
         writeFile(new File(resourcePath, "config.properties"), CONFIG);
         String logXml = LOG_XML.replaceAll("~MODULE_NAME~", parentPackageName);

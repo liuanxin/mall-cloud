@@ -7,7 +7,7 @@ package com.github.user.constant;
  */
 public final class UserConst {
 
-    /** 当前模块名. 要与 application.yml 中的一致 */
+    /** 当前模块名. 要与 bootstrap.yml 中的一致 */
     public static final String MODULE_NAME = "user";
 
     /** 当前模块说明. 当用在文档中时有用 */

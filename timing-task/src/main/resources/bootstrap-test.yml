@@ -1,9 +1,7 @@
 
 online: false
 
-logging.config: classpath:log-dev.xml
-
-server.port: 8989
+logging.config: classpath:log-test.xml
 
 spring.application.name: task
 
