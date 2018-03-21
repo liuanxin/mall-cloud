@@ -52,7 +52,7 @@ public class CommonGlobalException {
         if (LogUtil.ROOT_LOG.isDebugEnabled()) {
             LogUtil.ROOT_LOG.debug(e.getMessage(), e);
         }
-        return JsonResult.fail(e.getMessage());
+        return JsonResult.notPermission(e.getMessage());
     }
 
     @ExceptionHandler(NoHandlerFoundException.class)

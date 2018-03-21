@@ -540,7 +540,7 @@ class Server {
             "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
             "            LogUtil.ROOT_LOG.debug(e.getMessage(), e);\n" +
             "        }\n" +
-            "        return JsonResult.fail(e.getMessage());\n" +
+            "        return JsonResult.notPermission(e.getMessage());\n" +
             "    }\n" +
             "\n" +
             "    @ExceptionHandler(NoHandlerFoundException.class)\n" +
