@@ -22,8 +22,8 @@ eureka:
     eviction-interval-timer-in-ms: 10000
   # spring-cloud-netflix-eureka-client.jar!/spring-configuration-metadata.json
   client:
-    # 不注册到 eureka 服务器(当前实例是服务器)
+    # 不注册到 eureka 服务器(单机不需要)
     register-with-eureka: false
-    # 不从 eureka 服务器获取注册信息(当前实例是服务器)
+    # 不从服务器获取注册信息(单机不需要)
     fetch-registry: false
     serviceUrl.defaultZone: ${register.center}
