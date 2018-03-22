@@ -522,7 +522,7 @@ class Server {
             "    @ExceptionHandler(ServiceException.class)\n" +
             "    public JsonResult service(ServiceException e) {\n" +
             "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
-            "            LogUtil.ROOT_LOG.debug(e.getMessage(), e);\n" +
+            "            LogUtil.ROOT_LOG.debug(e.getMessage());\n" +
             "        }\n" +
             "        return JsonResult.fail(e.getMessage());\n" +
             "    }\n" +
@@ -530,15 +530,15 @@ class Server {
             "    @ExceptionHandler(NotLoginException.class)\n" +
             "    public JsonResult notLogin(NotLoginException e) {\n" +
             "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
-            "            LogUtil.ROOT_LOG.debug(e.getMessage(), e);\n" +
+            "            LogUtil.ROOT_LOG.debug(e.getMessage());\n" +
             "        }\n" +
-            "        return JsonResult.notLogin();\n" +
+            "        return JsonResult.notLogin(e.getMessage());\n" +
             "    }\n" +
             "    /** 无权限 */\n" +
             "    @ExceptionHandler(ForbiddenException.class)\n" +
             "    public JsonResult forbidden(ForbiddenException e) {\n" +
             "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
-            "            LogUtil.ROOT_LOG.debug(e.getMessage(), e);\n" +
+            "            LogUtil.ROOT_LOG.debug(e.getMessage());\n" +
             "        }\n" +
             "        return JsonResult.notPermission(e.getMessage());\n" +
             "    }\n" +
@@ -862,6 +862,10 @@ class Server {
             "    <property name=\"CONSOLE_LOG_PATTERN\" value=\"[%X{receiveTime}%d] [${PID:- } %t\\\\(%logger\\\\) : %p]%X{requestInfo}%n%class.%method\\\\(%file:%line\\\\)%n%m%n%n\"/>\n" +
             "    <include resource=\"org/springframework/boot/logging/logback/console-appender.xml\" />\n" +
             "\n\n" +
+            "    <logger name=\"zipkin.autoconfigure\" level=\"warn\"/>\n" +
+            "    <logger name=\"io.undertow\" level=\"warn\"/>\n" +
+            "    <logger name=\"freemarker\" level=\"warn\"/>\n" +
+            "\n" +
             "    <logger name=\"" + PACKAGE + ".~MODULE_NAME~.repository\" level=\"warn\"/>\n" +
             "    <logger name=\"" + PACKAGE + ".common.mvc\" level=\"warn\"/>\n" +
             "\n" +
@@ -917,6 +921,10 @@ class Server {
             "        <appender-ref ref=\"SQL\" />\n" +
             "    </logger>\n" +
             "\n\n" +
+            "    <logger name=\"zipkin.autoconfigure\" level=\"warn\"/>\n" +
+            "    <logger name=\"io.undertow\" level=\"warn\"/>\n" +
+            "    <logger name=\"freemarker\" level=\"warn\"/>\n" +
+            "\n" +
             "    <logger name=\"" + PACKAGE + ".~MODULE_NAME~.repository\" level=\"warn\"/>\n" +
             "    <logger name=\"" + PACKAGE + ".common.mvc\" level=\"warn\"/>\n" +
             "\n" +
@@ -958,6 +966,10 @@ class Server {
             "        <appender-ref ref =\"PROJECT\"/>\n" +
             "    </appender>\n" +
             "\n\n" +
+            "    <logger name=\"zipkin.autoconfigure\" level=\"warn\"/>\n" +
+            "    <logger name=\"io.undertow\" level=\"warn\"/>\n" +
+            "    <logger name=\"freemarker\" level=\"warn\"/>\n" +
+            "\n" +
             "    <logger name=\"" + PACKAGE + ".~MODULE_NAME~.repository\" level=\"warn\"/>\n" +
             "    <logger name=\"" + PACKAGE + ".common.mvc\" level=\"warn\"/>\n" +
             "\n" +

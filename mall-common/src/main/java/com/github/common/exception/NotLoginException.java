@@ -6,10 +6,8 @@ import java.io.Serializable;
 public class NotLoginException extends RuntimeException implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    public static final String DEFAULT_MSG = "请先登录";
-
     public NotLoginException() {
-        super(DEFAULT_MSG);
+        super("请先登录");
     }
 
     @Override

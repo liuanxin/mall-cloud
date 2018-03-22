@@ -1,7 +1,6 @@
 package com.github.common.json;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.github.common.exception.NotLoginException;
 import com.github.liuanxin.api.annotation.ApiReturn;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -48,8 +47,8 @@ public class JsonResult<T> {
     }
 
     /** 未登录时 */
-    public static <T> JsonResult<T> notLogin() {
-        return new JsonResult<T>(JsonCode.NOT_LOGIN, NotLoginException.DEFAULT_MSG);
+    public static <T> JsonResult<T> notLogin(String msg) {
+        return new JsonResult<T>(JsonCode.NOT_LOGIN, msg);
     }
 
     /** 无权限时 */

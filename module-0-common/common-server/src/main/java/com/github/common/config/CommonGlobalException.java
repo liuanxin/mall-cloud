@@ -34,7 +34,7 @@ public class CommonGlobalException {
     @ExceptionHandler(ServiceException.class)
     public JsonResult service(ServiceException e) {
         if (LogUtil.ROOT_LOG.isDebugEnabled()) {
-            LogUtil.ROOT_LOG.debug(e.getMessage(), e);
+            LogUtil.ROOT_LOG.debug(e.getMessage());
         }
         return JsonResult.fail(e.getMessage());
     }
@@ -42,15 +42,15 @@ public class CommonGlobalException {
     @ExceptionHandler(NotLoginException.class)
     public JsonResult notLogin(NotLoginException e) {
         if (LogUtil.ROOT_LOG.isDebugEnabled()) {
-            LogUtil.ROOT_LOG.debug(e.getMessage(), e);
+            LogUtil.ROOT_LOG.debug(e.getMessage());
         }
-        return JsonResult.notLogin();
+        return JsonResult.notLogin(e.getMessage());
     }
     /** 无权限 */
     @ExceptionHandler(ForbiddenException.class)
     public JsonResult forbidden(ForbiddenException e) {
         if (LogUtil.ROOT_LOG.isDebugEnabled()) {
-            LogUtil.ROOT_LOG.debug(e.getMessage(), e);
+            LogUtil.ROOT_LOG.debug(e.getMessage());
         }
         return JsonResult.notPermission(e.getMessage());
     }

@@ -8,6 +8,6 @@ import lombok.Data;
 public class DemoDto {
     @ApiParam(must = true, desc = "用户 id")
     private Long userId;
-    @ApiParam(type = "int", desc = "性别")
+    @ApiParam(dataType = "int", desc = "性别")
     private Gender gender;
 }
