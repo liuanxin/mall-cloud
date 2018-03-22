@@ -64,7 +64,8 @@
         <mybatis-spring.version>1.3.1</mybatis-spring.version>
         <mybatis-page.version>1.2.3</mybatis-page.version>
         <mybatis-redis-cache.version>1.2.3</mybatis-redis-cache.version>
-        <api-document.version>0.0.9</api-document.version>
+
+        <api-document.version>0.1.0</api-document.version>
     </properties>
 
     <dependencyManagement>
