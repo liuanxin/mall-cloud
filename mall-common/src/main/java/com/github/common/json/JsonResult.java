@@ -42,27 +42,27 @@ public class JsonResult<T> {
 
     // ---------- 在 service 中请只使用下面的静态方法就好了. 不要 new JsonResult()... 这样操作 ----------
 
-    /** 请求成功且不需要返回数据, 当返回 "地址添加成功" 这一类说明时 */
-    public static JsonResult success(String msg) {
-        return new JsonResult(JsonCode.SUCCESS, msg);
-    }
-    /** 请求成功且有返回数据时 */
-    public static <T> JsonResult<T> success(String msg, T data) {
-        return new JsonResult<>(JsonCode.SUCCESS, msg, data);
-    }
-
     /** 请求失败时 */
-    public static JsonResult fail(String msg) {
-        return new JsonResult(JsonCode.FAIL, msg);
+    public static <T> JsonResult<T> fail(String msg) {
+        return new JsonResult<T>(JsonCode.FAIL, msg);
     }
 
     /** 未登录时 */
-    public static JsonResult notLogin() {
-        return new JsonResult(JsonCode.NOT_LOGIN, NotLoginException.DEFAULT_MSG);
+    public static <T> JsonResult<T> notLogin() {
+        return new JsonResult<T>(JsonCode.NOT_LOGIN, NotLoginException.DEFAULT_MSG);
     }
 
     /** 无权限时 */
-    public static JsonResult notPermission(String msg) {
-        return new JsonResult(JsonCode.NOT_PERMISSION, msg);
+    public static <T> JsonResult<T> notPermission(String msg) {
+        return new JsonResult<T>(JsonCode.NOT_PERMISSION, msg);
+    }
+
+    /** 请求成功且不需要返回数据, 当返回 "地址添加成功" 这一类说明时 */
+    public static <T> JsonResult<T> success(String msg) {
+        return new JsonResult<T>(JsonCode.SUCCESS, msg);
+    }
+    /** 请求成功且有返回数据时 */
+    public static <T> JsonResult<T> success(String msg, T data) {
+        return new JsonResult<T>(JsonCode.SUCCESS, msg, data);
     }
 }
