@@ -694,12 +694,6 @@ class Server {
             "import " + PACKAGE + ".common.page.PageInfo;\n" +
             "import " + PACKAGE + ".common.page.Pages;\n" +
             "import " + PACKAGE + ".common.util.LogUtil;\n" +
-            "import " + PACKAGE + ".global.model.Develop;\n" +
-            "import com.github.liuanxin.api.annotation.ApiGroup;\n" +
-            "import com.github.liuanxin.api.annotation.ApiIgnore;\n" +
-            "import com.github.liuanxin.api.annotation.ApiMethod;\n" +
-            "import com.github.liuanxin.api.annotation.ApiParam;\n" +
-            "import " + PACKAGE + ".%s.constant.%sConst;\n" +
             "import org.springframework.web.bind.annotation.GetMapping;\n" +
             "import org.springframework.web.bind.annotation.RestController;\n" +
             "\n" +
@@ -707,25 +701,20 @@ class Server {
             " * %s模块的接口实现类\n" +
             AUTHOR +
             " */\n" +
-            "@ApiGroup({ %sConst.MODULE_INFO })\n" +
             "@RestController\n" +
             "public class %sService implements %sInterface {\n" +
             "    \n" +
-            "    @ApiMethod(title = \"%s测试接口\", develop = Develop.%s)\n" +
             "    @Override\n" +
-            "    public PageInfo demo(String xx, \n" +
-            "                         @ApiParam(desc = \"当前页数\") Integer page,\n" +
-            "                         @ApiParam(desc = \"每页条数\") Integer limit) {\n" +
+            "    public PageInfo demo(String xx, Integer page, Integer limit) {\n" +
             "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
             "            LogUtil.ROOT_LOG.debug(\"调用实现类\" + xx + \", page:\" + page + \", limit:\" + limit);\n" +
             "        }\n" +
             "        return Pages.returnPage(null);\n" +
             "    }\n" +
             "\n" +
-            "    @ApiIgnore\n" +
             "    @GetMapping(\"/\")\n" +
             "    public JsonResult index() {\n" +
-            "        return JsonResult.success(\"%s module\");\n" +
+            "        return JsonResult.success(\"%s-module\");\n" +
             "    }\n" +
             "}\n";
 
@@ -1147,8 +1136,8 @@ class Server {
         String war = String.format(WEB_CONFIG, parentPackageName, comment, clazzName, clazzName);
         writeFile(new File(configPath, clazzName + "WebConfig.java"), war);
 
-        String service = String.format(SERVICE, parentPackageName, parentPackageName, clazzName,
-                comment, clazzName, clazzName, clazzName, comment, clazzName.toUpperCase(), parentPackageName);
+        String service = String.format(SERVICE, parentPackageName, comment, clazzName, clazzName,
+                clazzName, comment, clazzName.toUpperCase(), parentPackageName);
         writeFile(new File(servicePath, clazzName + "Service.java"), service);
 
 
