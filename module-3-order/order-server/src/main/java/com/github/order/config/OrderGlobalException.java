@@ -37,26 +37,29 @@ public class OrderGlobalException {
     /** 业务异常 */
     @ExceptionHandler(ServiceException.class)
     public ResponseEntity<JsonResult> service(ServiceException e) {
+        String msg = e.getMessage();
         if (LogUtil.ROOT_LOG.isDebugEnabled()) {
-            LogUtil.ROOT_LOG.debug(e.getMessage());
+            LogUtil.ROOT_LOG.debug(msg);
         }
-        return new ResponseEntity<>(JsonResult.fail(e.getMessage()), FAIL);
+        return new ResponseEntity<>(JsonResult.fail(msg), FAIL);
     }
     /** 未登录 */
     @ExceptionHandler(NotLoginException.class)
     public ResponseEntity<JsonResult> notLogin(NotLoginException e) {
+        String msg = e.getMessage();
         if (LogUtil.ROOT_LOG.isDebugEnabled()) {
-            LogUtil.ROOT_LOG.debug(e.getMessage());
+            LogUtil.ROOT_LOG.debug(msg);
         }
-        return new ResponseEntity<>(JsonResult.notLogin(e.getMessage()), HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(JsonResult.notLogin(msg), HttpStatus.UNAUTHORIZED);
     }
     /** 无权限 */
     @ExceptionHandler(ForbiddenException.class)
     public ResponseEntity<JsonResult> forbidden(ForbiddenException e) {
+        String msg = e.getMessage();
         if (LogUtil.ROOT_LOG.isDebugEnabled()) {
-            LogUtil.ROOT_LOG.debug(e.getMessage());
+            LogUtil.ROOT_LOG.debug(msg);
         }
-        return new ResponseEntity<>(JsonResult.notPermission(e.getMessage()), HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(JsonResult.notPermission(msg), HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(NoHandlerFoundException.class)
@@ -95,15 +98,17 @@ public class OrderGlobalException {
     /** 未知的所有其他异常 */
     @ExceptionHandler(Throwable.class)
     public ResponseEntity<JsonResult> other(Throwable e) {
-        if (LogUtil.ROOT_LOG.isErrorEnabled()) {
-            LogUtil.ROOT_LOG.error("有错误: " + e.getMessage(), e);
-        }
-
-        String msg = e.getMessage();
+        String msg;
         if (online) {
             msg = "请求时出现错误, 我们会尽快处理";
-        } else if (e instanceof NullPointerException && U.isBlank(msg)) {
+        } else if (e instanceof NullPointerException) {
             msg = "空指针异常, 联系后台查看日志进行处理";
+        } else {
+            msg = e.getMessage();
+        }
+
+        if (LogUtil.ROOT_LOG.isErrorEnabled()) {
+            LogUtil.ROOT_LOG.error("有错误", e);
         }
         return new ResponseEntity<>(JsonResult.fail(msg), FAIL);
     }

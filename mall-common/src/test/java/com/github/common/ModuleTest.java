@@ -525,26 +525,29 @@ class Server {
             "    /** 业务异常 */\n" +
             "    @ExceptionHandler(ServiceException.class)\n" +
             "    public ResponseEntity<JsonResult> service(ServiceException e) {\n" +
+            "        String msg = e.getMessage();\n" +
             "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
-            "            LogUtil.ROOT_LOG.debug(e.getMessage());\n" +
+            "            LogUtil.ROOT_LOG.debug(msg);\n" +
             "        }\n" +
-            "        return new ResponseEntity<>(JsonResult.fail(e.getMessage()), FAIL);\n" +
+            "        return new ResponseEntity<>(JsonResult.fail(msg), FAIL);\n" +
             "    }\n" +
             "    /** 未登录 */\n" +
             "    @ExceptionHandler(NotLoginException.class)\n" +
             "    public ResponseEntity<JsonResult> notLogin(NotLoginException e) {\n" +
+            "        String msg = e.getMessage();\n" +
             "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
-            "            LogUtil.ROOT_LOG.debug(e.getMessage());\n" +
+            "            LogUtil.ROOT_LOG.debug(msg);\n" +
             "        }\n" +
-            "        return new ResponseEntity<>(JsonResult.notLogin(e.getMessage()), HttpStatus.UNAUTHORIZED);\n" +
+            "        return new ResponseEntity<>(JsonResult.notLogin(msg), HttpStatus.UNAUTHORIZED);\n" +
             "    }\n" +
             "    /** 无权限 */\n" +
             "    @ExceptionHandler(ForbiddenException.class)\n" +
             "    public ResponseEntity<JsonResult> forbidden(ForbiddenException e) {\n" +
+            "        String msg = e.getMessage();\n" +
             "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
-            "            LogUtil.ROOT_LOG.debug(e.getMessage());\n" +
+            "            LogUtil.ROOT_LOG.debug(msg);\n" +
             "        }\n" +
-            "        return new ResponseEntity<>(JsonResult.notPermission(e.getMessage()), HttpStatus.FORBIDDEN);\n" +
+            "        return new ResponseEntity<>(JsonResult.notPermission(msg), HttpStatus.FORBIDDEN);\n" +
             "    }\n" +
             "\n" +
             "    @ExceptionHandler(NoHandlerFoundException.class)\n" +
@@ -583,15 +586,17 @@ class Server {
             "    /** 未知的所有其他异常 */\n" +
             "    @ExceptionHandler(Throwable.class)\n" +
             "    public ResponseEntity<JsonResult> other(Throwable e) {\n" +
-            "        if (LogUtil.ROOT_LOG.isErrorEnabled()) {\n" +
-            "            LogUtil.ROOT_LOG.error(\"有错误: \" + e.getMessage(), e);\n" +
-            "        }\n" +
-            "\n" +
-            "        String msg = e.getMessage();\n" +
+            "        String msg;\n" +
             "        if (online) {\n" +
             "            msg = \"请求时出现错误, 我们会尽快处理\";\n" +
-            "        } else if (e instanceof NullPointerException && U.isBlank(msg)) {\n" +
+            "        } else if (e instanceof NullPointerException) {\n" +
             "            msg = \"空指针异常, 联系后台查看日志进行处理\";\n" +
+            "        } else {\n" +
+            "            msg = e.getMessage();\n" +
+            "        }\n" +
+            "\n" +
+            "        if (LogUtil.ROOT_LOG.isErrorEnabled()) {\n" +
+            "            LogUtil.ROOT_LOG.error(\"有错误\", e);\n" +
             "        }\n" +
             "        return new ResponseEntity<>(JsonResult.fail(msg), FAIL);\n" +
             "    }\n" +
