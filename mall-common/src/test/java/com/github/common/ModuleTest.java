@@ -517,6 +517,8 @@ class Server {
             "@RestControllerAdvice\n" +
             "public class %sGlobalException {\n" +
             "\n" +
+            "    private static final HttpStatus FAIL = HttpStatus.INTERNAL_SERVER_ERROR;\n" +
+            "\n" +
             "    @Value(\"${online:false}\")\n" +
             "    private boolean online;\n" +
             "\n" +
@@ -526,7 +528,7 @@ class Server {
             "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
             "            LogUtil.ROOT_LOG.debug(e.getMessage());\n" +
             "        }\n" +
-            "        return new ResponseEntity<>(JsonResult.fail(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);\n" +
+            "        return new ResponseEntity<>(JsonResult.fail(e.getMessage()), FAIL);\n" +
             "    }\n" +
             "    /** 未登录 */\n" +
             "    @ExceptionHandler(NotLoginException.class)\n" +
@@ -566,7 +568,7 @@ class Server {
             "        if (!online) {\n" +
             "            msg = \" 当前方式(\" + e.getMethod() + \"), 支持方式(\" + A.toStr(e.getSupportedMethods()) + \")\";\n" +
             "        }\n" +
-            "        return new ResponseEntity<>(JsonResult.fail(\"不支持此种请求方式!\" + msg), HttpStatus.INTERNAL_SERVER_ERROR);\n" +
+            "        return new ResponseEntity<>(JsonResult.fail(\"不支持此种请求方式!\" + msg), FAIL);\n" +
             "    }\n" +
             "    @ExceptionHandler(MaxUploadSizeExceededException.class)\n" +
             "    public ResponseEntity<JsonResult> uploadSizeExceeded(MaxUploadSizeExceededException e) {\n" +
@@ -575,7 +577,7 @@ class Server {
             "        }\n" +
             "        // 右移 20 位相当于除以两次 1024, 正好表示从字节到 Mb\n" +
             "        JsonResult<Object> result = JsonResult.fail(\"上传文件太大! 请保持在 \" + (e.getMaxUploadSize() >> 20) + \"M 以内\");\n" +
-            "        return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);\n" +
+            "        return new ResponseEntity<>(result, FAIL);\n" +
             "    }\n" +
             "\n" +
             "    /** 未知的所有其他异常 */\n" +
@@ -591,7 +593,7 @@ class Server {
             "        } else if (e instanceof NullPointerException && U.isBlank(msg)) {\n" +
             "            msg = \"空指针异常, 联系后台查看日志进行处理\";\n" +
             "        }\n" +
-            "        return new ResponseEntity<>(JsonResult.fail(msg), HttpStatus.INTERNAL_SERVER_ERROR);\n" +
+            "        return new ResponseEntity<>(JsonResult.fail(msg), FAIL);\n" +
             "    }\n" +
             "}\n";
 

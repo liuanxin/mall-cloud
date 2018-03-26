@@ -28,6 +28,8 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 @RestControllerAdvice
 public class ManagerGlobalException {
 
+    private static final HttpStatus FAIL = HttpStatus.INTERNAL_SERVER_ERROR;
+
     @Value("${online:false}")
     private boolean online;
 
@@ -37,7 +39,7 @@ public class ManagerGlobalException {
         if (LogUtil.ROOT_LOG.isDebugEnabled()) {
             LogUtil.ROOT_LOG.debug(e.getMessage());
         }
-        return new ResponseEntity<>(JsonResult.fail(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(JsonResult.fail(e.getMessage()), FAIL);
     }
 
     /** 未登录 */
@@ -83,7 +85,7 @@ public class ManagerGlobalException {
         if (!online) {
             msg = String.format(" 当前方式(%s), 支持方式(%s)", e.getMethod(), A.toStr(e.getSupportedMethods()));
         }
-        return new ResponseEntity<>(JsonResult.fail("不支持此种请求方式!" + msg), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(JsonResult.fail("不支持此种请求方式!" + msg), FAIL);
     }
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<JsonResult> uploadSizeExceeded(MaxUploadSizeExceededException e) {
@@ -92,7 +94,7 @@ public class ManagerGlobalException {
         }
         // 右移 20 位相当于除以两次 1024, 正好表示从字节到 Mb
         JsonResult<Object> result = JsonResult.fail("上传文件太大! 请保持在 " + (e.getMaxUploadSize() >> 20) + "M 以内");
-        return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(result, FAIL);
     }
 
     /** 未知的所有其他异常 */
@@ -108,6 +110,6 @@ public class ManagerGlobalException {
         } else if (e instanceof NullPointerException && U.isBlank(msg)) {
             msg = "空指针异常, 联系后台查看日志进行处理";
         }
-        return new ResponseEntity<>(JsonResult.fail(msg), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(JsonResult.fail(msg), FAIL);
     }
 }
