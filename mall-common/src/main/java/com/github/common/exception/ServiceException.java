@@ -6,7 +6,6 @@ import java.io.Serializable;
 public class ServiceException extends RuntimeException implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    public ServiceException() {super("业务异常");}
     public ServiceException(String msg) {super(msg);}
 
     @Override

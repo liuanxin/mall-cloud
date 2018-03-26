@@ -497,6 +497,8 @@ class Server {
             "import " + PACKAGE + ".common.util.LogUtil;\n" +
             "import " + PACKAGE + ".common.util.RequestUtils;\n" +
             "import " + PACKAGE + ".common.util.U;\n" +
+            "import org.springframework.http.HttpStatus;\n" +
+            "import org.springframework.http.ResponseEntity;\n" +
             "import org.springframework.beans.factory.annotation.Value;\n" +
             "import org.springframework.web.HttpRequestMethodNotSupportedException;\n" +
             "import org.springframework.web.bind.annotation.ExceptionHandler;\n" +
@@ -520,40 +522,40 @@ class Server {
             "\n" +
             "    /** 业务异常 */\n" +
             "    @ExceptionHandler(ServiceException.class)\n" +
-            "    public JsonResult service(ServiceException e) {\n" +
+            "    public ResponseEntity<JsonResult> service(ServiceException e) {\n" +
             "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
             "            LogUtil.ROOT_LOG.debug(e.getMessage());\n" +
             "        }\n" +
-            "        return JsonResult.fail(e.getMessage());\n" +
+            "        return new ResponseEntity<>(JsonResult.fail(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);\n" +
             "    }\n" +
             "    /** 未登录 */\n" +
             "    @ExceptionHandler(NotLoginException.class)\n" +
-            "    public JsonResult notLogin(NotLoginException e) {\n" +
+            "    public ResponseEntity<JsonResult> notLogin(NotLoginException e) {\n" +
             "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
             "            LogUtil.ROOT_LOG.debug(e.getMessage());\n" +
             "        }\n" +
-            "        return JsonResult.notLogin(e.getMessage());\n" +
+            "        return new ResponseEntity<>(JsonResult.notLogin(e.getMessage()), HttpStatus.UNAUTHORIZED);\n" +
             "    }\n" +
             "    /** 无权限 */\n" +
             "    @ExceptionHandler(ForbiddenException.class)\n" +
-            "    public JsonResult forbidden(ForbiddenException e) {\n" +
+            "    public ResponseEntity<JsonResult> forbidden(ForbiddenException e) {\n" +
             "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
             "            LogUtil.ROOT_LOG.debug(e.getMessage());\n" +
             "        }\n" +
-            "        return JsonResult.notPermission(e.getMessage());\n" +
+            "        return new ResponseEntity<>(JsonResult.notPermission(e.getMessage()), HttpStatus.FORBIDDEN);\n" +
             "    }\n" +
             "\n" +
             "    @ExceptionHandler(NoHandlerFoundException.class)\n" +
-            "    public JsonResult noHandler(NoHandlerFoundException e) {\n" +
+            "    public ResponseEntity<JsonResult> noHandler(NoHandlerFoundException e) {\n" +
             "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
             "            LogUtil.bind(RequestUtils.logContextInfo());\n" +
             "            LogUtil.ROOT_LOG.debug(e.getMessage(), e);\n" +
             "            LogUtil.unbind();\n" +
             "        }\n" +
-            "        return JsonResult.fail(\"404\");\n" +
+            "        return new ResponseEntity<>(JsonResult.notFound(\"404\"), HttpStatus.NOT_FOUND);\n" +
             "    }\n" +
             "    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)\n" +
-            "    public JsonResult notSupported(HttpRequestMethodNotSupportedException e) {\n" +
+            "    public ResponseEntity<JsonResult> notSupported(HttpRequestMethodNotSupportedException e) {\n" +
             "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
             "            LogUtil.bind(RequestUtils.logContextInfo());\n" +
             "            LogUtil.ROOT_LOG.debug(e.getMessage(), e);\n" +
@@ -564,20 +566,21 @@ class Server {
             "        if (!online) {\n" +
             "            msg = \" 当前方式(\" + e.getMethod() + \"), 支持方式(\" + A.toStr(e.getSupportedMethods()) + \")\";\n" +
             "        }\n" +
-            "        return JsonResult.fail(\"不支持此种请求方式!\" + msg);\n" +
+            "        return new ResponseEntity<>(JsonResult.fail(\"不支持此种请求方式!\" + msg), HttpStatus.INTERNAL_SERVER_ERROR);\n" +
             "    }\n" +
             "    @ExceptionHandler(MaxUploadSizeExceededException.class)\n" +
-            "    public JsonResult uploadSizeExceeded(MaxUploadSizeExceededException e) {\n" +
+            "    public ResponseEntity<JsonResult> uploadSizeExceeded(MaxUploadSizeExceededException e) {\n" +
             "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
             "            LogUtil.ROOT_LOG.debug(\"文件太大: \" + e.getMessage(), e);\n" +
             "        }\n" +
             "        // 右移 20 位相当于除以两次 1024, 正好表示从字节到 Mb\n" +
-            "        return JsonResult.fail(\"上传文件太大! 请保持在 \" + (e.getMaxUploadSize() >> 20) + \"M 以内\");\n" +
+            "        JsonResult<Object> result = JsonResult.fail(\"上传文件太大! 请保持在 \" + (e.getMaxUploadSize() >> 20) + \"M 以内\");\n" +
+            "        return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);\n" +
             "    }\n" +
             "\n" +
             "    /** 未知的所有其他异常 */\n" +
             "    @ExceptionHandler(Throwable.class)\n" +
-            "    public JsonResult other(Throwable e) {\n" +
+            "    public ResponseEntity<JsonResult> other(Throwable e) {\n" +
             "        if (LogUtil.ROOT_LOG.isErrorEnabled()) {\n" +
             "            LogUtil.ROOT_LOG.error(\"有错误: \" + e.getMessage(), e);\n" +
             "        }\n" +
@@ -588,7 +591,7 @@ class Server {
             "        } else if (e instanceof NullPointerException && U.isBlank(msg)) {\n" +
             "            msg = \"空指针异常, 联系后台查看日志进行处理\";\n" +
             "        }\n" +
-            "        return JsonResult.fail(msg);\n" +
+            "        return new ResponseEntity<>(JsonResult.fail(msg), HttpStatus.INTERNAL_SERVER_ERROR);\n" +
             "    }\n" +
             "}\n";
 

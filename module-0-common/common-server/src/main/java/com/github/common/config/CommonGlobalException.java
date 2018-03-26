@@ -8,6 +8,8 @@ import com.github.common.util.A;
 import com.github.common.util.LogUtil;
 import com.github.common.util.RequestUtils;
 import com.github.common.util.U;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -32,40 +34,40 @@ public class CommonGlobalException {
 
     /** 业务异常 */
     @ExceptionHandler(ServiceException.class)
-    public JsonResult service(ServiceException e) {
+    public ResponseEntity<JsonResult> service(ServiceException e) {
         if (LogUtil.ROOT_LOG.isDebugEnabled()) {
             LogUtil.ROOT_LOG.debug(e.getMessage());
         }
-        return JsonResult.fail(e.getMessage());
+        return new ResponseEntity<>(JsonResult.fail(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
     /** 未登录 */
     @ExceptionHandler(NotLoginException.class)
-    public JsonResult notLogin(NotLoginException e) {
+    public ResponseEntity<JsonResult> notLogin(NotLoginException e) {
         if (LogUtil.ROOT_LOG.isDebugEnabled()) {
             LogUtil.ROOT_LOG.debug(e.getMessage());
         }
-        return JsonResult.notLogin(e.getMessage());
+        return new ResponseEntity<>(JsonResult.notLogin(e.getMessage()), HttpStatus.UNAUTHORIZED);
     }
     /** 无权限 */
     @ExceptionHandler(ForbiddenException.class)
-    public JsonResult forbidden(ForbiddenException e) {
+    public ResponseEntity<JsonResult> forbidden(ForbiddenException e) {
         if (LogUtil.ROOT_LOG.isDebugEnabled()) {
             LogUtil.ROOT_LOG.debug(e.getMessage());
         }
-        return JsonResult.notPermission(e.getMessage());
+        return new ResponseEntity<>(JsonResult.notPermission(e.getMessage()), HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(NoHandlerFoundException.class)
-    public JsonResult noHandler(NoHandlerFoundException e) {
+    public ResponseEntity<JsonResult> noHandler(NoHandlerFoundException e) {
         if (LogUtil.ROOT_LOG.isDebugEnabled()) {
             LogUtil.bind(RequestUtils.logContextInfo());
             LogUtil.ROOT_LOG.debug(e.getMessage(), e);
             LogUtil.unbind();
         }
-        return JsonResult.fail("404");
+        return new ResponseEntity<>(JsonResult.notFound("404"), HttpStatus.NOT_FOUND);
     }
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public JsonResult notSupported(HttpRequestMethodNotSupportedException e) {
+    public ResponseEntity<JsonResult> notSupported(HttpRequestMethodNotSupportedException e) {
         if (LogUtil.ROOT_LOG.isDebugEnabled()) {
             LogUtil.bind(RequestUtils.logContextInfo());
             LogUtil.ROOT_LOG.debug(e.getMessage(), e);
@@ -76,20 +78,21 @@ public class CommonGlobalException {
         if (!online) {
             msg = " 当前方式(" + e.getMethod() + "), 支持方式(" + A.toStr(e.getSupportedMethods()) + ")";
         }
-        return JsonResult.fail("不支持此种请求方式!" + msg);
+        return new ResponseEntity<>(JsonResult.fail("不支持此种请求方式!" + msg), HttpStatus.INTERNAL_SERVER_ERROR);
     }
     @ExceptionHandler(MaxUploadSizeExceededException.class)
-    public JsonResult uploadSizeExceeded(MaxUploadSizeExceededException e) {
+    public ResponseEntity<JsonResult> uploadSizeExceeded(MaxUploadSizeExceededException e) {
         if (LogUtil.ROOT_LOG.isDebugEnabled()) {
             LogUtil.ROOT_LOG.debug("文件太大: " + e.getMessage(), e);
         }
         // 右移 20 位相当于除以两次 1024, 正好表示从字节到 Mb
-        return JsonResult.fail("上传文件太大! 请保持在 " + (e.getMaxUploadSize() >> 20) + "M 以内");
+        JsonResult<Object> result = JsonResult.fail("上传文件太大! 请保持在 " + (e.getMaxUploadSize() >> 20) + "M 以内");
+        return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /** 未知的所有其他异常 */
     @ExceptionHandler(Throwable.class)
-    public JsonResult other(Throwable e) {
+    public ResponseEntity<JsonResult> other(Throwable e) {
         if (LogUtil.ROOT_LOG.isErrorEnabled()) {
             LogUtil.ROOT_LOG.error("有错误: " + e.getMessage(), e);
         }
@@ -100,6 +103,6 @@ public class CommonGlobalException {
         } else if (e instanceof NullPointerException && U.isBlank(msg)) {
             msg = "空指针异常, 联系后台查看日志进行处理";
         }
-        return JsonResult.fail(msg);
+        return new ResponseEntity<>(JsonResult.fail(msg), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
