@@ -552,7 +552,7 @@ class Server {
             "            LogUtil.ROOT_LOG.debug(e.getMessage(), e);\n" +
             "            LogUtil.unbind();\n" +
             "        }\n" +
-            "        return new ResponseEntity<>(JsonResult.notFound(\"404\"), HttpStatus.NOT_FOUND);\n" +
+            "        return new ResponseEntity<>(JsonResult.notFound(), HttpStatus.NOT_FOUND);\n" +
             "    }\n" +
             "    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)\n" +
             "    public ResponseEntity<JsonResult> notSupported(HttpRequestMethodNotSupportedException e) {\n" +

@@ -57,8 +57,8 @@ public class JsonResult<T> {
     }
 
     /** 未找到 */
-    public static <T> JsonResult<T> notFound(String msg) {
-        return new JsonResult<>(JsonCode.NOT_FOUND, msg);
+    public static <T> JsonResult<T> notFound() {
+        return new JsonResult<>(JsonCode.NOT_FOUND, "404");
     }
 
     /** 请求成功且不需要返回数据, 当返回 "地址添加成功" 这一类说明时 */

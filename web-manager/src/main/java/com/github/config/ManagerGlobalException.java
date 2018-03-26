@@ -67,7 +67,7 @@ public class ManagerGlobalException {
             LogUtil.ROOT_LOG.debug(e.getMessage(), e);
             LogUtil.unbind();
         }
-        return new ResponseEntity<>(JsonResult.notFound("404"), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(JsonResult.notFound(), HttpStatus.NOT_FOUND);
     }
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<JsonResult> notSupported(HttpRequestMethodNotSupportedException e) {
