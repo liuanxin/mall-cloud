@@ -1,6 +1,10 @@
 package com.github.common.json;
 
-/** 返回码 */
+/**
+ * 返回码
+ *
+ * @see org.springframework.http.HttpStatus
+ */
 public enum JsonCode {
 
     /** 将 data 解析后渲染页面(依业务而定, 也可能显示 msg 给用户看, 如 收货地址添加成功 这种) */
