@@ -47,7 +47,7 @@ public final class CollectResourceUtil {
                 }
             } catch (IOException e) {
                 if (LogUtil.ROOT_LOG.isErrorEnabled()) {
-                    LogUtil.ROOT_LOG.error("load file(" + path + ") exception", e);
+                    LogUtil.ROOT_LOG.error(String.format("load file(%s) exception", path), e);
                 }
             }
         }

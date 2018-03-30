@@ -88,7 +88,7 @@ public class CommonGlobalException {
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<JsonResult> uploadSizeExceeded(MaxUploadSizeExceededException e) {
         if (LogUtil.ROOT_LOG.isDebugEnabled()) {
-            LogUtil.ROOT_LOG.debug("文件太大: " + e.getMessage(), e);
+            LogUtil.ROOT_LOG.debug("文件太大", e);
         }
         // 右移 20 位相当于除以两次 1024, 正好表示从字节到 Mb
         JsonResult<Object> result = JsonResult.fail("上传文件太大! 请保持在 " + (e.getMaxUploadSize() >> 20) + "M 以内");

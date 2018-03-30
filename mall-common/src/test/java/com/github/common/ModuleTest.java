@@ -576,7 +576,7 @@ class Server {
             "    @ExceptionHandler(MaxUploadSizeExceededException.class)\n" +
             "    public ResponseEntity<JsonResult> uploadSizeExceeded(MaxUploadSizeExceededException e) {\n" +
             "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
-            "            LogUtil.ROOT_LOG.debug(\"文件太大: \" + e.getMessage(), e);\n" +
+            "            LogUtil.ROOT_LOG.debug(\"文件太大\"), e);\n" +
             "        }\n" +
             "        // 右移 20 位相当于除以两次 1024, 正好表示从字节到 Mb\n" +
             "        JsonResult<Object> result = JsonResult.fail(\"上传文件太大! 请保持在 \" + (e.getMaxUploadSize() >> 20) + \"M 以内\");\n" +
@@ -1150,15 +1150,17 @@ class Server {
 
         File resourcePath = new File(module + "/" + server + "/src/main/resources");
         resourcePath.mkdirs();
+        new File(resourcePath, parentPackageName).mkdir();
+        new File(resourcePath, parentPackageName + "-custom").mkdir();
 
         String applicationYml = String.format(APPLICATION_YML, port, packageName);
-        writeFile(new File(resourcePath, "bootstrap.yml"), applicationYml);
+        writeFile(new File(resourcePath, "application.yml"), applicationYml);
         String applicationTestYml = String.format(APPLICATION_TEST_YML, port,
                 packageName, packageName, packageName, packageName);
-        writeFile(new File(resourcePath, "bootstrap-test.yml"), applicationTestYml);
+        writeFile(new File(resourcePath, "application-test.yml"), applicationTestYml);
         String applicationProdYml = String.format(APPLICATION_PROD_YML, port,
                 packageName, packageName, packageName, packageName);
-        writeFile(new File(resourcePath, "bootstrap-prod.yml"), applicationProdYml);
+        writeFile(new File(resourcePath, "application-prod.yml"), applicationProdYml);
 
         writeFile(new File(resourcePath, "config.properties"), CONFIG);
         String logXml = LOG_XML.replaceAll("~MODULE_NAME~", parentPackageName);
