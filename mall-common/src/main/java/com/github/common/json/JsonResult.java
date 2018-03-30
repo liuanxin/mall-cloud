@@ -46,6 +46,11 @@ public class JsonResult<T> {
         return new JsonResult<T>(JsonCode.FAIL, msg);
     }
 
+    /** 参数错误 */
+    public static <T> JsonResult<T> badRequest(String msg) {
+        return new JsonResult<T>(JsonCode.BAD_REQUEST, msg);
+    }
+
     /** 未登录 */
     public static <T> JsonResult<T> notLogin(String msg) {
         return new JsonResult<T>(JsonCode.NOT_LOGIN, msg);

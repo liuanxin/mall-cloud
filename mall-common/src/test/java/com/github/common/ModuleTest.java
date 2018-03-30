@@ -497,14 +497,18 @@ class Server {
             "import " + PACKAGE + ".common.util.LogUtil;\n" +
             "import " + PACKAGE + ".common.util.RequestUtils;\n" +
             "import " + PACKAGE + ".common.util.U;\n" +
+            "import org.springframework.beans.factory.annotation.Value;\n" +
             "import org.springframework.http.HttpStatus;\n" +
             "import org.springframework.http.ResponseEntity;\n" +
-            "import org.springframework.beans.factory.annotation.Value;\n" +
             "import org.springframework.web.HttpRequestMethodNotSupportedException;\n" +
+            "import org.springframework.web.bind.MissingServletRequestParameterException;\n" +
             "import org.springframework.web.bind.annotation.ExceptionHandler;\n" +
             "import org.springframework.web.bind.annotation.RestControllerAdvice;\n" +
             "import org.springframework.web.multipart.MaxUploadSizeExceededException;\n" +
             "import org.springframework.web.servlet.NoHandlerFoundException;\n" +
+            "\n" +
+            "import java.util.regex.Matcher;\n" +
+            "import java.util.regex.Pattern;\n" +
             "\n" +
             "/**\n" +
             " * 处理全局异常的控制类. 如果要自定义错误处理类\n" +
@@ -521,6 +525,8 @@ class Server {
             "\n" +
             "    @Value(\"${online:false}\")\n" +
             "    private boolean online;\n" +
+            "\n" +
+            "    private static final Pattern REQUIRED_PARAMETER = Pattern.compile(\".*?\\'(.*?)\\'.*?\");\n" +
             "\n" +
             "    /** 业务异常 */\n" +
             "    @ExceptionHandler(ServiceException.class)\n" +
@@ -559,6 +565,21 @@ class Server {
             "        }\n" +
             "        return new ResponseEntity<>(JsonResult.notFound(), HttpStatus.NOT_FOUND);\n" +
             "    }\n" +
+            "    @ExceptionHandler(MissingServletRequestParameterException.class)\n" +
+            "    public ResponseEntity<JsonResult> missParam(MissingServletRequestParameterException e) {\n" +
+            "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
+            "            LogUtil.bind(RequestUtils.logContextInfo());\n" +
+            "            LogUtil.ROOT_LOG.debug(e.getMessage(), e);\n" +
+            "            LogUtil.unbind();\n" +
+            "        }\n" +
+            "\n" +
+            "        Matcher matcher = REQUIRED_PARAMETER.matcher(e.getMessage());\n" +
+            "        String showMsg = \"缺少必须的参数\";\n" +
+            "        if (matcher.find()) {\n" +
+            "            showMsg += \"(\" + matcher.group(1) + \")\";\n" +
+            "        }\n" +
+            "        return new ResponseEntity<>(JsonResult.badRequest(showMsg), HttpStatus.BAD_REQUEST);\n" +
+            "    }\n" +
             "    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)\n" +
             "    public ResponseEntity<JsonResult> notSupported(HttpRequestMethodNotSupportedException e) {\n" +
             "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
@@ -576,7 +597,7 @@ class Server {
             "    @ExceptionHandler(MaxUploadSizeExceededException.class)\n" +
             "    public ResponseEntity<JsonResult> uploadSizeExceeded(MaxUploadSizeExceededException e) {\n" +
             "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
-            "            LogUtil.ROOT_LOG.debug(\"文件太大\"), e);\n" +
+            "            LogUtil.ROOT_LOG.debug(\"文件太大\", e);\n" +
             "        }\n" +
             "        // 右移 20 位相当于除以两次 1024, 正好表示从字节到 Mb\n" +
             "        JsonResult<Object> result = JsonResult.fail(\"上传文件太大! 请保持在 \" + (e.getMaxUploadSize() >> 20) + \"M 以内\");\n" +
