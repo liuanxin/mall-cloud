@@ -20,9 +20,9 @@ public final class CollectResourceUtil {
      *
      * key 表示资源文件所在包的类(用来获取 ClassLoader), value 表示目录路径(数组)
      */
-    public static Resource[] resource(Map<Class, List<String>> resourceMap) {
+    public static Resource[] resource(Map<Class, String[]> resourceMap) {
         List<Resource> resourceList = Lists.newArrayList();
-        for (Map.Entry<Class, List<String>> entry : resourceMap.entrySet()) {
+        for (Map.Entry<Class, String[]> entry : resourceMap.entrySet()) {
             // 将模块里面的 mybatis 配置文件都收集起来扫描进 spring 容器
             resourceList.addAll(getResourceArray(entry.getKey(), entry.getValue()));
         }
@@ -33,7 +33,7 @@ public final class CollectResourceUtil {
     }
 
     /** 从单个类所在的加载器下获取 mybatis 要加载的 xml 文件 */
-    private static List<Resource> getResourceArray(Class clazz, List<String> resourcePath) {
+    private static List<Resource> getResourceArray(Class clazz, String[] resourcePath) {
         if (LogUtil.ROOT_LOG.isDebugEnabled()) {
             LogUtil.ROOT_LOG.debug("load {} in ({})", clazz, clazz.getProtectionDomain().getCodeSource().getLocation());
         }
