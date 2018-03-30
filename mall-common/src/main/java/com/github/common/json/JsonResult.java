@@ -13,11 +13,11 @@ import lombok.Setter;
 public class JsonResult<T> {
 
     /**
-     * 返回码. 前端根据此值控制页面扭转
+     * 返回码
      *
      * @see JsonCode
      */
-    @ApiReturn(desc = "返回码. 前端根据此值控制页面扭转")
+    @ApiReturn(desc = "返回码")
     private int code;
 
     /** 返回说明. 如: 用户名密码错误, 收货地址添加成功 等 */
