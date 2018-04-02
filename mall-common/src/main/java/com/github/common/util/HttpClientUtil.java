@@ -229,16 +229,25 @@ public class HttpClientUtil {
             EntityUtils.consume(entity);
             if (LogUtil.ROOT_LOG.isInfoEnabled()) {
                 long ms = System.currentTimeMillis() - start;
-                StringBuilder log = new StringBuilder();
-                log.append("HttpClient(").append(method).append(" ").append(url).append(")");
+                StringBuilder sbd = new StringBuilder();
+                sbd.append("HttpClient => (").append(method).append(" ").append(url).append(")");
                 if (U.isNotBlank(params)) {
-                    log.append("params(").append(params).append(")");
+                    sbd.append(" params(").append(params).append(")");
                 }
                 if (U.isNotBlank(headers)) {
-                    log.append("headers(").append(headers).append(")");
+                    sbd.append(" headers(").append(headers).append(")");
                 }
-                log.append(" time(").append(ms).append("ms), return(").append(result).append(")");
-                LogUtil.ROOT_LOG.info(log.toString());
+                sbd.append(" time(").append(ms).append("ms), return(").append(result).append(")");
+                Header[] allHeaders = response.getAllHeaders();
+                if (A.isNotEmpty(allHeaders)) {
+                    sbd.append(", response headers(\n");
+                    for (Header header : allHeaders) {
+                        sbd.append("  ").append(header.getName())
+                                .append(" : ").append(header.getValue()).append("\n");
+                    }
+                    sbd.append(")");
+                }
+                LogUtil.ROOT_LOG.info(sbd.toString());
             }
             return result;
         } catch (Exception e) {

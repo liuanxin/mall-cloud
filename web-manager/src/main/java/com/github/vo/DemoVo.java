@@ -9,6 +9,6 @@ import lombok.Data;
 public class DemoVo {
     @ApiReturn(desc = "用户 id")
     private String userId;
-    @ApiParam(type = "int", desc = "性别")
+    @ApiParam(dataType = "int", desc = "性别")
     private Gender gender;
 }

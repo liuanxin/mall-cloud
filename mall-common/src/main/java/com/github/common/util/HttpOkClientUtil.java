@@ -142,23 +142,34 @@ public class HttpOkClientUtil {
         String requestUrl = request.url().toString();
         try {
             long start = System.currentTimeMillis();
-            ResponseBody response = HTTP_CLIENT.newCall(request).execute().body();
+            Response response = HTTP_CLIENT.newCall(request).execute();
             if (response != null) {
-                String result = response.string();
-                if (LogUtil.ROOT_LOG.isInfoEnabled()) {
-                    long ms = System.currentTimeMillis() - start;
-                    StringBuilder sbd = new StringBuilder();
-                    sbd.append("OkHttp3(").append(method).append(" ").append(requestUrl).append(")");
-                    if (U.isNotBlank(params)) {
-                        sbd.append("params(").append(params).append(")");
+                ResponseBody body = response.body();
+                if (body != null) {
+                    String result = body.string();
+                    if (LogUtil.ROOT_LOG.isInfoEnabled()) {
+                        long ms = System.currentTimeMillis() - start;
+                        StringBuilder sbd = new StringBuilder();
+                        sbd.append("OkHttp3 => (").append(method).append(" ").append(requestUrl).append(")");
+                        if (U.isNotBlank(params)) {
+                            sbd.append(" params(").append(params).append(")");
+                        }
+                        if (U.isNotBlank(headers)) {
+                            sbd.append(" headers(").append(headers).append(")");
+                        }
+                        sbd.append(" time(").append(ms).append("ms), return(").append(result).append(")");
+                        Headers h = response.headers();
+                        if (U.isNotBlank(h)) {
+                            sbd.append(", response headers(\n");
+                            for (String name : h.names()) {
+                                sbd.append("  ").append(name).append(" : ").append(h.get(name)).append("\n");
+                            }
+                            sbd.append(")");
+                        }
+                        LogUtil.ROOT_LOG.info(sbd.toString());
                     }
-                    if (U.isNotBlank(headers)) {
-                        sbd.append("headers(").append(headers).append(")");
-                    }
-                    sbd.append(" time(").append(ms).append("ms), return(").append(result).append(")");
-                    LogUtil.ROOT_LOG.info(sbd.toString());
+                    return result;
                 }
-                return result;
             }
         } catch (IOException e) {
             if (LogUtil.ROOT_LOG.isInfoEnabled()) {
