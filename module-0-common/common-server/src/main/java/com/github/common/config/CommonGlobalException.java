@@ -7,7 +7,6 @@ import com.github.common.json.JsonResult;
 import com.github.common.util.A;
 import com.github.common.util.LogUtil;
 import com.github.common.util.RequestUtils;
-import com.github.common.util.U;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +16,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.NoHandlerFoundException;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * 处理全局异常的控制类. 如果要自定义错误处理类
@@ -37,8 +33,6 @@ public class CommonGlobalException {
 
     @Value("${online:false}")
     private boolean online;
-
-    private static final Pattern REQUIRED_PARAMETER = Pattern.compile(".*?\'(.*?)\'.*?");
 
     /** 业务异常 */
     @ExceptionHandler(ServiceException.class)
@@ -70,50 +64,43 @@ public class CommonGlobalException {
 
     @ExceptionHandler(NoHandlerFoundException.class)
     public ResponseEntity<JsonResult> noHandler(NoHandlerFoundException e) {
-        if (LogUtil.ROOT_LOG.isDebugEnabled()) {
-            LogUtil.bind(RequestUtils.logContextInfo());
-            LogUtil.ROOT_LOG.debug(e.getMessage(), e);
-            LogUtil.unbind();
-        }
-        return new ResponseEntity<>(JsonResult.notFound(), HttpStatus.NOT_FOUND);
+        bindAndPrintLog(e);
+
+        String msg = String.format("Not found(%s %s)", e.getHttpMethod(), e.getRequestURL());
+        return new ResponseEntity<>(JsonResult.notFound(msg), HttpStatus.NOT_FOUND);
     }
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<JsonResult> missParam(MissingServletRequestParameterException e) {
-        if (LogUtil.ROOT_LOG.isDebugEnabled()) {
-            LogUtil.bind(RequestUtils.logContextInfo());
-            LogUtil.ROOT_LOG.debug(e.getMessage(), e);
-            LogUtil.unbind();
-        }
+        bindAndPrintLog(e);
 
-        Matcher matcher = REQUIRED_PARAMETER.matcher(e.getMessage());
-        String showMsg = "缺少必须的参数";
-        if (matcher.find()) {
-            showMsg += "(" + matcher.group(1) + ")";
-        }
-        return new ResponseEntity<>(JsonResult.badRequest(showMsg), HttpStatus.BAD_REQUEST);
+        String msg = String.format("缺少必须的参数(%s), 类型(%s)", e.getParameterName(), e.getParameterType());
+        return new ResponseEntity<>(JsonResult.badRequest(msg), HttpStatus.BAD_REQUEST);
     }
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<JsonResult> notSupported(HttpRequestMethodNotSupportedException e) {
-        if (LogUtil.ROOT_LOG.isDebugEnabled()) {
-            LogUtil.bind(RequestUtils.logContextInfo());
-            LogUtil.ROOT_LOG.debug(e.getMessage(), e);
-            LogUtil.unbind();
-        }
+        bindAndPrintLog(e);
 
-        String msg = U.EMPTY;
-        if (!online) {
-            msg = " 当前方式(" + e.getMethod() + "), 支持方式(" + A.toStr(e.getSupportedMethods()) + ")";
-        }
-        return new ResponseEntity<>(JsonResult.fail("不支持此种请求方式!" + msg), FAIL);
+        String msg = String.format("不支持此种请求方式! 当前方式(%s), 支持方式(%s)",
+                e.getMethod(), A.toStr(e.getSupportedMethods()));
+        return new ResponseEntity<>(JsonResult.fail(msg), FAIL);
     }
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<JsonResult> uploadSizeExceeded(MaxUploadSizeExceededException e) {
-        if (LogUtil.ROOT_LOG.isDebugEnabled()) {
-            LogUtil.ROOT_LOG.debug("文件太大", e);
-        }
+        bindAndPrintLog(e);
+
         // 右移 20 位相当于除以两次 1024, 正好表示从字节到 Mb
-        JsonResult<Object> result = JsonResult.fail("上传文件太大! 请保持在 " + (e.getMaxUploadSize() >> 20) + "M 以内");
-        return new ResponseEntity<>(result, FAIL);
+        String msg = String.format("上传文件太大! 请保持在 %sM 以内", (e.getMaxUploadSize() >> 20));
+        return new ResponseEntity<>(JsonResult.fail(msg), FAIL);
+    }
+    private void bindAndPrintLog(Exception e) {
+        if (LogUtil.ROOT_LOG.isDebugEnabled()) {
+            LogUtil.bind(RequestUtils.logContextInfo());
+            try {
+                LogUtil.ROOT_LOG.debug(e.getMessage(), e);
+            } finally {
+                LogUtil.unbind();
+            }
+        }
     }
 
     /** 未知的所有其他异常 */

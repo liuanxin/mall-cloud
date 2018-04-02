@@ -7,7 +7,6 @@ import com.github.common.json.JsonResult;
 import com.github.common.util.A;
 import com.github.common.util.LogUtil;
 import com.github.common.util.RequestUtils;
-import com.github.common.util.U;
 import com.github.util.BackendSessionUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -18,9 +17,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.NoHandlerFoundException;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * 处理全局异常的控制类
@@ -33,8 +29,6 @@ import java.util.regex.Pattern;
 public class BackendGlobalException {
 
     private static final HttpStatus FAIL = HttpStatus.INTERNAL_SERVER_ERROR;
-
-    private static final Pattern REQUIRED_PARAMETER = Pattern.compile(".*?\'(.*?)\'.*?");
 
     @Value("${online:false}")
     private boolean online;
@@ -71,56 +65,45 @@ public class BackendGlobalException {
 
     @ExceptionHandler(NoHandlerFoundException.class)
     public ResponseEntity<JsonResult> noHandler(NoHandlerFoundException e) {
-        if (LogUtil.ROOT_LOG.isDebugEnabled()) {
-            LogUtil.bind(RequestUtils.logContextInfo()
-                    .setId(String.valueOf(BackendSessionUtil.getUserId()))
-                    .setName(BackendSessionUtil.getUserName()));
-            LogUtil.ROOT_LOG.debug(e.getMessage(), e);
-            LogUtil.unbind();
-        }
-        return new ResponseEntity<>(JsonResult.notFound(), HttpStatus.NOT_FOUND);
+        bindAndPrintLog(e);
+
+        String msg = String.format("Not found(%s %s)", e.getHttpMethod(), e.getRequestURL());
+        return new ResponseEntity<>(JsonResult.notFound(msg), HttpStatus.NOT_FOUND);
     }
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<JsonResult> missParam(MissingServletRequestParameterException e) {
-        if (LogUtil.ROOT_LOG.isDebugEnabled()) {
-            LogUtil.bind(RequestUtils.logContextInfo()
-                    .setId(String.valueOf(BackendSessionUtil.getUserId()))
-                    .setName(BackendSessionUtil.getUserName()));
-            LogUtil.ROOT_LOG.debug(e.getMessage(), e);
-            LogUtil.unbind();
-        }
+        bindAndPrintLog(e);
 
-        Matcher matcher = REQUIRED_PARAMETER.matcher(e.getMessage());
-        String showMsg = "缺少必须的参数";
-        if (matcher.find()) {
-            showMsg += "(" + matcher.group(1) + ")";
-        }
-        return new ResponseEntity<>(JsonResult.badRequest(showMsg), HttpStatus.BAD_REQUEST);
+        String msg = String.format("缺少必须的参数(%s), 类型(%s)", e.getParameterName(), e.getParameterType());
+        return new ResponseEntity<>(JsonResult.badRequest(msg), HttpStatus.BAD_REQUEST);
     }
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<JsonResult> notSupported(HttpRequestMethodNotSupportedException e) {
+        bindAndPrintLog(e);
+
+        String msg = String.format("不支持此种请求方式! 当前方式(%s), 支持方式(%s)",
+                e.getMethod(), A.toStr(e.getSupportedMethods()));
+        return new ResponseEntity<>(JsonResult.fail(msg), FAIL);
+    }
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<JsonResult> uploadSizeExceeded(MaxUploadSizeExceededException e) {
+        bindAndPrintLog(e);
+
+        // 右移 20 位相当于除以两次 1024, 正好表示从字节到 Mb
+        String msg = String.format("上传文件太大! 请保持在 %sM 以内", (e.getMaxUploadSize() >> 20));
+        return new ResponseEntity<>(JsonResult.fail(msg), FAIL);
+    }
+    private void bindAndPrintLog(Exception e) {
         if (LogUtil.ROOT_LOG.isDebugEnabled()) {
             LogUtil.bind(RequestUtils.logContextInfo()
                     .setId(String.valueOf(BackendSessionUtil.getUserId()))
                     .setName(BackendSessionUtil.getUserName()));
-            LogUtil.ROOT_LOG.debug(e.getMessage(), e);
-            LogUtil.unbind();
+            try {
+                LogUtil.ROOT_LOG.debug(e.getMessage(), e);
+            } finally {
+                LogUtil.unbind();
+            }
         }
-
-        String msg = U.EMPTY;
-        if (!online) {
-            msg = String.format(" 当前方式(%s), 支持方式(%s)", e.getMethod(), A.toStr(e.getSupportedMethods()));
-        }
-        return new ResponseEntity<>(JsonResult.fail("不支持此种请求方式!" + msg), FAIL);
-    }
-    @ExceptionHandler(MaxUploadSizeExceededException.class)
-    public ResponseEntity<JsonResult> uploadSizeExceeded(MaxUploadSizeExceededException e) {
-        if (LogUtil.ROOT_LOG.isDebugEnabled()) {
-            LogUtil.ROOT_LOG.debug("文件太大", e);
-        }
-        // 右移 20 位相当于除以两次 1024, 正好表示从字节到 Mb
-        JsonResult<Object> result = JsonResult.fail("上传文件太大! 请保持在 " + (e.getMaxUploadSize() >> 20) + "M 以内");
-        return new ResponseEntity<>(result, FAIL);
     }
 
     /** 未知的所有其他异常 */
