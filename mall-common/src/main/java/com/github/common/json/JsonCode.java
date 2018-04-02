@@ -11,7 +11,7 @@ public enum JsonCode {
     SUCCESS(200, "成功. 操作数据或显示 msg 给用户看, 依具体的业务而定"),
 
     /** 显示 msg 给用户看 */
-    BAD_REQUEST(400, "参数有误"),
+    BAD_REQUEST(400, "参数有误(输出 msg 即可)"),
 
     /** 导向登录页面引导用户登录 */
     NOT_LOGIN(401, "未登录, 导到登录页"),
@@ -20,10 +20,10 @@ public enum JsonCode {
     NOT_PERMISSION(403, "无权限, 提示用户无权限(输出 msg 即可)"),
 
     /** 不需要额外处理 */
-    NOT_FOUND(404, "未找到相应处理"),
+    NOT_FOUND(404, "未找到相应处理(不需要处理)"),
 
     /** 显示 msg 给用户看 */
-    FAIL(500, "失败. 显示 msg 给用户看");
+    FAIL(500, "失败(输出 msg 即可)");
 
     int flag;
     String msg;
