@@ -1,7 +1,6 @@
 package com.github.common.resource;
 
 import com.github.common.Const;
-import com.github.common.util.A;
 import com.github.common.util.U;
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.Maps;
@@ -23,33 +22,28 @@ public final class CollectEnumUtil {
     /** 在 enum 中返回给前台的下拉数据的值, 如果没有将会以 name() 为值 */
     private static final String VALUE = "getValue";
 
-    private static Map<String, Map<Object, Object>> cacheMap = Maps.newLinkedHashMap();
-
     /** 获取所有枚举的说明 */
     public static Map<String, Map<Object, Object>> enumMap(Map<String, Class> enumClassMap) {
-        if (A.isNotEmpty(cacheMap)) {
-            return cacheMap;
-        }
+        Map<String, Map<Object, Object>> returnMap = Maps.newHashMap();
+        // 先通过各自的类找到所有的枚举
         Map<String, Class> enums = getEnumMap(enumClassMap);
         for (String type : enums.keySet()) {
-            enumInfo(type, enums);
+            returnMap.put(type, enumInfo(type, enums, false));
         }
-        return cacheMap;
+        return returnMap;
     }
 
-    /** 根据枚举的名字获取单个枚举的说明 */
+    /** 根据枚举的名字获取单个枚举的说明. loadEnum 为 true 表示需要基于加载器去获取相关包里面的 枚举 */
     @SuppressWarnings("unchecked")
-    public static Map<Object, Object> enumInfo(String type, Map<String, Class> enumClassMap) {
+    public static Map<Object, Object> enumInfo(String type, Map<String, Class> enumClassMap, boolean loadEnum) {
         if (U.isBlank(type)) {
             return Collections.emptyMap();
         }
-        Map<Object, Object> returnMap = cacheMap.get(type);
-        if (A.isNotEmpty(returnMap)) {
-            return returnMap;
-        }
 
-        Map<String, Class> enums = getEnumMap(enumClassMap);
-        Class enumClass = enums.get(type.toLowerCase());
+        if (loadEnum) {
+            enumClassMap = getEnumMap(enumClassMap);
+        }
+        Class enumClass = enumClassMap.get(type.toLowerCase());
         if (enumClass == null || !enumClass.isEnum()) {
             return Collections.emptyMap();
         }
@@ -58,9 +52,7 @@ public final class CollectEnumUtil {
             if (U.isNotBlank(select)) {
                 Object result = select.invoke(null);
                 if (U.isNotBlank(result) && result instanceof Map) {
-                    Map<Object, Object> resultMap = (Map<Object, Object>) result;
-                    cacheMap.put(type, resultMap);
-                    return resultMap;
+                    return (Map<Object, Object>) result;
                 }
             }
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
@@ -83,7 +75,6 @@ public final class CollectEnumUtil {
 
             map.put(key, value);
         }
-        cacheMap.put(type, map);
         return map;
     }
 

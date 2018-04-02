@@ -29,6 +29,6 @@ public final class BackendDataCollectUtil {
     public static final Map<String, Map<Object, Object>> ALL_ENUM_INFO = CollectEnumUtil.enumMap(ENUM_MAP);
     /** 提供接口出去的 单个 枚举信息 */
     public static Map<Object, Object> singleEnumInfo(String type) {
-        return CollectEnumUtil.enumInfo(type, ENUM_MAP);
+        return CollectEnumUtil.enumInfo(type, ENUM_MAP, true);
     }
 }
