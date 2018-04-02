@@ -15,7 +15,7 @@ public class JsonUtil {
             super();
             // 日期不用 utc 方式显示(utc 是一个整数值)
             // configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-            // 时间格式
+            // 时间格式. 要想自定义在字段上标 @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd") 即可
             // setDateFormat(new SimpleDateFormat(DateFormatType.YYYY_MM_DD_HH_MM_SS.getValue()));
             // 不确定值的枚举返回 null
             configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL, true);
