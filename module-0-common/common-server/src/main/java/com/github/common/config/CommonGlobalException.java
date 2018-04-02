@@ -93,6 +93,7 @@ public class CommonGlobalException {
     }
     private void bindAndPrintLog(Exception e) {
         if (LogUtil.ROOT_LOG.isDebugEnabled()) {
+            // 当没有进到全局拦截器就抛出的异常, 需要这么处理才能在日志中输出整个上下文信息
             LogUtil.bind(RequestUtils.logContextInfo());
             try {
                 LogUtil.ROOT_LOG.debug(e.getMessage(), e);

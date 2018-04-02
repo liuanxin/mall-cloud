@@ -581,6 +581,7 @@ class Server {
             "    }\n" +
             "    private void bindAndPrintLog(Exception e) {\n" +
             "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
+            "            // 当没有进到全局拦截器就抛出的异常, 需要这么处理才能在日志中输出整个上下文信息\n" +
             "            LogUtil.bind(RequestUtils.logContextInfo());\n" +
             "            try {\n" +
             "                LogUtil.ROOT_LOG.debug(e.getMessage(), e);\n" +

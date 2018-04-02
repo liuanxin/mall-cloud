@@ -98,6 +98,7 @@ public class ManagerGlobalException {
     }
     private void bindAndPrintLog(Exception e) {
         if (LogUtil.ROOT_LOG.isDebugEnabled()) {
+            // 当没有进到全局拦截器就抛出的异常, 需要这么处理才能在日志中输出整个上下文信息
             LogUtil.bind(RequestUtils.logContextInfo()
                     .setId(String.valueOf(ManagerSessionUtil.getUserId()))
                     .setName(ManagerSessionUtil.getUserName()));
