@@ -1,7 +1,7 @@
 package com.github.global.config;
 
 import com.github.common.json.JsonCode;
-import com.github.global.model.Develop;
+import com.github.global.constant.Develop;
 import com.github.liuanxin.api.annotation.EnableApiInfo;
 import com.github.liuanxin.api.model.DocumentCopyright;
 import com.github.liuanxin.api.model.DocumentResponse;

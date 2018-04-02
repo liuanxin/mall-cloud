@@ -1,4 +1,4 @@
-package com.github.global.model;
+package com.github.global.constant;
 
 import com.github.common.AppVersion;
 
