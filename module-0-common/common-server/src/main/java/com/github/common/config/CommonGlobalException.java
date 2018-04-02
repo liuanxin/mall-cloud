@@ -66,7 +66,7 @@ public class CommonGlobalException {
     public ResponseEntity<JsonResult> noHandler(NoHandlerFoundException e) {
         bindAndPrintLog(e);
 
-        String msg = String.format("Not found(%s %s)", e.getHttpMethod(), e.getRequestURL());
+        String msg = String.format("没找到(%s %s)", e.getHttpMethod(), e.getRequestURL());
         return new ResponseEntity<>(JsonResult.notFound(msg), HttpStatus.NOT_FOUND);
     }
     @ExceptionHandler(MissingServletRequestParameterException.class)

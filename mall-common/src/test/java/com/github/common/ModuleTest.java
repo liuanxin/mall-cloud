@@ -554,7 +554,7 @@ class Server {
             "    public ResponseEntity<JsonResult> noHandler(NoHandlerFoundException e) {\n" +
             "        bindAndPrintLog(e);\n" +
             "\n" +
-            "        String msg = String.format(\"Not found(%%s %%s)\", e.getHttpMethod(), e.getRequestURL());\n" +
+            "        String msg = String.format(\"没找到(%%s %%s)\", e.getHttpMethod(), e.getRequestURL());\n" +
             "        return new ResponseEntity<>(JsonResult.notFound(msg), HttpStatus.NOT_FOUND);\n" +
             "    }\n" +
             "    @ExceptionHandler(MissingServletRequestParameterException.class)\n" +
