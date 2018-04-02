@@ -67,7 +67,7 @@ public class JsonResult<T> {
 
     /** 未找到 */
     public static <T> JsonResult<T> notFound(String msg) {
-        return new JsonResult<>(JsonCode.NOT_FOUND, msg);
+        return new JsonResult<T>(JsonCode.NOT_FOUND, msg);
     }
 
     /** 请求失败 */
