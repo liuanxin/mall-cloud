@@ -27,15 +27,16 @@ public final class RequestUtils {
      */
     public static String getRealIp() {
         HttpServletRequest request = getRequest();
-        String ip = request.getHeader("X-Real-IP");
-        if (U.isNotBlank(ip) && !"unknown".equalsIgnoreCase(ip)) {
-            return ip.trim();
-        }
 
-        ip = request.getHeader("X-Forwarded-For");
+        String ip = request.getHeader("X-Forwarded-For");
         if (U.isNotBlank(ip) && !"unknown".equalsIgnoreCase(ip)) {
             // 多次反向代理后会有多个IP值，第一个为 真实 ip
             return ip.split(",")[0].trim();
+        }
+
+        ip = request.getHeader("X-Real-IP");
+        if (U.isNotBlank(ip) && !"unknown".equalsIgnoreCase(ip)) {
+            return ip.trim();
         }
 
         ip = request.getHeader("Proxy-Client-IP");
