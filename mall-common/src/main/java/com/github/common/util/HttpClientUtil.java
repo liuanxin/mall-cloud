@@ -243,7 +243,7 @@ public class HttpClientUtil {
                     sbd.append(", response headers(");
                     int i = 0, len = allHeaders.length;
                     for (Header header : allHeaders) {
-                        sbd.append("  ").append(header.getName()).append(" : ").append(header.getValue());
+                        sbd.append("<").append(header.getName()).append(" : ").append(header.getValue()).append(">");
                         if (i + 1 != len) {
                             sbd.append(",");
                         }
