@@ -241,13 +241,8 @@ public class HttpClientUtil {
                 Header[] allHeaders = response.getAllHeaders();
                 if (A.isNotEmpty(allHeaders)) {
                     sbd.append(", response headers(");
-                    int i = 0, len = allHeaders.length;
                     for (Header header : allHeaders) {
                         sbd.append("<").append(header.getName()).append(" : ").append(header.getValue()).append(">");
-                        if (i + 1 != len) {
-                            sbd.append(",");
-                        }
-                        i++;
                     }
                     sbd.append(")");
                 }

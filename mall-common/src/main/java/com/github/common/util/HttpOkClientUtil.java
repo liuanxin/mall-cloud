@@ -161,13 +161,8 @@ public class HttpOkClientUtil {
                         Headers h = response.headers();
                         if (U.isNotBlank(h)) {
                             sbd.append(", response headers(");
-                            int i = 0, len = h.names().size();
                             for (String name : h.names()) {
                                 sbd.append("<").append(name).append(" : ").append(h.get(name)).append(">");
-                                if (i + 1 != len) {
-                                    sbd.append(",");
-                                }
-                                i++;
                             }
                             sbd.append(")");
                         }
