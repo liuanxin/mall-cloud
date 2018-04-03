@@ -160,9 +160,14 @@ public class HttpOkClientUtil {
                         sbd.append(" time(").append(ms).append("ms), return(").append(result).append(")");
                         Headers h = response.headers();
                         if (U.isNotBlank(h)) {
-                            sbd.append(", response headers(\n");
+                            sbd.append(", response headers(");
+                            int i = 0, len = h.names().size();
                             for (String name : h.names()) {
-                                sbd.append("  ").append(name).append(" : ").append(h.get(name)).append("\n");
+                                sbd.append("  ").append(name).append(" : ").append(h.get(name));
+                                if (i + 1 != len) {
+                                    sbd.append(",");
+                                }
+                                i++;
                             }
                             sbd.append(")");
                         }

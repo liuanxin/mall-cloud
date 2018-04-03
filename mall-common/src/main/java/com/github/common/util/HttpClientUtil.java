@@ -240,10 +240,14 @@ public class HttpClientUtil {
                 sbd.append(" time(").append(ms).append("ms), return(").append(result).append(")");
                 Header[] allHeaders = response.getAllHeaders();
                 if (A.isNotEmpty(allHeaders)) {
-                    sbd.append(", response headers(\n");
+                    sbd.append(", response headers(");
+                    int i = 0, len = allHeaders.length;
                     for (Header header : allHeaders) {
-                        sbd.append("  ").append(header.getName())
-                                .append(" : ").append(header.getValue()).append("\n");
+                        sbd.append("  ").append(header.getName()).append(" : ").append(header.getValue());
+                        if (i + 1 != len) {
+                            sbd.append(",");
+                        }
+                        i++;
                     }
                     sbd.append(")");
                 }
