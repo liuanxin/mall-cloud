@@ -61,7 +61,7 @@ public final class ExportUtil {
     }
 
     /** 从类上收集导出的标题(在字段上标的 &#064;ExportColumn 注解) */
-    public static LinkedHashMap<String, String> collectTitle(Class clazz) {
+    private static LinkedHashMap<String, String> collectTitle(Class clazz) {
         LinkedHashMap<String, String> titleMap = Maps.newLinkedHashMap();
         if (U.isNotBlank(clazz)) {
             Field[] fields = clazz.getDeclaredFields();
@@ -84,7 +84,7 @@ public final class ExportUtil {
     }
 
     /**
-     * 导出文件! 在 Controller 中调用!
+     * 导出文件! 在 Controller 中调用! 如果 dataList 为 empty, 导出的文件将会没有标题头
      *
      * @param type 文件类型, 现在有 xls03、xls07、csv 三种, 不在这三种中则默认是 xls07
      * @param name 导出时的文件名
@@ -97,6 +97,19 @@ public final class ExportUtil {
             titleMap = collectTitle(dataList.get(0).getClass());
         }
         export(type, name, titleMap, dataList, response);
+    }
+
+    /**
+     * 导出文件! 在 Controller 中调用!
+     *
+     * @param type 文件类型, 现在有 xls03、xls07、csv 三种, 不在这三种中则默认是 xls07
+     * @param name 导出时的文件名
+     * @param dataList 导出的数据(数组中的每个 object 都是一行, 并且每个字段上有使用 &#064;ExportColumn 注解来说明导出的列名)
+     * @param clazz 导出的实体类. 主要用来获取标题头
+     */
+    public static <T> void export(String type, String name, List<T> dataList, Class<T> clazz,
+                                  HttpServletResponse response) throws IOException {
+        export(type, name, collectTitle(clazz), dataList, response);
     }
 
     /**
@@ -247,9 +260,13 @@ public final class ExportUtil {
                                        LinkedHashMap<String, List<?>> dataMap) {
             // 声明一个工作薄. HSSFWorkbook 是 Office 2003 的版本, XSSFWorkbook 是 2007
             Workbook workbook = excel07 ? new XSSFWorkbook() : new HSSFWorkbook();
-            // 没有数据, 或者没有标题, 都直接返回
-            if (A.isEmpty(dataMap) || A.isEmpty(titleMap)) {
+            // 没有标题直接返回
+            if (A.isEmpty(titleMap)) {
                 return workbook;
+            }
+            // 如果数据为空, 构建一个空字典(确保导出的文件有标题头)
+            if (dataMap == null) {
+                dataMap = new LinkedHashMap<>();
             }
 
             // 头样式
@@ -257,13 +274,12 @@ public final class ExportUtil {
             // 内容样式
             CellStyle contentStyle = createContentStyle(workbook);
 
-            // sheet
             Sheet sheet;
-            // 行
+            //  行
             Row row;
-            // 列
+            //   列
             Cell cell;
-            // 表格数        行索引     列索引      数据起始索引  数据结束索引
+            //  表格数       行索引     列索引      数据起始索引  数据结束索引
             int sheetCount, rowIndex, cellIndex, fromIndex, toIndex;
             //  大小
             int size;
@@ -273,31 +289,35 @@ public final class ExportUtil {
             for (Map.Entry<String, List<?>> entry : dataMap.entrySet()) {
                 // 当前 sheet 的数据
                 excelList = entry.getValue();
-                if (A.isNotEmpty(excelList)) {
-                    // 一个 sheet 数据过多 excel 处理会出错, 分多个 sheet
-                    size = excelList.size();
-                    sheetCount = ((size % EXCEL_TOTAL == 0) ? (size / EXCEL_TOTAL) : (size / EXCEL_TOTAL + 1));
-                    for (int i = 0; i < sheetCount; i++) {
-                        // 构建 sheet, 带名字
-                        sheet = workbook.createSheet(entry.getKey() + (sheetCount > 1 ? ("-" + (i + 1)) : U.EMPTY));
+                size = A.isEmpty(excelList) ? 0 : excelList.size();
+                // 一个 sheet 数据过多 excel 处理会出错, 分多个 sheet
+                sheetCount = ((size % EXCEL_TOTAL == 0) ? (size / EXCEL_TOTAL) : (size / EXCEL_TOTAL + 1));
+                if (sheetCount == 0) {
+                    // 如果没有记录时也至少构建一个(确保导出的文件有标题头)
+                    sheetCount = 1;
+                }
+                for (int i = 0; i < sheetCount; i++) {
+                    // 构建 sheet, 带名字
+                    sheet = workbook.createSheet(entry.getKey() + (sheetCount > 1 ? ("-" + (i + 1)) : U.EMPTY));
 
-                        // 每个 sheet 的标题行
-                        rowIndex = 0;
-                        cellIndex = 0;
-                        row = sheet.createRow(rowIndex);
-                        row.setHeightInPoints(ROW_HEIGHT);
-                        // 每个 sheet 的标题行
-                        for (String header : titleMap.values()) {
-                            cell = row.createCell(cellIndex);
-                            cell.setCellStyle(headStyle);
-                            cell.setCellValue(U.getNil(header));
-                            // 宽度自适应
-                            sheet.autoSizeColumn(cellIndex);
-                            cellIndex++;
-                        }
-                        // 冻结第一行
-                        sheet.createFreezePane(0, 1, 0, 1);
+                    // 每个 sheet 的标题行
+                    rowIndex = 0;
+                    cellIndex = 0;
+                    row = sheet.createRow(rowIndex);
+                    row.setHeightInPoints(ROW_HEIGHT);
+                    // 每个 sheet 的标题行
+                    for (String header : titleMap.values()) {
+                        cell = row.createCell(cellIndex);
+                        cell.setCellStyle(headStyle);
+                        cell.setCellValue(U.getNil(header));
+                        // 宽度自适应
+                        sheet.autoSizeColumn(cellIndex, true);
+                        cellIndex++;
+                    }
+                    // 冻结第一行
+                    sheet.createFreezePane(0, 1, 0, 1);
 
+                    if (size > 0) {
                         // 每个 sheet 除标题行以外的数据
                         fromIndex = EXCEL_TOTAL * i;
                         toIndex = (i + 1 == sheetCount) ? size : EXCEL_TOTAL;
