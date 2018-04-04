@@ -48,11 +48,11 @@ public class Page implements Serializable {
     private static final int MAX_LIMIT = 1000;
 
     /** 当前页数. 不传或传入 0, 或负数, 或非数字则默认是 1 */
-    @ApiParam(desc = "当前页数. 不传或传入 0, 或负数, 或非数字则默认是 1")
+    @ApiParam("当前页数. 不传或传入 0, 或负数, 或非数字则默认是 1")
     private int page;
 
     /** 每页条数. 不传或传入 0, 或负数, 或非数字, 或大于 1000 则默认是 15 */
-    @ApiParam(desc = "每页条数. 不传或传入 0, 或负数, 或非数字, 或大于 " + MAX_LIMIT + " 则默认是 " + DEFAULT_LIMIT)
+    @ApiParam("每页条数. 不传或传入 0, 或负数, 或非数字, 或大于 " + MAX_LIMIT + " 则默认是 " + DEFAULT_LIMIT)
     private int limit;
 
     /** 是否是移动端 */

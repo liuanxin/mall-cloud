@@ -17,15 +17,15 @@ public class JsonResult<T> {
      *
      * @see JsonCode
      */
-    @ApiReturn(desc = "返回码")
+    @ApiReturn("返回码")
     private int code;
 
     /** 返回说明. 如: 用户名密码错误, 收货地址添加成功 等 */
-    @ApiReturn(desc = "返回说明. 如: 用户名密码错误, 收货地址添加成功 等")
+    @ApiReturn("返回说明. 如: 用户名密码错误, 收货地址添加成功 等")
     private String msg;
 
     /** 返回的数据. 具体是返回实体 {"id":1} 还是列表 [{"id":1},{"id":2}] 依具体的业务而定 */
-    @ApiReturn(desc = "返回的数据. 实体 {\"id\":1} 还是列表 [{\"id\":1},{\"id\":2}] 依具体的业务而定")
+    @ApiReturn("返回的数据. 实体 {\"id\":1} 还是列表 [{\"id\":1},{\"id\":2}] 依具体的业务而定")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private T data;
 

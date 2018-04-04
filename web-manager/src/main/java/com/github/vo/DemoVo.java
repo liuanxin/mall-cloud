@@ -14,9 +14,9 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class DemoVo {
 
-    @ApiReturn(desc = "用户 id")
+    @ApiReturn("用户 id")
     private String userId;
 
-    @ApiParam(dataType = "int", desc = "性别")
+    @ApiParam(value = "性别", dataType = "int")
     private Gender gender;
 }
