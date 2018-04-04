@@ -59,7 +59,13 @@ public final class SpringMvc {
                 if (U.isNotBlank(jsonp)) {
                     toRender = "/**/" + jsonp + "(" + toRender + ");";
                 }
-                LogUtil.ROOT_LOG.info("return json : {}", toRender);
+
+                int max = 6000;
+                if (toRender.length() < max) {
+                    LogUtil.ROOT_LOG.info("return json: {}", render);
+                } else {
+                    LogUtil.ROOT_LOG.info("return data greater than {}, ignore the print", max);
+                }
             }
         }
     }
