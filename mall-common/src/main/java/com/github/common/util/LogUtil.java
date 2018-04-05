@@ -56,7 +56,7 @@ public final class LogUtil {
         /** 请求 header 中的参数 */
         private String heads;
 
-        public RequestLogContext(String ip, String method, String url, String params, String heads) {
+        RequestLogContext(String ip, String method, String url, String params, String heads) {
             this.ip = ip;
             this.method =method;
             this.url = url;

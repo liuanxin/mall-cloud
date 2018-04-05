@@ -558,4 +558,16 @@ public final class U {
             throw new ServiceMustHandleException(msg);
         }
     }
+
+    public static String returnMsg(Throwable e, boolean online) {
+        String msg;
+        if (online) {
+            msg = "请求时出现错误, 我们会尽快处理";
+        } else if (e instanceof NullPointerException) {
+            msg = "空指针异常, 联系后台查看日志进行处理";
+        } else {
+            msg = e.getMessage();
+        }
+        return msg;
+    }
 }

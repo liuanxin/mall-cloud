@@ -496,6 +496,7 @@ class Server {
             "import " + PACKAGE + ".common.util.A;\n" +
             "import " + PACKAGE + ".common.util.LogUtil;\n" +
             "import " + PACKAGE + ".common.util.RequestUtils;\n" +
+            "import " + PACKAGE + ".common.util.U;\n" +
             "import org.springframework.beans.factory.annotation.Value;\n" +
             "import org.springframework.http.HttpStatus;\n" +
             "import org.springframework.http.ResponseEntity;\n" +
@@ -517,8 +518,6 @@ class Server {
             "@RestControllerAdvice\n" +
             "public class %sGlobalException {\n" +
             "\n" +
-            "    private static final HttpStatus FAIL = HttpStatus.INTERNAL_SERVER_ERROR;\n" +
-            "\n" +
             "    @Value(\"${online:false}\")\n" +
             "    private boolean online;\n" +
             "\n" +
@@ -529,7 +528,7 @@ class Server {
             "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
             "            LogUtil.ROOT_LOG.debug(msg);\n" +
             "        }\n" +
-            "        return new ResponseEntity<>(JsonResult.fail(msg), FAIL);\n" +
+            "        return fail(msg);\n" +
             "    }\n" +
             "    /** 未登录 */\n" +
             "    @ExceptionHandler(NotLoginException.class)\n" +
@@ -568,17 +567,28 @@ class Server {
             "    public ResponseEntity<JsonResult> notSupported(HttpRequestMethodNotSupportedException e) {\n" +
             "        bindAndPrintLog(e);\n" +
             "\n" +
-            "        String msg = String.format(\"不支持此请求方式! 当前(%%s), 支持(%%s)\", e.getMethod(), A.toStr(e.getSupportedMethods()));\n" +
-            "        return new ResponseEntity<>(JsonResult.fail(msg), FAIL);\n" +
+            "        return fail(String.format(\"不支持此请求方式! 当前(%%s), 支持(%%s)\", e.getMethod(), A.toStr(e.getSupportedMethods())));\n" +
             "    }\n" +
             "    @ExceptionHandler(MaxUploadSizeExceededException.class)\n" +
             "    public ResponseEntity<JsonResult> uploadSizeExceeded(MaxUploadSizeExceededException e) {\n" +
             "        bindAndPrintLog(e);\n" +
             "\n" +
             "        // 右移 20 位相当于除以两次 1024, 正好表示从字节到 Mb\n" +
-            "        String msg = String.format(\"上传文件太大! 请保持在 %%sM 以内\", (e.getMaxUploadSize() >> 20));\n" +
-            "        return new ResponseEntity<>(JsonResult.fail(msg), FAIL);\n" +
+            "        return fail(String.format(\"上传文件太大! 请保持在 %%sM 以内\", (e.getMaxUploadSize() >> 20)));\n" +
             "    }\n" +
+            "\n" +
+            "\n" +
+            "    /** 未知的所有其他异常 */\n" +
+            "    @ExceptionHandler(Throwable.class)\n" +
+            "    public ResponseEntity<JsonResult> other(Throwable e) {\n" +
+            "        if (LogUtil.ROOT_LOG.isErrorEnabled()) {\n" +
+            "            LogUtil.ROOT_LOG.error(\"有错误\", e);\n" +
+            "        }\n" +
+            "        return fail(U.returnMsg(e, online));\n" +
+            "    }\n" +
+            "\n" +
+            "    // ==================================================\n" +
+            "\n" +
             "    private void bindAndPrintLog(Exception e) {\n" +
             "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
             "            // 当没有进到全局拦截器就抛出的异常, 需要这么处理才能在日志中输出整个上下文信息\n" +
@@ -590,23 +600,8 @@ class Server {
             "            }\n" +
             "        }\n" +
             "    }\n" +
-            "\n" +
-            "    /** 未知的所有其他异常 */\n" +
-            "    @ExceptionHandler(Throwable.class)\n" +
-            "    public ResponseEntity<JsonResult> other(Throwable e) {\n" +
-            "        String msg;\n" +
-            "        if (online) {\n" +
-            "            msg = \"请求时出现错误, 我们会尽快处理\";\n" +
-            "        } else if (e instanceof NullPointerException) {\n" +
-            "            msg = \"空指针异常, 联系后台查看日志进行处理\";\n" +
-            "        } else {\n" +
-            "            msg = e.getMessage();\n" +
-            "        }\n" +
-            "\n" +
-            "        if (LogUtil.ROOT_LOG.isErrorEnabled()) {\n" +
-            "            LogUtil.ROOT_LOG.error(\"有错误\", e);\n" +
-            "        }\n" +
-            "        return new ResponseEntity<>(JsonResult.fail(msg), FAIL);\n" +
+            "    private ResponseEntity<JsonResult> fail(String msg) {\n" +
+            "        return new ResponseEntity<>(JsonResult.fail(msg), HttpStatus.INTERNAL_SERVER_ERROR);\n" +
             "    }\n" +
             "}\n";
 
