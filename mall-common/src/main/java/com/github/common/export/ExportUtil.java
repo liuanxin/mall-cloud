@@ -144,10 +144,8 @@ public final class ExportUtil {
                                   List<?> dataList, HttpServletResponse response) throws IOException {
         // 导出的文件名
         String fileName = encodeName(name) + ".csv";
+        responseExport(response, "text/csv", fileName);
 
-        response.setContentType("application/octet-stream; charset=utf-8");
-        response.setContentType("text/csv");
-        response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
         // 没有数据或没有标题, 返回一个内容为空的文件
         String content = U.EMPTY;
         if (A.isNotEmpty(titleMap) && A.isNotEmpty(dataList)) {
@@ -212,12 +210,15 @@ public final class ExportUtil {
                                     List<?> dataList, HttpServletResponse response) throws IOException {
         // 导出的文件名
         String fileName = encodeName(name) + "." + (excel07 ? "xlsx" : "xls");
-
-        response.setContentType("application/octet-stream; charset=utf-8");
-        response.setContentType("text/xls");
-        response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
+        responseExport(response, "text/xls", fileName);
 
         ExportExcel.handle(excel07, titleMap, A.linkedMaps(name, dataList)).write(response.getOutputStream());
+    }
+
+    private static void responseExport(HttpServletResponse response, String type, String fileName) {
+        response.setContentType("application/octet-stream; charset=utf-8");
+        response.setContentType(type);
+        response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
     }
 
     private static String encodeName(String name) {
