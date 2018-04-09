@@ -13,10 +13,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * <pre>
@@ -281,10 +278,17 @@ public final class ExportUtil {
             Cell cell;
             //  表格数       行索引     列索引      数据起始索引  数据结束索引
             int sheetCount, rowIndex, cellIndex, fromIndex, toIndex;
-            //  大小
-            int size;
             //      数据
             List<?> excelList;
+            //  数据总条数, 上面 list 的长度
+            int size;
+
+            // 标题头, 这里跟数据中的属性相对应
+            Set<String> titleKey = titleMap.keySet();
+            // 标题显示名
+            Collection<String> titleValue = titleMap.values();
+            // 列数量
+            int titleLen = titleMap.size();
 
             for (Map.Entry<String, List<?>> entry : dataMap.entrySet()) {
                 // 当前 sheet 的数据
@@ -306,12 +310,10 @@ public final class ExportUtil {
                     row = sheet.createRow(rowIndex);
                     row.setHeightInPoints(ROW_HEIGHT);
                     // 每个 sheet 的标题行
-                    for (String header : titleMap.values()) {
+                    for (String header : titleValue) {
                         cell = row.createCell(cellIndex);
                         cell.setCellStyle(headStyle);
                         cell.setCellValue(U.getNil(header));
-                        // 宽度自适应
-                        sheet.autoSizeColumn(cellIndex, true);
                         cellIndex++;
                     }
                     // 冻结第一行
@@ -329,7 +331,7 @@ public final class ExportUtil {
                                 row.setHeightInPoints(ROW_HEIGHT);
 
                                 cellIndex = 0;
-                                for (String value : titleMap.keySet()) {
+                                for (String value : titleKey) {
                                     // 每列
                                     cell = row.createCell(cellIndex);
                                     cell.setCellStyle(contentStyle);
@@ -339,6 +341,11 @@ public final class ExportUtil {
                                 }
                             }
                         }
+                    }
+
+                    // 让列的宽度自适应
+                    for (int j = 0; i < titleLen; j++) {
+                        sheet.autoSizeColumn(j, true);
                     }
                 }
             }
