@@ -7,6 +7,7 @@ import com.github.common.json.JsonResult;
 import com.github.common.util.A;
 import com.github.common.util.LogUtil;
 import com.github.common.util.RequestUtils;
+import com.github.common.util.U;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,8 +30,6 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 @RestControllerAdvice
 public class OrderGlobalException {
 
-    private static final HttpStatus FAIL = HttpStatus.INTERNAL_SERVER_ERROR;
-
     @Value("${online:false}")
     private boolean online;
 
@@ -41,7 +40,7 @@ public class OrderGlobalException {
         if (LogUtil.ROOT_LOG.isDebugEnabled()) {
             LogUtil.ROOT_LOG.debug(msg);
         }
-        return new ResponseEntity<>(JsonResult.fail(msg), FAIL);
+        return fail(msg);
     }
     /** 未登录 */
     @ExceptionHandler(NotLoginException.class)
@@ -80,17 +79,28 @@ public class OrderGlobalException {
     public ResponseEntity<JsonResult> notSupported(HttpRequestMethodNotSupportedException e) {
         bindAndPrintLog(e);
 
-        String msg = String.format("不支持此请求方式! 当前(%s), 支持(%s)", e.getMethod(), A.toStr(e.getSupportedMethods()));
-        return new ResponseEntity<>(JsonResult.fail(msg), FAIL);
+        return fail(String.format("不支持此请求方式! 当前(%s), 支持(%s)", e.getMethod(), A.toStr(e.getSupportedMethods())));
     }
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<JsonResult> uploadSizeExceeded(MaxUploadSizeExceededException e) {
         bindAndPrintLog(e);
 
         // 右移 20 位相当于除以两次 1024, 正好表示从字节到 Mb
-        String msg = String.format("上传文件太大! 请保持在 %sM 以内", (e.getMaxUploadSize() >> 20));
-        return new ResponseEntity<>(JsonResult.fail(msg), FAIL);
+        return fail(String.format("上传文件太大! 请保持在 %sM 以内", (e.getMaxUploadSize() >> 20)));
     }
+
+
+    /** 未知的所有其他异常 */
+    @ExceptionHandler(Throwable.class)
+    public ResponseEntity<JsonResult> other(Throwable e) {
+        if (LogUtil.ROOT_LOG.isErrorEnabled()) {
+            LogUtil.ROOT_LOG.error("有错误", e);
+        }
+        return fail(U.returnMsg(e, online));
+    }
+
+    // ==================================================
+
     private void bindAndPrintLog(Exception e) {
         if (LogUtil.ROOT_LOG.isDebugEnabled()) {
             // 当没有进到全局拦截器就抛出的异常, 需要这么处理才能在日志中输出整个上下文信息
@@ -102,22 +112,7 @@ public class OrderGlobalException {
             }
         }
     }
-
-    /** 未知的所有其他异常 */
-    @ExceptionHandler(Throwable.class)
-    public ResponseEntity<JsonResult> other(Throwable e) {
-        String msg;
-        if (online) {
-            msg = "请求时出现错误, 我们会尽快处理";
-        } else if (e instanceof NullPointerException) {
-            msg = "空指针异常, 联系后台查看日志进行处理";
-        } else {
-            msg = e.getMessage();
-        }
-
-        if (LogUtil.ROOT_LOG.isErrorEnabled()) {
-            LogUtil.ROOT_LOG.error("有错误", e);
-        }
-        return new ResponseEntity<>(JsonResult.fail(msg), FAIL);
+    private ResponseEntity<JsonResult> fail(String msg) {
+        return new ResponseEntity<>(JsonResult.fail(msg), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
