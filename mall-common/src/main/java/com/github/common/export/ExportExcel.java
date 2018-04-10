@@ -129,7 +129,7 @@ final class ExportExcel {
                         }
                     }
                     // 让列的宽度自适应
-                    for (int j = 0; i < titleLen; j++) {
+                    for (int j = 0; j < titleLen; j++) {
                         sheet.autoSizeColumn(j, true);
                     }
                 }
