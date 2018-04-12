@@ -178,7 +178,7 @@ final class ExportExcel {
         return style;
     }
 
-    /** 内容样式 */
+    /** 数字样式 */
     private static CellStyle createNumberStyle(Workbook workbook) {
         CellStyle style = workbook.createCellStyle();
 
