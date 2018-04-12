@@ -130,9 +130,11 @@ final class ExportExcel {
                                 if (NumberUtils.isNumber(field)) {
                                     cell.setCellStyle(numberStyle);
                                     cell.setCellValue(NumberUtils.toDouble(field));
+                                    // cell.setCellType(CellType.NUMERIC);
                                 } else {
                                     cell.setCellStyle(contentStyle);
                                     cell.setCellValue(field);
+                                    // cell.setCellType(CellType.STRING);
                                 }
                             }
                         }
