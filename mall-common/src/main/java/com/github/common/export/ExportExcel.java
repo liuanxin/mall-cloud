@@ -49,8 +49,8 @@ final class ExportExcel {
         CellStyle headStyle = createHeadStyle(workbook);
         // 内容样式
         CellStyle contentStyle = createContentStyle(workbook);
-        // 数字样式
-        CellStyle numberStyle = createNumberStyle(workbook);
+        // 每个列用到的样式
+        CellStyle cellTmpStyle;
 
         Sheet sheet;
         //  行
@@ -71,8 +71,12 @@ final class ExportExcel {
         Collection<String> titleValue = titleMap.values();
         // 列数量
         int titleLen = titleMap.size();
+
+        // 单个列的数据
         String cellData;
+        // 标题说明|数字格式
         String[] titleValues;
+        // 数字格式
         DataFormat dataFormat = workbook.createDataFormat();
 
         for (Map.Entry<String, List<?>> entry : dataMap.entrySet()) {
@@ -135,18 +139,19 @@ final class ExportExcel {
                                 if (NumberUtils.isNumber(cellData)) {
                                     cell.setCellType(CellType.NUMERIC);
                                     cell.setCellValue(NumberUtils.toDouble(cellData));
+
+                                    // 数字样式需要单独设置格式, 每次都生成一个
+                                    cellTmpStyle = createNumberStyle(workbook);
                                     if (titleValues.length > 1) {
-                                        numberStyle.setDataFormat(dataFormat.getFormat(titleValues[1]));
+                                        cellTmpStyle.setDataFormat(dataFormat.getFormat(titleValues[1]));
                                     }
-                                    cell.setCellStyle(numberStyle);
                                 } else {
                                     cell.setCellType(CellType.STRING);
                                     cell.setCellValue(cellData);
-                                    if (titleValues.length > 1) {
-                                        contentStyle.setDataFormat(dataFormat.getFormat(titleValues[1]));
-                                    }
-                                    cell.setCellStyle(contentStyle);
+                                    // 经字符串设置样式意义并不大, 为了性能考虑, 此处并不每次都生成一个
+                                    cellTmpStyle = contentStyle;
                                 }
+                                cell.setCellStyle(cellTmpStyle);
                             }
                         }
                     }
