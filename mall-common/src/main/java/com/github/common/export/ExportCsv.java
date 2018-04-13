@@ -14,7 +14,7 @@ final class ExportCsv {
             StringBuilder sbd = new StringBuilder();
             int i = 0;
             for (String title : titleMap.values()) {
-                sbd.append(handleCsvContent(title));
+                sbd.append(handleCsvContent(title.split("\\|")[0]));
                 i++;
                 if (i != titleMap.size()) {
                     sbd.append(",");

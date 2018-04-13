@@ -71,6 +71,9 @@ final class ExportExcel {
         Collection<String> titleValue = titleMap.values();
         // 列数量
         int titleLen = titleMap.size();
+        String cellData;
+        String[] titleValues;
+        DataFormat dataFormat = workbook.createDataFormat();
 
         for (Map.Entry<String, List<?>> entry : dataMap.entrySet()) {
             // 当前 sheet 的数据
@@ -121,20 +124,28 @@ final class ExportExcel {
                             row.setHeightInPoints(ROW_HEIGHT);
 
                             cellIndex = 0;
-                            for (String value : titleKey) {
+                            for (String title : titleKey) {
                                 // 每列
                                 cell = row.createCell(cellIndex);
                                 cellIndex++;
 
-                                String field = U.getField(data, value);
-                                if (NumberUtils.isNumber(field)) {
+                                cellData = U.getField(data, title);
+
+                                titleValues = titleMap.get(title).split("\\|");
+                                if (NumberUtils.isNumber(cellData)) {
+                                    cell.setCellType(CellType.NUMERIC);
+                                    cell.setCellValue(NumberUtils.toDouble(cellData));
+                                    if (titleValues.length > 1) {
+                                        numberStyle.setDataFormat(dataFormat.getFormat(titleValues[1]));
+                                    }
                                     cell.setCellStyle(numberStyle);
-                                    cell.setCellValue(NumberUtils.toDouble(field));
-                                    // cell.setCellType(CellType.NUMERIC);
                                 } else {
+                                    cell.setCellType(CellType.STRING);
+                                    cell.setCellValue(cellData);
+                                    if (titleValues.length > 1) {
+                                        contentStyle.setDataFormat(dataFormat.getFormat(titleValues[1]));
+                                    }
                                     cell.setCellStyle(contentStyle);
-                                    cell.setCellValue(field);
-                                    // cell.setCellType(CellType.STRING);
                                 }
                             }
                         }
