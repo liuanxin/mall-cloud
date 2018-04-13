@@ -131,7 +131,6 @@ final class ExportExcel {
                             for (String title : titleKey) {
                                 // 每列
                                 cell = row.createCell(cellIndex);
-                                cellIndex++;
 
                                 cellData = U.getField(data, title);
 
@@ -152,10 +151,22 @@ final class ExportExcel {
                                     cellTmpStyle = contentStyle;
                                 }
                                 cell.setCellStyle(cellTmpStyle);
+
+                                /*
+                                // 中文字体的宽度计算会有问题, 此处统一设置
+                                sheet.setColumnWidth(cellIndex, 15 * 256);
+                                if (titleValues.length > 2) {
+                                    int width = NumberUtils.toInt(titleValues[2]);
+                                    if (width > 0) {
+                                        sheet.setColumnWidth(cellIndex, width);
+                                    }
+                                }
+                                */
+                                cellIndex++;
                             }
                         }
                     }
-                    // 让列的宽度自适应
+                    // 让列的宽度自适应(缺少中文字体计算宽度时如果有问题, 可以统一一个宽度并接受自定义列宽度, 或者复制字体文件到操作系统)
                     for (int j = 0; j < titleLen; j++) {
                         sheet.autoSizeColumn(j, true);
                     }
