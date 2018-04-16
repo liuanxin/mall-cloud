@@ -75,7 +75,7 @@ final class ExportExcel {
 
         // 单个列的数据
         String cellData;
-        // 标题说明|宽度(255 以内)|数字格式(比如金额用 0.00)
+        // 标题说明|数字格式(比如金额用 0.00)|宽度(255 以内)
         String[] titleValues;
         // 数字格式
         DataFormat dataFormat = workbook.createDataFormat();
@@ -136,10 +136,10 @@ final class ExportExcel {
                                     cell.setCellValue(NumberUtils.toDouble(cellData));
 
                                     titleValues = titleMapEntry.getValue().split("\\|");
-                                    if (titleValues.length > 2) {
+                                    if (titleValues.length > 1) {
                                         // 数字样式需要单独设置格式, 每次都生成一个
                                         cellTmpStyle = createNumberStyle(workbook);
-                                        cellTmpStyle.setDataFormat(dataFormat.getFormat(titleValues[2]));
+                                        cellTmpStyle.setDataFormat(dataFormat.getFormat(titleValues[1]));
                                     } else {
                                         cellTmpStyle = numberStyle;
                                     }
@@ -163,11 +163,11 @@ final class ExportExcel {
                         sheet.autoSizeColumn(cellIndex, true);
                     } else {
                         // 左移 8 相当于 * 256
-                        sheet.setColumnWidth(cellIndex, 15 << 8);
+                        sheet.setColumnWidth(cellIndex, 12 << 8);
 
                         titleValues = titleMapEntry.getValue().split("\\|");
-                        if (titleValues.length > 1) {
-                            int width = NumberUtils.toInt(titleValues[1]);
+                        if (titleValues.length > 2) {
+                            int width = NumberUtils.toInt(titleValues[2]);
                             if (width > 0) {
                                 // 左移 8 相当于 * 256
                                 sheet.setColumnWidth(cellIndex, width << 8);
