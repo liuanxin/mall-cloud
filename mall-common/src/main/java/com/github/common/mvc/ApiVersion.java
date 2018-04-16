@@ -1,6 +1,5 @@
-package com.github.common.annotation;
+package com.github.common.mvc;
 
-import com.github.common.AppVersion;
 import org.springframework.web.bind.annotation.Mapping;
 
 import java.lang.annotation.*;

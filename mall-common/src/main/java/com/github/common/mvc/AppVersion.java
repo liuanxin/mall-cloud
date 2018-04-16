@@ -1,4 +1,4 @@
-package com.github.common;
+package com.github.common.mvc;
 
 /** 版本 */
 public enum AppVersion {
