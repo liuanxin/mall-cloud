@@ -33,7 +33,7 @@ final class ExportExcel {
      * @param dataMap  以「sheet 名」为 key, 对应的数据为 value(每一行的数据为一个 Object)
      */
     static Workbook handle(boolean excel07, LinkedHashMap<String, String> titleMap,
-                                   LinkedHashMap<String, List<?>> dataMap) {
+                           LinkedHashMap<String, List<?>> dataMap) {
         // 声明一个工作薄. HSSFWorkbook 是 Office 2003 的版本, XSSFWorkbook 是 2007
         Workbook workbook = excel07 ? new XSSFWorkbook() : new HSSFWorkbook();
         // 没有标题直接返回
@@ -49,6 +49,8 @@ final class ExportExcel {
         CellStyle headStyle = createHeadStyle(workbook);
         // 内容样式
         CellStyle contentStyle = createContentStyle(workbook);
+        // 数字样式
+        CellStyle numberStyle = createNumberStyle(workbook);
         // 每个列用到的样式
         CellStyle cellTmpStyle;
 
@@ -63,18 +65,17 @@ final class ExportExcel {
         int size, fromIndex, toIndex;
         //      数据
         List<?> dataList;
+        //      每个 sheet 的数据, 当数据量大, 有多个 sheet 时会用到
         List<?> sheetList;
 
         // 标题头, 这里跟数据中的属性相对应
-        Set<String> titleKey = titleMap.keySet();
-        // 标题显示名
-        Collection<String> titleValue = titleMap.values();
-        // 列数量
-        int titleLen = titleMap.size();
+        Set<Map.Entry<String, String>> titleEntry = titleMap.entrySet();
+        // 是否能正确中文字体的大小
+        boolean rightChineseFont = false;
 
         // 单个列的数据
         String cellData;
-        // 标题说明|数字格式
+        // 标题说明|宽度(255 以内)|数字格式(比如金额用 0.00)
         String[] titleValues;
         // 数字格式
         DataFormat dataFormat = workbook.createDataFormat();
@@ -99,13 +100,10 @@ final class ExportExcel {
                 row = sheet.createRow(rowIndex);
                 row.setHeightInPoints(ROW_HEIGHT);
                 // 每个 sheet 的标题行
-                for (String header : titleValue) {
+                for (Map.Entry<String, String> titleMapEntry : titleEntry) {
                     cell = row.createCell(cellIndex);
                     cell.setCellStyle(headStyle);
-                    cell.setCellValue(U.getNil(header));
-                    if (size == 0) {
-                        sheet.autoSizeColumn(cellIndex, true);
-                    }
+                    cell.setCellValue(U.getNil(titleMapEntry.getValue().split("\\|")[0]));
                     cellIndex++;
                 }
                 // 冻结第一行
@@ -128,48 +126,55 @@ final class ExportExcel {
                             row.setHeightInPoints(ROW_HEIGHT);
 
                             cellIndex = 0;
-                            for (String title : titleKey) {
+                            for (Map.Entry<String, String> titleMapEntry : titleEntry) {
                                 // 每列
                                 cell = row.createCell(cellIndex);
 
-                                cellData = U.getField(data, title);
-
-                                titleValues = titleMap.get(title).split("\\|");
+                                cellData = U.getField(data, titleMapEntry.getKey());
                                 if (NumberUtils.isNumber(cellData)) {
                                     cell.setCellType(CellType.NUMERIC);
                                     cell.setCellValue(NumberUtils.toDouble(cellData));
 
-                                    // 数字样式需要单独设置格式, 每次都生成一个
-                                    cellTmpStyle = createNumberStyle(workbook);
-                                    if (titleValues.length > 1) {
-                                        cellTmpStyle.setDataFormat(dataFormat.getFormat(titleValues[1]));
+                                    titleValues = titleMapEntry.getValue().split("\\|");
+                                    if (titleValues.length > 2) {
+                                        // 数字样式需要单独设置格式, 每次都生成一个
+                                        cellTmpStyle = createNumberStyle(workbook);
+                                        cellTmpStyle.setDataFormat(dataFormat.getFormat(titleValues[2]));
+                                    } else {
+                                        cellTmpStyle = numberStyle;
                                     }
                                 } else {
                                     cell.setCellType(CellType.STRING);
                                     cell.setCellValue(cellData);
-                                    // 经字符串设置样式意义并不大, 为了性能考虑, 此处并不每次都生成一个
+                                    // 经字符串设置样式意义并不大, 忽略样式. 此处并不每次都生成一个
                                     cellTmpStyle = contentStyle;
                                 }
                                 cell.setCellStyle(cellTmpStyle);
-
-                                /*
-                                // 中文字体的宽度计算会有问题, 此处统一设置
-                                sheet.setColumnWidth(cellIndex, 15 * 256);
-                                if (titleValues.length > 2) {
-                                    int width = NumberUtils.toInt(titleValues[2]);
-                                    if (width > 0) {
-                                        sheet.setColumnWidth(cellIndex, width);
-                                    }
-                                }
-                                */
                                 cellIndex++;
                             }
                         }
                     }
-                    // 让列的宽度自适应(缺少中文字体计算宽度时如果有问题, 可以统一一个宽度并接受自定义列宽度, 或者复制字体文件到操作系统)
-                    for (int j = 0; j < titleLen; j++) {
-                        sheet.autoSizeColumn(j, true);
+                }
+
+                cellIndex = 0;
+                for (Map.Entry<String, String> titleMapEntry : titleEntry) {
+                    // 让列的宽度自适应. 缺少中文字体计算宽度时会有问题, 可以统一宽度并接受自定义列宽度(像下面), 或者复制字体文件到操作系统
+                    if (rightChineseFont) {
+                        sheet.autoSizeColumn(cellIndex, true);
+                    } else {
+                        // 左移 8 相当于 * 256
+                        sheet.setColumnWidth(cellIndex, 15 << 8);
+
+                        titleValues = titleMapEntry.getValue().split("\\|");
+                        if (titleValues.length > 1) {
+                            int width = NumberUtils.toInt(titleValues[1]);
+                            if (width > 0) {
+                                // 左移 8 相当于 * 256
+                                sheet.setColumnWidth(cellIndex, width << 8);
+                            }
+                        }
                     }
+                    cellIndex++;
                 }
             }
         }
