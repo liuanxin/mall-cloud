@@ -6,6 +6,7 @@ import com.github.common.exception.ServiceMustHandleException;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
@@ -145,13 +146,7 @@ public final class U {
     public static boolean notBetween(Number num, Number min, Number max) {
         return !between(num, min, max);
     }
-    // ========== number ==========
 
-
-    // ========== object & string ==========
-    public static String toStr(Object obj) {
-        return isBlank(obj) ? EMPTY : obj.toString();
-    }
     public static int toInt(Object obj) {
         if (isBlank(obj)) {
             return 0;
@@ -193,8 +188,69 @@ public final class U {
         }
     }
 
+    // + ==> add
+    // - ==> subtract
+    // * ==> multiply
+    // / ==> divide
+
+    /** num1 + num2, num2 为空则返回 num1, 两个都为空则返回 0 */
+    public static BigDecimal add(BigDecimal num1, BigDecimal num2) {
+        if (isNotBlank(num1)) {
+            if (isNotBlank(num2)) {
+                return num1.add(num2);
+            } else {
+                return num1;
+            }
+        } else {
+            return BigDecimal.ZERO;
+        }
+    }
+    /** num1 - num2, num2 为空则返回 num1, 两个都为空则返回 0 */
+    public static BigDecimal subtract(BigDecimal num1, BigDecimal num2) {
+        if (isNotBlank(num1)) {
+            if (isNotBlank(num2)) {
+                return num1.subtract(num2);
+            } else {
+                return num1;
+            }
+        } else {
+            return BigDecimal.ZERO;
+        }
+    }
+    /** num1 * num2, num2 为空则返回 num1, 两个都为空则返回 0 */
+    public static BigDecimal multiply(BigDecimal num1, BigDecimal num2) {
+        if (isNotBlank(num1)) {
+            if (isNotBlank(num2)) {
+                return num1.multiply(num2);
+            } else {
+                return num1;
+            }
+        } else {
+            return BigDecimal.ZERO;
+        }
+    }
+    /** num1 / num2, num2 为空则返回 num1, 两个都为空则返回 0. 返回结果有两位小数点精度 */
+    public static BigDecimal divide(BigDecimal num1, BigDecimal num2) {
+        if (isNotBlank(num1)) {
+            if (isNotBlank(num2) && num2.doubleValue() != 0) {
+                return num1.divide(num2, 2, BigDecimal.ROUND_UP);
+            } else {
+                return num1;
+            }
+        } else {
+            return BigDecimal.ZERO;
+        }
+    }
+    // ========== number ==========
+
+
+    // ========== object & string ==========
+    public static String toStr(Object obj) {
+        return isBlank(obj) ? EMPTY : obj.toString();
+    }
+
     /** 去掉所有的制表符 和 换行符 */
-    public static String tabAndWrap(String str) {
+    public static String replaceTabAndWrap(String str) {
         return isBlank(str) ? EMPTY : str.replace("\t", "").replace("\n", "");
     }
 
