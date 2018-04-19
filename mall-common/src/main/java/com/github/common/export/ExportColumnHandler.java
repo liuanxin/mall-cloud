@@ -5,6 +5,7 @@ import com.github.common.util.U;
 import com.google.common.collect.Maps;
 
 import java.lang.reflect.Field;
+import java.util.Date;
 import java.util.LinkedHashMap;
 
 final class ExportColumnHandler {
@@ -23,6 +24,11 @@ final class ExportColumnHandler {
                         String columnValue = column.value();
                         if (U.isNotBlank(columnValue)) {
                             value = columnValue;
+                        }
+
+                        String dateFormat = column.dateFormat().getValue();
+                        if (Date.class.isAssignableFrom(field.getType())) {
+                            name += "|" + dateFormat;
                         }
                     }
                     titleMap.put(name, value);

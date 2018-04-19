@@ -425,11 +425,12 @@ public final class U {
             return EMPTY;
         }
 
+        String[] split = field.split("\\|");
         Object value;
         if (data instanceof Map) {
-            value = ((Map) data).get(field);
+            value = ((Map) data).get(split[0]);
         } else {
-            value = getMethod(data, fieldToMethod(field));
+            value = getMethod(data, fieldToMethod(split[0]));
         }
 
         if (isBlank(value)) {
@@ -440,7 +441,11 @@ public final class U {
             return getNil(enumValue != null ? enumValue : value);
         } else if (value instanceof Date) {
             // 如果是日期, 则格式化
-            return getNil(DateUtil.formatFull((Date) value));
+            if (split.length > 1 && isNotBlank(split[1])) {
+                return getNil(DateUtil.format((Date) value, split[1]));
+            } else {
+                return getNil(DateUtil.formatFull((Date) value));
+            }
         } else {
             return getNil(value);
         }

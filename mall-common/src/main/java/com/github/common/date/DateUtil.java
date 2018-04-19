@@ -48,7 +48,11 @@ public class DateUtil {
             return U.EMPTY;
         }
 
-        return DateTimeFormat.forPattern(type.getValue()).print(date.getTime());
+        return format(date, type.getValue());
+    }
+
+    public static String format(Date date, String type) {
+        return DateTimeFormat.forPattern(type).print(date.getTime());
     }
 
     /**
