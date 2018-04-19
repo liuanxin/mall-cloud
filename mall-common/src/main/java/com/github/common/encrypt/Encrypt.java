@@ -28,10 +28,9 @@ public final class Encrypt {
     /** aes 加解密时, 长度必须为 16 位的密钥 */
     private static final byte[] AES_SECRET = "&gAe#sEn!cr*yp^t".getBytes(StandardCharsets.UTF_8);
 
-    /** jwt 加密解密密钥 */
-    private static final String JWT_SECRET = "*&gJw%tE#ncry^pt";
-    private static final JWTSigner JWT_SIGNER = new JWTSigner(JWT_SECRET);
-    private static final JWTVerifier JWT_VERIFIER = new JWTVerifier(JWT_SECRET);
+    private static final String SECRET_KEY = "*g0$%Te#nr&y^pOt";
+    private static final JWTSigner JWT_SIGNER = new JWTSigner(SECRET_KEY);
+    private static final JWTVerifier JWT_VERIFIER = new JWTVerifier(SECRET_KEY);
 
     /** 使用 aes 加密 */
     public static String aesEncode(String data) {
@@ -125,6 +124,45 @@ public final class Encrypt {
             }
         }
         return Collections.emptyMap();
+    }
+
+    /** 使用 rc4 加解密, 如果是密文调用此方法将返回明文 */
+    public static String rc4(String input, String key) {
+        int[] iS = new int[256];
+        byte[] iK = new byte[256];
+
+        for (int i = 0; i < 256; i++) {
+            iS[i] = i;
+        }
+
+        for (short i = 0; i < 256; i++) {
+            iK[i] = (byte) key.charAt((i % key.length()));
+        }
+
+        int j = 0;
+        for (int i = 0; i < 255; i++) {
+            j = (j + iS[i] + iK[i]) % 256;
+            int temp = iS[i];
+            iS[i] = iS[j];
+            iS[j] = temp;
+        }
+
+        int i = 0;
+        j = 0;
+        char[] iInputChar = input.toCharArray();
+        char[] iOutputChar = new char[iInputChar.length];
+        for (short x = 0; x < iInputChar.length; x++) {
+            i = (i + 1) % 256;
+            j = (j + iS[i]) % 256;
+            int temp = iS[i];
+            iS[i] = iS[j];
+            iS[j] = temp;
+            int t = (iS[i] + (iS[j] % 256)) % 256;
+            int iY = iS[t];
+            char iCY = (char) iY;
+            iOutputChar[x] = (char) (iInputChar[x] ^ iCY);
+        }
+        return new String(iOutputChar);
     }
 
     /** 使用 base64 编码 */
