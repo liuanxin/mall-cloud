@@ -1,5 +1,8 @@
-package com.github.common.util;
+package com.github.common.http;
 
+import com.github.common.util.A;
+import com.github.common.util.LogUtil;
+import com.github.common.util.U;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.http.*;
@@ -25,6 +28,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 
+import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLHandshakeException;
 import java.io.File;
@@ -43,6 +47,16 @@ public class HttpClientUtil {
     private static final int MAX_TOTAL = 200;
     private static final int MAX_PER_ROUTE = 40;
 
+    private static final SSLConnectionSocketFactory SSL_CONNECTION_SOCKET_FACTORY;
+    static {
+        SSLContext ignoreVerifySSL = TrustAllCerts.createIgnoreVerifySSL();
+        if (U.isBlank(ignoreVerifySSL)) {
+            SSL_CONNECTION_SOCKET_FACTORY = SSLConnectionSocketFactory.getSocketFactory();
+        } else {
+            SSL_CONNECTION_SOCKET_FACTORY = new SSLConnectionSocketFactory(ignoreVerifySSL);
+        }
+    }
+
     private static void config(HttpRequestBase httpRequestBase) {
         // 配置请求的超时设置
         RequestConfig requestConfig = RequestConfig.custom()
@@ -54,8 +68,9 @@ public class HttpClientUtil {
 
     private static CloseableHttpClient createHttpClient() {
         Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create()
-                .register("http", PlainConnectionSocketFactory.getSocketFactory())
-                .register("https", SSLConnectionSocketFactory.getSocketFactory()).build();
+                .register("http", PlainConnectionSocketFactory.INSTANCE)
+                .register("https", SSL_CONNECTION_SOCKET_FACTORY)
+                .build();
 
         PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager(registry);
         // 将最大连接数增加

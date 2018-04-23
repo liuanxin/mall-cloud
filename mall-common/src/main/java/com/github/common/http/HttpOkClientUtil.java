@@ -1,9 +1,13 @@
-package com.github.common.util;
+package com.github.common.http;
 
 import com.github.common.json.JsonUtil;
+import com.github.common.util.A;
+import com.github.common.util.LogUtil;
+import com.github.common.util.U;
 import com.google.common.io.Files;
 import okhttp3.*;
 
+import javax.net.ssl.SSLContext;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
@@ -16,10 +20,18 @@ public class HttpOkClientUtil {
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     // private static final MediaType FORM = MediaType.parse("application/x-www-form-urlencoded");
 
-    private static final OkHttpClient HTTP_CLIENT = new OkHttpClient().newBuilder()
-            .connectTimeout(10, TimeUnit.SECONDS)
-            .readTimeout(20, TimeUnit.SECONDS)
-            .build();
+    private static final OkHttpClient HTTP_CLIENT;
+    static {
+        OkHttpClient.Builder builder = new OkHttpClient().newBuilder()
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(20, TimeUnit.SECONDS);
+
+        SSLContext ignoreVerifySSL = TrustAllCerts.createIgnoreVerifySSL();
+        if (U.isNotBlank(ignoreVerifySSL)) {
+            builder.sslSocketFactory(ignoreVerifySSL.getSocketFactory(), TrustAllCerts.INSTANCE);
+        }
+        HTTP_CLIENT = builder.build();
+    }
 
     public static String get(String url) {
         return get(url, null);

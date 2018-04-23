@@ -339,7 +339,7 @@ public final class U {
     }
 
     /** 只要找到匹配即返回 true */
-    static boolean checkRegexWithRelax(String param, String regex) {
+    public static boolean checkRegexWithRelax(String param, String regex) {
         return isNotBlank(param) && Pattern.compile(regex).matcher(param).find();
     }
     /** 传入的参数只要包含中文就返回 true */
