@@ -49,7 +49,7 @@ public class HttpClientUtil {
 
     private static final SSLConnectionSocketFactory SSL_CONNECTION_SOCKET_FACTORY;
     static {
-        SSLContext ignoreVerifySSL = TrustAllCerts.createIgnoreVerifySSL();
+        SSLContext ignoreVerifySSL = TrustAllCerts.SSL_CONTEXT;
         if (U.isBlank(ignoreVerifySSL)) {
             SSL_CONNECTION_SOCKET_FACTORY = SSLConnectionSocketFactory.getSocketFactory();
         } else {

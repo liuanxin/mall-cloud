@@ -13,6 +13,7 @@ import java.security.cert.X509Certificate;
 class TrustAllCerts implements X509TrustManager {
 
     static final TrustAllCerts INSTANCE = new TrustAllCerts();
+    static final SSLContext SSL_CONTEXT = createIgnoreVerifySSL();
 
     @Override
     public void checkClientTrusted(X509Certificate[] paramArrayOfX509Certificate,
@@ -27,9 +28,7 @@ class TrustAllCerts implements X509TrustManager {
         return new X509Certificate[0];
     }
 
-
-
-    static SSLContext createIgnoreVerifySSL() {
+    private static SSLContext createIgnoreVerifySSL() {
         try {
             SSLContext sc = SSLContext.getInstance("SSLv3");
             sc.init(null, new TrustManager[] { INSTANCE }, null);

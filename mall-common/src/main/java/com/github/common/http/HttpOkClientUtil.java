@@ -26,7 +26,7 @@ public class HttpOkClientUtil {
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(20, TimeUnit.SECONDS);
 
-        SSLContext ignoreVerifySSL = TrustAllCerts.createIgnoreVerifySSL();
+        SSLContext ignoreVerifySSL = TrustAllCerts.SSL_CONTEXT;
         if (U.isNotBlank(ignoreVerifySSL)) {
             builder.sslSocketFactory(ignoreVerifySSL.getSocketFactory(), TrustAllCerts.INSTANCE);
         }
