@@ -74,24 +74,29 @@ public final class Const {
 
         Object tmp = null;
         if (obj instanceof Map) {
-            tmp = ((Map) obj).get(ENUM_CODE);
+            tmp = getEnumInMap((Map) obj);
         } else {
             String tmpStr = obj.toString();
             if (tmpStr.startsWith("{") && tmpStr.endsWith("}")) {
-                Map tmpMap = JsonUtil.toObjectNil(obj.toString(), Map.class);
-                if (A.isNotEmpty(tmpMap)) {
-                    tmp = tmpMap.get(ENUM_CODE);
-                    if (U.isBlank(tmp)) {
-                        tmp = tmpMap.get(ENUM_VALUE);
-                    }
-                }
-            }
-
-            if (U.isBlank(tmp)) {
-                tmp = obj;
+                tmp = getEnumInMap(JsonUtil.toObjectNil(obj.toString(), Map.class));
             }
         }
+
+        if (U.isBlank(tmp)) {
+            tmp = obj;
+        }
         return U.toEnum(enumClass, tmp);
+    }
+    private static Object getEnumInMap(Map map) {
+        if (A.isNotEmpty(map)) {
+            Object tmp = map.get(ENUM_CODE);
+            if (U.isBlank(tmp)) {
+                tmp = map.get(ENUM_VALUE);
+            }
+            return tmp;
+        } else {
+            return null;
+        }
     }
     // ========== enum ==========
 
