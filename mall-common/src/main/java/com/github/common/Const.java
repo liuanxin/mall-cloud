@@ -68,15 +68,27 @@ public final class Const {
      * </pre>
      */
     public static <E extends Enum> E enumDeserializer(Object obj, Class<E> enumClass) {
-        Object tmp;
+        if (U.isBlank(obj)) {
+            return null;
+        }
+
+        Object tmp = null;
         if (obj instanceof Map) {
             tmp = ((Map) obj).get(ENUM_CODE);
         } else {
-            Map tmpMap = JsonUtil.toObjectNil(obj.toString(), Map.class);
-            if (A.isNotEmpty(tmpMap)) {
-                tmp = tmpMap.get(ENUM_CODE);
-            } else {
-                tmp = obj.toString();
+            String tmpStr = obj.toString();
+            if (tmpStr.startsWith("{") && tmpStr.endsWith("}")) {
+                Map tmpMap = JsonUtil.toObjectNil(obj.toString(), Map.class);
+                if (A.isNotEmpty(tmpMap)) {
+                    tmp = tmpMap.get(ENUM_CODE);
+                    if (U.isBlank(tmp)) {
+                        tmp = tmpMap.get(ENUM_VALUE);
+                    }
+                }
+            }
+
+            if (U.isBlank(tmp)) {
+                tmp = obj;
             }
         }
         return U.toEnum(enumClass, tmp);
