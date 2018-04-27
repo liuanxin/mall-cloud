@@ -70,6 +70,8 @@ public class HttpUtil {
             url = "http://" + url;
         }
 
+        String result = U.EMPTY;
+        long start = System.currentTimeMillis();
         HttpURLConnection connection = null;
         try {
             connection = (HttpURLConnection) new URL(url).openConnection();
@@ -88,7 +90,17 @@ public class HttpUtil {
 
             InputStream inputStream = response(connection);
             if (inputStream != null) {
-                return CharStreams.toString(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+                result = CharStreams.toString(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+                if (LogUtil.ROOT_LOG.isInfoEnabled()) {
+                    long ms = System.currentTimeMillis() - start;
+                    StringBuilder sbd = new StringBuilder();
+                    sbd.append("Http => (").append(method).append(" ").append(url).append(")");
+                    if (U.isNotBlank(params)) {
+                        sbd.append(" params(").append(params).append(")");
+                    }
+                    sbd.append(" time(").append(ms).append("ms), return(").append(result).append(")");
+                    LogUtil.ROOT_LOG.info(sbd.toString());
+                }
             }
         } catch (IOException e) {
             if (LogUtil.ROOT_LOG.isWarnEnabled()) {
@@ -99,6 +111,6 @@ public class HttpUtil {
                 connection.disconnect();
             }
         }
-        return U.EMPTY;
+        return result;
     }
 }
