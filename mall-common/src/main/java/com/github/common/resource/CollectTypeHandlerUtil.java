@@ -40,7 +40,7 @@ public final class CollectTypeHandlerUtil {
     /** 基于指定的类(用来获取 ClassLoader), 在指定的包名下获取 mybatis 的类型处理器 */
     private static List<TypeHandler> getHandleArray(Class clazz, String classPackage) {
         if (LogUtil.ROOT_LOG.isTraceEnabled()) {
-            LogUtil.ROOT_LOG.trace("{} in ({})", clazz, clazz.getProtectionDomain().getCodeSource().getLocation());
+            LogUtil.ROOT_LOG.trace("{} in ({})", clazz, U.getClassInFile(clazz));
         }
         List<TypeHandler> handlerList = Lists.newArrayList();
         String packageName = classPackage.replace(".", "/");

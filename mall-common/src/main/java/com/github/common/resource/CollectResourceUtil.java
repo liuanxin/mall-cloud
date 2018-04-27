@@ -2,6 +2,7 @@ package com.github.common.resource;
 
 import com.github.common.util.A;
 import com.github.common.util.LogUtil;
+import com.github.common.util.U;
 import com.google.common.collect.Lists;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -35,7 +36,7 @@ public final class CollectResourceUtil {
     /** 从单个类所在的加载器下获取 mybatis 要加载的 xml 文件 */
     private static List<Resource> getResourceArray(Class clazz, String[] resourcePath) {
         if (LogUtil.ROOT_LOG.isDebugEnabled()) {
-            LogUtil.ROOT_LOG.debug("load {} in ({})", clazz, clazz.getProtectionDomain().getCodeSource().getLocation());
+            LogUtil.ROOT_LOG.debug("load {} in ({})", clazz, U.getClassInFile(clazz));
         }
         List<Resource> resourceList = Lists.newArrayList();
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(clazz.getClassLoader());

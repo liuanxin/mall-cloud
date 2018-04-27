@@ -7,10 +7,13 @@ import com.github.common.exception.ServiceMustHandleException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.security.CodeSource;
+import java.security.ProtectionDomain;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
@@ -507,7 +510,7 @@ public final class U {
         }
     }
 
-    /** 调用对象的公有方法. 将会忽略异常只返回 null, 如果要对异常专门记录勿调用此方法 */
+    /** 调用对象的公有方法. 异常将被忽略并返回 null */
     public static Object getMethod(Object obj, String method, Object... param) {
         if (isNotBlank(method)) {
             try {
@@ -556,6 +559,23 @@ public final class U {
             }
         }
         return sbd.toString();
+    }
+
+    /** 获取指定类所在 jar 包的地址 */
+    public static String getClassInFile(Class<?> clazz) {
+        if (isNotBlank(clazz)) {
+            ProtectionDomain domain = clazz.getProtectionDomain();
+            if (isNotBlank(domain)) {
+                CodeSource source = domain.getCodeSource();
+                if (isNotBlank(source)) {
+                    URL location = source.getLocation();
+                    if (isNotBlank(location)) {
+                        return location.getFile();
+                    }
+                }
+            }
+        }
+        return null;
     }
 
 
