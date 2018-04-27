@@ -71,7 +71,6 @@ public class HttpUtil {
         }
 
         String result = U.EMPTY;
-        long start = System.currentTimeMillis();
         HttpURLConnection connection = null;
         try {
             connection = (HttpURLConnection) new URL(url).openConnection();
@@ -81,6 +80,7 @@ public class HttpUtil {
             connection.setUseCaches(false);
             connection.setDoInput(true);
             connection.setDoOutput(true);
+            long start = System.currentTimeMillis();
             if (A.isNotEmpty(params)) {
                 Writer writer = new OutputStreamWriter(connection.getOutputStream(), StandardCharsets.UTF_8);
                 writer.write(U.formatParam(params));
