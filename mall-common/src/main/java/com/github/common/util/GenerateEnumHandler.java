@@ -47,7 +47,7 @@ public class GenerateEnumHandler {
                 "    @Override\n" +
                 "    public void setNonNullParameter(PreparedStatement ps, int i, " + PLACEHOLDER + " parameter,\n" +
                 "                                    JdbcType jdbcType) throws SQLException {\n" +
-                "        // 使用 getCode 返回的 int 值来存储\n" +
+                // "        // 使用 getCode 返回的 int 值来存储\n" +
                 "        ps.setInt(i, parameter.getCode());\n" +
                 "    }\n" +
                 "\n" +
