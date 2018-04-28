@@ -3,6 +3,7 @@ package com.github.common.util;
 import com.github.common.date.DateUtil;
 import com.github.common.exception.ServiceException;
 import com.github.common.exception.ServiceMustHandleException;
+import com.github.common.json.JsonUtil;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
@@ -84,6 +85,7 @@ public final class U {
         return sbd.toString();
     }
 
+    // ========== enum ==========
     /**
      * 获取枚举中的值, 先匹配 name, 再匹配 getCode(数字), 再匹配 getValue(中文), 都匹配不上则返回 null
      *
@@ -120,6 +122,96 @@ public final class U {
         }
         return null;
     }
+
+    private static final String ENUM_CODE = "code";
+    private static final String ENUM_VALUE = "value";
+    /**
+     * <pre>
+     * 序列化枚举, 属性是枚举时, 返回给前端时, 可以将 传递 和 显示的都返回, 如以下示例
+     *
+     * public enum Gender {
+     *   Male(0, "男"), Female(1, "女");
+     *   int code;
+     *   String value;
+     *
+     *   Gender(int code, String value) {
+     *     this.code = code;
+     *     this.value = value;
+     *   }
+     *   // get etc...
+     *
+     *   &#064;JsonValue
+     *   public Map<String, String> serializer() {
+     *     return <span style="color:red">U.serializerEnum(code, value);</span>
+     *   }
+     *   &#064;JsonCreator
+     *   public static Gender deserializer(Object obj) {
+     *     return U.enumDeserializer(obj, Gender.class);
+     *   }
+     * }
+     * </pre>
+     */
+    public static Map<String, String> serializerEnum(int code, String value) {
+        return A.maps(ENUM_CODE, code, ENUM_VALUE, value);
+    }
+    /**
+     * <pre>
+     * 枚举反序列化, 如以下示例
+     *
+     * public enum Gender {
+     *   Male(0, "男"), Female(1, "女");
+     *   int code;
+     *   String value;
+     *
+     *   Gender(int code, String value) {
+     *     this.code = code;
+     *     this.value = value;
+     *   }
+     *   // get etc...
+     *
+     *   &#064;JsonValue
+     *   public Map<String, String> serializer() {
+     *     return U.serializerEnum(code, value);
+     *   }
+     *   &#064;JsonCreator
+     *   public static Gender deserializer(Object obj) {
+     *     return <span style="color:red">U.enumDeserializer(obj, Gender.class);</span>
+     *   }
+     * }
+     * </pre>
+     */
+    public static <E extends Enum> E enumDeserializer(Object obj, Class<E> enumClass) {
+        if (isBlank(obj)) {
+            return null;
+        }
+
+        Object tmp = null;
+        if (obj instanceof Map) {
+            tmp = getEnumInMap((Map) obj);
+        } else {
+            String tmpStr = obj.toString();
+            if (tmpStr.startsWith("{") && tmpStr.endsWith("}")) {
+                tmp = getEnumInMap(JsonUtil.toObjectNil(obj.toString(), Map.class));
+            }
+        }
+
+        if (isBlank(tmp)) {
+            tmp = obj;
+        }
+        return toEnum(enumClass, tmp);
+    }
+    private static Object getEnumInMap(Map map) {
+        if (A.isNotEmpty(map)) {
+            Object tmp = map.get(ENUM_CODE);
+            if (isBlank(tmp)) {
+                tmp = map.get(ENUM_VALUE);
+            }
+            return tmp;
+        } else {
+            return null;
+        }
+    }
+    // ========== enum ==========
 
 
     // ========== number ==========
@@ -294,13 +386,13 @@ public final class U {
     }
 
     public static String like(String param) {
-        return isBlank(param) ? U.EMPTY : LIKE + param + LIKE;
+        return isBlank(param) ? EMPTY : LIKE + param + LIKE;
     }
     public static String leftLike(String param) {
-        return isBlank(param) ? U.EMPTY : LIKE + param;
+        return isBlank(param) ? EMPTY : LIKE + param;
     }
     public static String rightLike(String param) {
-        return isBlank(param) ? U.EMPTY : param + LIKE;
+        return isBlank(param) ? EMPTY : param + LIKE;
     }
     // ========== object & string ==========
 

@@ -1,105 +1,7 @@
 package com.github.common;
 
-import com.github.common.json.JsonUtil;
-import com.github.common.util.A;
-import com.github.common.util.U;
-
-import java.util.Map;
-
 /** 项目中会用到的常量 */
 public final class Const {
-
-    // ========== enum ==========
-    private static final String ENUM_CODE = "code";
-    private static final String ENUM_VALUE = "value";
-    /**
-     * <pre>
-     * 序列化枚举, 如以下示例
-     *
-     * public enum Gender {
-     *   Male(0, "男"), Female(1, "女");
-     *   int code;
-     *   String value;
-     *
-     *   Gender(int code, String value) {
-     *     this.code = code;
-     *     this.value = value;
-     *   }
-     *   // get etc...
-     *
-     *   &#064;JsonValue
-     *   public Map<String, String> serializer() {
-     *     return <span style="color:red">Const.serializerEnum(code, value);</span>
-     *   }
-     *   &#064;JsonCreator
-     *   public static Gender deserializer(Object obj) {
-     *     return Const.enumDeserializer(obj, Gender.class);
-     *   }
-     * }
-     * </pre>
-     */
-    public static Map<String, String> serializerEnum(int code, String value) {
-        return A.maps(ENUM_CODE, code, ENUM_VALUE, value);
-    }
-    /**
-     * <pre>
-     * 枚举反序列化, 如以下示例
-     *
-     * public enum Gender {
-     *   Male(0, "男"), Female(1, "女");
-     *   int code;
-     *   String value;
-     *
-     *   Gender(int code, String value) {
-     *     this.code = code;
-     *     this.value = value;
-     *   }
-     *   // get etc...
-     *
-     *   &#064;JsonValue
-     *   public Map<String, String> serializer() {
-     *     return Const.serializerEnum(code, value);
-     *   }
-     *   &#064;JsonCreator
-     *   public static Gender deserializer(Object obj) {
-     *     return <span style="color:red">Const.enumDeserializer(obj, Gender.class);</span>
-     *   }
-     * }
-     * </pre>
-     */
-    public static <E extends Enum> E enumDeserializer(Object obj, Class<E> enumClass) {
-        if (U.isBlank(obj)) {
-            return null;
-        }
-
-        Object tmp = null;
-        if (obj instanceof Map) {
-            tmp = getEnumInMap((Map) obj);
-        } else {
-            String tmpStr = obj.toString();
-            if (tmpStr.startsWith("{") && tmpStr.endsWith("}")) {
-                tmp = getEnumInMap(JsonUtil.toObjectNil(obj.toString(), Map.class));
-            }
-        }
-
-        if (U.isBlank(tmp)) {
-            tmp = obj;
-        }
-        return U.toEnum(enumClass, tmp);
-    }
-    private static Object getEnumInMap(Map map) {
-        if (A.isNotEmpty(map)) {
-            Object tmp = map.get(ENUM_CODE);
-            if (U.isBlank(tmp)) {
-                tmp = map.get(ENUM_VALUE);
-            }
-            return tmp;
-        } else {
-            return null;
-        }
-    }
-    // ========== enum ==========
-
 
     // ========== load ==========
     /** 当前项目的基本包名 */
@@ -125,7 +27,7 @@ public final class Const {
      *   forward 不会改变页面的请求地址, 而且前一个请求的 request 和 response 在下一个请求中还有效.
      *   redirect 正好不同, 要传值得使用 参数拼接 或者放在 session 里(都有利弊, 建议使用前者)
      *
-     * 在 spring mvc 的 service 上返回 String 时
+     * 在 spring mvc 的 Controller 上返回 String 时
      *   return "forward:/some/one" => 转发到 /some/one 的 service 方法上去. mvc 内部的异常处理就是基于这种方式
      *   return "some/one"          => 转发到 template-path/some/one.jsp 页面去(如果是 jsp 的话)
      *   return "/some/one"         => 同 "some/one"
