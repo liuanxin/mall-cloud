@@ -7,7 +7,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 // @Component
 public class CronTask {
 
-    /** 每分钟运行一次 */
+    /** 当前定时任务的业务说明 */
+    private static final String BUSINESS_DESC = "取消订单";
+    /** 当前任务的表达式 */
     private static final String CRON = "0 */1 * * * *";
 
     // @Autowired
@@ -18,16 +20,21 @@ public class CronTask {
     public void cancelOrder() {
         LogUtil.recordTime();
         try {
-            // int cancelCount = orderClient.xxx();
-            // if (LogUtil.ROOT_LOG.isInfoEnabled()) {
-            //     LogUtil.ROOT_LOG.info("共取消 {} 笔订单", cancelCount);
-            // }
+            handlerBusiness();
         } catch (Exception e) {
             if (LogUtil.ROOT_LOG.isErrorEnabled()) {
-                LogUtil.ROOT_LOG.error("取消订单时异常", e);
+                LogUtil.ROOT_LOG.error(String.format("%s时异常", BUSINESS_DESC), e);
             }
         } finally {
             LogUtil.unbind();
         }
+    }
+
+    /** 操作具体的业务 */
+    private void handlerBusiness() {
+        // int cancelCount = orderClient.xxx();
+        // if (LogUtil.ROOT_LOG.isInfoEnabled()) {
+        //     LogUtil.ROOT_LOG.info("{}时共操作了 {} 笔订单", BUSINESS_DESC, cancelCount);
+        // }
     }
 }
