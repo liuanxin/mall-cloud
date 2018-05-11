@@ -170,12 +170,6 @@ public class DateUtil {
         return new DateTime(date).plusWeeks(week).toDate();
     }
 
-    /** 传入的时间晚于当前时间就返回传入的时间, 否则就返回当前时间 */
-    public static Date before(Date date) {
-        Date now = now();
-        return now.after(date) ? now : date;
-    }
-
     /** 传入的时间是不是当月当日. 用来验证生日 */
     public static boolean wasBirthday(Date date) {
         DateTime dt = DateTime.now();
