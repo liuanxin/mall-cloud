@@ -11,7 +11,6 @@ import java.math.BigDecimal;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
@@ -25,15 +24,12 @@ import java.util.regex.Pattern;
 /** 工具类 */
 public final class U {
 
-    public static final Charset UTF8 = StandardCharsets.UTF_8;
     public static final ThreadLocalRandom RANDOM = ThreadLocalRandom.current();
 
     /** 本机的 cpu 核心数 */
     public static final int PROCESSORS = Runtime.getRuntime().availableProcessors();
 
     public static final String EMPTY = "";
-    public static final String SPACE = " ";
-    public static final String SPLIT = ",|，";
 
     private static final String LIKE = "%";
     private static final String PHONE = "^1[0-9]{10}$";
@@ -476,7 +472,7 @@ public final class U {
         }
         try {
             // java 中的 encode 是把空格变成 +, 转义后需要将 + 替换成 %20
-            return URLEncoder.encode(url, UTF8.displayName());//.replaceAll("\\+", "%20");
+            return URLEncoder.encode(url, StandardCharsets.UTF_8.displayName());//.replaceAll("\\+", "%20");
         } catch (UnsupportedEncodingException e) {
             return EMPTY;
         }
@@ -488,7 +484,7 @@ public final class U {
         }
         try {
             // java 中的 encode 是把空格变成 +, 反转义前需要将 %20 替换成 +
-            return URLDecoder.decode(src/*.replaceAll("%20", "\\+")*/, UTF8.displayName());
+            return URLDecoder.decode(src/*.replaceAll("%20", "\\+")*/, StandardCharsets.UTF_8.displayName());
         } catch (UnsupportedEncodingException e) {
             return EMPTY;
         }

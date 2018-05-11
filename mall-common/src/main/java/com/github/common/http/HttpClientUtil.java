@@ -240,7 +240,7 @@ public class HttpClientUtil {
         long start = System.currentTimeMillis();
         try (CloseableHttpResponse response = createHttpClient().execute(request, HttpClientContext.create())) {
             HttpEntity entity = response.getEntity();
-            String result = EntityUtils.toString(entity, U.UTF8);
+            String result = EntityUtils.toString(entity, StandardCharsets.UTF_8);
             EntityUtils.consume(entity);
             if (LogUtil.ROOT_LOG.isInfoEnabled()) {
                 long ms = System.currentTimeMillis() - start;

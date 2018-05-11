@@ -5,6 +5,7 @@ import com.google.common.io.Files;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
 /** 自动生成 mybatis 的 enum handle */
 public class GenerateEnumHandler {
@@ -85,7 +86,7 @@ public class GenerateEnumHandler {
                         }
                         File writeFile = new File(parent, clazzName + "Handler.java");
                         if (!writeFile.exists()) {
-                            Files.write(templateInfo.replaceAll(PLACEHOLDER, clazzName).getBytes(U.UTF8), writeFile);
+                            Files.write(templateInfo.replaceAll(PLACEHOLDER, clazzName).getBytes(StandardCharsets.UTF_8), writeFile);
                             System.out.println("生成文件: " + writeFile.getPath());
                             count += 1;
                         }

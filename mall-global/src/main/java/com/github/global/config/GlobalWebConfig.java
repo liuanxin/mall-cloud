@@ -9,11 +9,11 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
-import javax.servlet.Servlet;
+import javax.servlet.Filter;
 import java.nio.charset.StandardCharsets;
 
 @Configuration
-@ConditionalOnClass({ Servlet.class })
+@ConditionalOnClass({ Filter.class })
 public class GlobalWebConfig {
 
     @Bean
