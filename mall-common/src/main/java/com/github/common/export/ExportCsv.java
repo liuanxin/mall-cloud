@@ -6,6 +6,7 @@ import com.github.common.util.U;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+/** 如果想要将数据导成文件保持, 使用 {@link FileExport} 类, 如果要导出文件在 web 端下载, 使用 {@link WebExport} 类 */
 final class ExportCsv {
 
     static String getContent(LinkedHashMap<String, String> titleMap, List<?> dataList) {

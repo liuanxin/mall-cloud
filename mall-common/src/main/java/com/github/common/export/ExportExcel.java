@@ -7,8 +7,12 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+/** 如果想要将数据导成文件保持, 使用 {@link FileExport} 类, 如果要导出文件在 web 端下载, 使用 {@link WebExport} 类 */
 final class ExportExcel {
 
     // excel 2003 的最大行数是 65536 行, 2007 开始的版本是 1048576 行.
@@ -146,7 +150,7 @@ final class ExportExcel {
                                 } else {
                                     cell.setCellType(CellType.STRING);
                                     cell.setCellValue(cellData);
-                                    // 经字符串设置样式意义并不大, 忽略样式. 此处并不每次都生成一个
+                                    // 给字符串设置样式意义并不大, 忽略样式. 此处并不每次都生成一个
                                     cellTmpStyle = contentStyle;
                                 }
                                 cell.setCellStyle(cellTmpStyle);
