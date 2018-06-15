@@ -61,10 +61,11 @@ public final class SpringMvc {
                 }
 
                 int max = 6000;
-                if (toRender.length() < max) {
+                int length = toRender.length();
+                if (length < max) {
                     LogUtil.ROOT_LOG.info("return json: {}", toRender);
                 } else {
-                    LogUtil.ROOT_LOG.info("return data greater than {}, ignore the print", max);
+                    LogUtil.ROOT_LOG.info("return data too long {}(> {}), ignore the print", length, max);
                 }
             }
         }
