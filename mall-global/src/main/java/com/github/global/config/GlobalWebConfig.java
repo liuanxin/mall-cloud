@@ -26,12 +26,8 @@ public class GlobalWebConfig {
 
     @Bean
     public FilterRegistrationBean characterFilter() {
-        CharacterEncodingFilter encodingFilter = new CharacterEncodingFilter();
-        encodingFilter.setEncoding(StandardCharsets.UTF_8.displayName());
-        encodingFilter.setForceEncoding(true);
-
-        FilterRegistrationBean registrationBean = new FilterRegistrationBean();
-        registrationBean.setFilter(encodingFilter);
-        return registrationBean;
+        FilterRegistrationBean filterBean = new FilterRegistrationBean();
+        filterBean.setFilter(new CharacterEncodingFilter(StandardCharsets.UTF_8.displayName(), true));
+        return filterBean;
     }
 }
