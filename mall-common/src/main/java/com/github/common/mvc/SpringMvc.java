@@ -62,7 +62,7 @@ public final class SpringMvc {
 
                 int max = 6000;
                 if (toRender.length() < max) {
-                    LogUtil.ROOT_LOG.info("return json: {}", render);
+                    LogUtil.ROOT_LOG.info("return json: {}", toRender);
                 } else {
                     LogUtil.ROOT_LOG.info("return data greater than {}, ignore the print", max);
                 }
