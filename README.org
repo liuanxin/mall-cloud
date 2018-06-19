@@ -129,15 +129,20 @@ public enum Gender {
     public String getValue() {
         return value;
     }
-    /** 存进数据库 及 返回给前端 时 */
-    @JsonValue
+    /** 数据关联用 */
     public int getCode() {
         return code;
     }
-    /** 数据反序列化时 */
+
+    /** 序列化给前端时, 如果只想给前端返回数值, 去掉此方法并把注解挪到 getCode 即可 */
+    @JsonValue
+    public Map<String, String> serializer() {
+        return U.serializerEnum(code, value);
+    }
+    /** 数据反序列化. 如 male、0、男、{"code": 0, "value": "男"} 都可以反序列化为 Gender.Male 值 */
     @JsonCreator
     public static Gender deserializer(Object obj) {
-        return U.toEnum(Gender.class, obj);
+        return U.enumDeserializer(obj, Gender.class);
     }
 }
 #+END_SRC
