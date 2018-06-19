@@ -769,7 +769,7 @@ class Server {
             "## org.springframework.cloud.sleuth.zipkin2.ZipkinProperties\n" +
             "#spring:\n" +
             "#  zipkin.base-url: http://127.0.0.1:9411\n" +
-            "#  # 抽样比例, 默认是 10%%, 如果 值是 1 则表示 100%%, 分页式追踪数据量可能会非常大\n" +
+            "#  # 抽样比例, 默认是 10%%, 如果 值是 1 则表示 100%%, 分布式追踪数据量可能会非常大\n" +
             "#  sleuth.sampler.percentage: 0.1\n";
 
     private static final String APPLICATION_TEST_YML = "\n" +
