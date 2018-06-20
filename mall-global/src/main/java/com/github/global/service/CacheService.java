@@ -36,7 +36,6 @@ public class CacheService {
     public void set(String key, String value, long timeOut, TimeUnit timeUnit) {
         stringRedisTemplate.opsForValue().set(key, value, timeOut, timeUnit);
     }
-
     /**
      * <pre>
      * 向 redis 中原子存放一个值, 成功则返回 true, 否则返回 false, 想要操作分布式锁, 可以像下面这样操作
@@ -48,7 +47,7 @@ public class CacheService {
      * // 返回 true 则表示获取到了锁
      * if (flag) {
      *   try {
-     *     // do something
+     *     // 获取到锁之后的业务处理
      *   } finally {
      *     // 释放锁的时候先去缓存中取, 如果值跟之前存进去的一样才进行删除操作
      *     // 避免当前线程执行太长, 超时后其他线程又设置了值在处理
