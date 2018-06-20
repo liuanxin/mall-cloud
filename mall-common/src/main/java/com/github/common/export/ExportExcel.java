@@ -135,7 +135,7 @@ final class ExportExcel {
                                 cell = row.createCell(cellIndex);
 
                                 cellData = U.getField(data, titleMapEntry.getKey());
-                                if (NumberUtils.isNumber(cellData)) {
+                                if (NumberUtils.isCreatable(cellData)) {
                                     cell.setCellType(CellType.NUMERIC);
                                     cell.setCellValue(NumberUtils.toDouble(cellData));
 
