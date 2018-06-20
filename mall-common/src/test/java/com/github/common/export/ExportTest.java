@@ -5,7 +5,7 @@ import com.github.common.json.JsonUtil;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-public class ExportUtil {
+public class ExportTest {
 
     @SuppressWarnings("unchecked")
     public static void main(String[] args) {
