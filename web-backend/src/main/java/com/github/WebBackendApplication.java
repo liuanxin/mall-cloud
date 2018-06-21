@@ -6,11 +6,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
+import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.context.ApplicationContext;
 
-@EnableZuulProxy
+//@EnableZuulProxy
 @EnableDiscoveryClient
+@EnableFeignClients
 @SpringBootApplication
 public class WebBackendApplication extends SpringBootServletInitializer {
 

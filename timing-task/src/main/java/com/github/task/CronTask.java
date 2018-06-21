@@ -1,7 +1,7 @@
 package com.github.task;
 
 import com.github.common.util.LogUtil;
-import com.github.order.client.OrderClient;
+import com.github.order.client.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -16,7 +16,7 @@ public class CronTask {
     private static final String CRON = "0 */1 * * * *";
 
     @Autowired
-    private OrderClient orderService;
+    private OrderService orderService;
 
     /** 取消下单已经超过了 24 小时的订单 */
     @Scheduled(cron = CRON)

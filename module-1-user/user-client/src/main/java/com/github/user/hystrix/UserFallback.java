@@ -3,7 +3,7 @@ package com.github.user.hystrix;
 import com.github.common.page.PageInfo;
 import com.github.common.page.Pages;
 import com.github.common.util.LogUtil;
-import com.github.user.client.UserClient;
+import com.github.user.client.UserService;
 import org.springframework.stereotype.Component;
 
 /**
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
  * @author https://github.com/liuanxin
  */
 @Component
-public class UserFallback implements UserClient {
+public class UserFallback implements UserService {
 
     @Override
     public PageInfo demo(String xx, Integer page, Integer limit) {

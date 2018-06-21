@@ -41,10 +41,10 @@ public class ModuleTest {
     }
 
     public static void main(String[] args) throws Exception {
-        generate("0-common",  "8090", "公共服务");
-        generate("1-user",    "8091", "用户");
-        generate("2-product", "8092", "商品");
-        generate("3-order",   "8093", "订单");
+        generate("message-queue",  "8079", "消息队列");
+//        generate("1-user",    "8091", "用户");
+//        generate("2-product", "8092", "商品");
+//        generate("3-order",   "8093", "订单");
 
         soutInfo();
     }
@@ -52,7 +52,7 @@ public class ModuleTest {
     private static List<List<String>> moduleNameList = new ArrayList<>();
     private static List<List<String>> moduleList = new ArrayList<>();
     private static void generate(String basicModuleName, String port, String comment) throws Exception {
-        String moduleName = "module-" + basicModuleName;
+        String moduleName = /*"module-" +*/ basicModuleName;
         String packageName = basicModuleName;
         if (basicModuleName.contains("-")) {
             packageName = basicModuleName.substring(basicModuleName.indexOf("-") + 1);
@@ -160,7 +160,7 @@ class Client {
             AUTHOR +
             " */\n" +
             "@FeignClient(value = %sConst.MODULE_NAME" + (fallback ? ", fallback = %sFallback.class" : "") + ")\n" +
-            "public interface %sClient extends %sInterface {\n" +
+            "public interface %sService extends %sInterface {\n" +
             "}\n";
 
     private static final String FALLBACK = "package " + PACKAGE + ".%s.hystrix;\n" +
@@ -176,7 +176,7 @@ class Client {
             AUTHOR +
             " */\n" +
             "@Component\n" +
-            "public class %sFallback implements %sClient {\n" +
+            "public class %sFallback implements %sService {\n" +
             "\n" +
             "    @Override\n" +
             "    public PageInfo demo(String xx, Integer page, Integer limit) {\n" +
@@ -199,7 +199,7 @@ class Client {
             "    <modelVersion>4.0.0</modelVersion>\n" +
             "\n" +
             "    <artifactId>%s-client</artifactId>\n" +
-            "    <description>%s模块的客户端包(单独分包的原因是: 只在调用的地方才需要引入 feign 包和开启 @EnableFeignClients 注解)</description>\n" +
+            "    <description>%s 模块中将 restful 调用封装成 FeignClient 以达到 rpc 的调用形式(需要引入 feign 包和开启 @EnableFeignClients 注解)</description>\n" +
             "\n" +
             "    <dependencies>\n" +
             "        <dependency>\n" +
@@ -250,7 +250,7 @@ class Client {
                     parentPackageName, clazzName, parentPackageName, clazzName,
                     comment, clazzName, clazzName, clazzName, clazzName);
         }
-        writeFile(new File(model_client, clazzName + "Client.java"), constModel);
+        writeFile(new File(model_client, clazzName + "Service.java"), constModel);
     }
 }
 
@@ -712,7 +712,7 @@ class Server {
             AUTHOR +
             " */\n" +
             "@RestController\n" +
-            "public class %sService implements %sInterface {\n" +
+            "public class %sServiceImpl implements %sInterface {\n" +
             "    \n" +
             "    @Override\n" +
             "    public PageInfo demo(String xx, Integer page, Integer limit) {\n" +
@@ -1148,7 +1148,7 @@ class Server {
 
         String service = String.format(SERVICE, parentPackageName, comment, clazzName, clazzName,
                 clazzName, comment, clazzName.toUpperCase(), parentPackageName);
-        writeFile(new File(servicePath, clazzName + "Service.java"), service);
+        writeFile(new File(servicePath, clazzName + "ServiceImpl.java"), service);
 
 
         File resourcePath = new File(module + "/" + server + "/src/main/resources");

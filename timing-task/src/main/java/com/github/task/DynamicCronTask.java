@@ -20,10 +20,10 @@ public class DynamicCronTask implements SchedulingConfigurer {
     private static final String CRON = "0 0 0/1 * * *";
 
     // @Autowired
-    // private ProductClient productService;
+    // private ProductService productService;
 
     // @Autowired
-    // private CommonClient commonService;
+    // private CommonService commonService;
 
     @Override
     public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {

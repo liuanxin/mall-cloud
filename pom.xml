@@ -24,6 +24,9 @@
         <!-- 注册中心模块 -->
         <module>register-center</module>
 
+        <!-- 消息队列 -->
+        <module>message-queue</module>
+
         <!-- 公共服务模块 -->
         <module>module-0-common</module>
         <!-- 用户模块 -->
@@ -42,8 +45,6 @@
 
         <!-- 服务跟踪模块 -->
         <module>service-trace</module>
-        <!-- 消息队列的消费端 -->
-        <module>subscribe-message</module>
     </modules>
 
     <properties>
@@ -85,17 +86,22 @@
 
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>user-model</artifactId>
+                <artifactId>queue-model</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>user-client</artifactId>
+                <artifactId>queue-client</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>user-server</artifactId>
+                <artifactId>queue-server</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>queue-consume</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -112,6 +118,22 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>common-server</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>user-model</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>user-client</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>user-server</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
