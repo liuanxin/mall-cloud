@@ -42,6 +42,8 @@
 
         <!-- 服务跟踪模块 -->
         <module>service-trace</module>
+        <!-- 消息队列的消费端 -->
+        <module>subscribe-message</module>
     </modules>
 
     <properties>

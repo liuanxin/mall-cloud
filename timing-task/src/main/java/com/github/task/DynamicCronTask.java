@@ -20,10 +20,10 @@ public class DynamicCronTask implements SchedulingConfigurer {
     private static final String CRON = "0 0 0/1 * * *";
 
     // @Autowired
-    // private ProductClient productClient;
+    // private ProductClient productService;
 
     // @Autowired
-    // private CommonClient commonClient;
+    // private CommonClient commonService;
 
     @Override
     public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
@@ -50,7 +50,7 @@ public class DynamicCronTask implements SchedulingConfigurer {
             @Override
             public Date nextExecutionTime(TriggerContext triggerContext) {
                 // 从数据库读取 cron 表达式
-                String cron = ""; // commonClient.getAbcCron();
+                String cron = ""; // commonService.getAbcCron();
                 if (U.isBlank(cron)) {
                     // 如果没有, 给一个默认值.
                     cron = CRON;
@@ -74,7 +74,7 @@ public class DynamicCronTask implements SchedulingConfigurer {
 
     /** 操作具体的业务 */
     private void handlerBusiness() {
-        // int offlineCount = productClient.yyy();
+        // int offlineCount = productService.yyy();
         // if (LogUtil.ROOT_LOG.isInfoEnabled()) {
         //     LogUtil.ROOT_LOG.info("{}时共操作了 {} 个商品", BUSINESS_DESC, offlineCount);
         // }
