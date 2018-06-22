@@ -3,7 +3,6 @@ package com.github.util;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
@@ -13,7 +12,6 @@ import java.util.Objects;
 @Getter
 @NoArgsConstructor
 @Accessors(chain = true)
-@ToString
 class BackendSessionModel implements Serializable {
     private static final long serialVersionUID = 1L;
 
