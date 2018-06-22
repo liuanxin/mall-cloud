@@ -79,7 +79,11 @@ public class ProductGlobalException {
     public ResponseEntity<JsonResult> notSupported(HttpRequestMethodNotSupportedException e) {
         bindAndPrintLog(e);
 
-        return fail(String.format("不支持此请求方式! 当前(%s), 支持(%s)", e.getMethod(), A.toStr(e.getSupportedMethods())));
+        String msg = "不支持此种请求方式.";
+        if (!online) {
+            msg += String.format(" 当前(%s), 支持(%s)", e.getMethod(), A.toStr(e.getSupportedMethods()));
+        }
+        return fail(msg);
     }
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<JsonResult> uploadSizeExceeded(MaxUploadSizeExceededException e) {

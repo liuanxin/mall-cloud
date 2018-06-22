@@ -567,7 +567,11 @@ class Server {
             "    public ResponseEntity<JsonResult> notSupported(HttpRequestMethodNotSupportedException e) {\n" +
             "        bindAndPrintLog(e);\n" +
             "\n" +
-            "        return fail(String.format(\"不支持此请求方式! 当前(%%s), 支持(%%s)\", e.getMethod(), A.toStr(e.getSupportedMethods())));\n" +
+            "        String msg = \"不支持此种请求方式.\";\n" +
+            "        if (!online) {\n" +
+            "            msg += String.format(\" 当前(%s), 支持(%s)\", e.getMethod(), A.toStr(e.getSupportedMethods()));\n" +
+            "        }\n" +
+            "        return fail(msg);\n" +
             "    }\n" +
             "    @ExceptionHandler(MaxUploadSizeExceededException.class)\n" +
             "    public ResponseEntity<JsonResult> uploadSizeExceeded(MaxUploadSizeExceededException e) {\n" +
