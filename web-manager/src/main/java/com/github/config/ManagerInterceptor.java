@@ -21,7 +21,7 @@ public class ManagerInterceptor implements HandlerInterceptor {
     private static final List<String> LET_IT_GO = Lists.newArrayList("/error");
 
     private boolean online;
-    public ManagerInterceptor(boolean online) {
+    ManagerInterceptor(boolean online) {
         this.online = online;
     }
 
@@ -67,7 +67,6 @@ public class ManagerInterceptor implements HandlerInterceptor {
         if (!online) {
             return;
         }
-
         if (LET_IT_GO.contains(RequestUtils.getRequest().getRequestURI())) {
             return;
         }
@@ -76,20 +75,15 @@ public class ManagerInterceptor implements HandlerInterceptor {
         }
 
         HandlerMethod handlerMethod = (HandlerMethod) handler;
+
         // 在不需要登录的 url 上标注 @NotNeedLogin
         NotNeedLogin notNeedLogin = getAnnotation(handlerMethod, NotNeedLogin.class);
         // 标注了 NotNeedLogin 且 flag 为 true(默认就是 true)则表示当前的请求不需要验证登录
         if (notNeedLogin != null && notNeedLogin.flag()) {
             return;
         }
-
         // 检查登录
         ManagerSessionUtil.checkLogin();
-
-        // 超级管理员忽略权限检查
-        if (ManagerSessionUtil.isSuper()) {
-            return;
-        }
 
         // 在不需要验证权限的 url 上标注 @NotNeedPermission
         NotNeedPermission notNeedPermission = getAnnotation(handlerMethod, NotNeedPermission.class);
@@ -97,12 +91,11 @@ public class ManagerInterceptor implements HandlerInterceptor {
         if (notNeedPermission != null && notNeedPermission.flag()) {
             return;
         }
-
         // 检查权限
         ManagerSessionUtil.checkPermission();
     }
     private <T extends Annotation> T getAnnotation(HandlerMethod handlerMethod, Class<T> clazz) {
-        // 先找方法上的注解, 再找类上的注解
+        // 先找方法上的注解, 没有再找类上的注解
         T annotation = handlerMethod.getMethodAnnotation(clazz);
         return annotation == null ? AnnotationUtils.findAnnotation(handlerMethod.getBeanType(), clazz) : annotation;
     }

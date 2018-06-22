@@ -41,8 +41,8 @@ class BackendSessionModel implements Serializable {
     // 以下为静态方法
 
     /*
-    static WebSessionModel assemblyData(User account) {
-        return JsonUtil.convert(account, WebSessionModel.class);
+    static BackendSessionModel assemblyData(User user) {
+        return JsonUtil.convert(user, BackendSessionModel.class);
     }
     */
 

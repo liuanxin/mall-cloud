@@ -61,7 +61,7 @@ public class BackendInterceptor implements HandlerInterceptor {
         }
     }
     private <T extends Annotation> T getAnnotation(HandlerMethod handlerMethod, Class<T> clazz) {
-        // 先找方法上的注解, 再找类上的注解
+        // 先找方法上的注解, 没有再找类上的注解
         T annotation = handlerMethod.getMethodAnnotation(clazz);
         return annotation == null ? AnnotationUtils.findAnnotation(handlerMethod.getBeanType(), clazz) : annotation;
     }
