@@ -24,11 +24,10 @@
         <!-- 注册中心模块 -->
         <module>register-center</module>
 
-        <!-- 消息队列 -->
-        <module>message-queue</module>
-
         <!-- 公共模块 -->
         <module>module-0-common</module>
+        <!-- 消息队列 -->
+        <module>module-0-queue</module>
         <!-- 搜索模块 -->
         <module>module-0-search</module>
         <!-- 用户模块 -->

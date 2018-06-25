@@ -52,7 +52,7 @@
     </dependencies>
 
     <build>
-        <finalName>queue-server-8079</finalName>
+        <finalName>queue-server-8071</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

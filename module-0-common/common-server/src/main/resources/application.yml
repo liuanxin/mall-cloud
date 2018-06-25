@@ -2,7 +2,7 @@
 # https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
 online: false
 
-server.port: 8090
+server.port: 8070
 
 spring.application.name: common
 

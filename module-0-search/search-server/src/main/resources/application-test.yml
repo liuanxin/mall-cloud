@@ -1,7 +1,7 @@
 
 online: false
 
-server.port: 8078
+server.port: 8072
 
 spring.application.name: search
 

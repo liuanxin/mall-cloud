@@ -79,7 +79,7 @@
     </dependencies>
 
     <build>
-        <finalName>common-server-8090</finalName>
+        <finalName>common-server-8070</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

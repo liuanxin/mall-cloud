@@ -1,7 +1,7 @@
 
 online: false
 
-server.port: 8079
+server.port: 8071
 
 spring.application.name: queue
 
