@@ -3,21 +3,18 @@ online: false
 
 logging.config: classpath:log-test.xml
 
-spring.application.name: search
+spring.application.name: search-sync
 
-database:
-  url:  jdbc:mysql://test_ip:test_port/x123x?useSSL=false&useUnicode=true&characterEncoding=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&statementInterceptors=com.github.common.sql.ShowSqlInterceptor
-  userName: xx123xx
-  password: xxx123xxx
-  initialSize: 2
-  minIdle: 2
-  maxActive: 10
-  maxWait: 60000
-  timeBetweenEvictionRunsMillis: 60000
-  minEvictableIdleTimeMillis: 300000
-  validationQuery: SELECT 'x'
-  testWhileIdle: true
-  testOnBorrow: false
-  testOnReturn: false
-  filters: stat,wall
+spring.datasource:
+  url: jdbc:mysql://test_search_db?useSSL=false&useUnicode=true&characterEncoding=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&statementInterceptors=com.github.common.sql.ShowSqlInterceptor
+  username: test_search_user
+  password: test_search_pass
+  hikari:
+    minimumIdle: 2
+    maximumPoolSize: 5
+    dataSourceProperties:
+      prepStmtCacheSize: 250
+      prepStmtCacheSqlLimit: 2048
+      cachePrepStmts: true
+      useServerPrepStmts: true
 
