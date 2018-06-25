@@ -16,6 +16,9 @@ spring.activemq:
   broker-url: failover:(tcp://ip:port)?timeout=3000&startupMaxReconnectAttempts=5
   user: admin
   password: admin
+  pool:
+    enabled: true
+    max-connections: 10
 
 
 register.center: http://prod1:8761/eureka/,http://prod2:8761/eureka/,http://prod3:8761/eureka/
