@@ -3,7 +3,7 @@ package com.github.search.hystrix;
 import com.github.common.page.PageInfo;
 import com.github.common.page.Pages;
 import com.github.common.util.LogUtil;
-import com.github.search.client.SearchClient;
+import com.github.search.client.SearchService;
 import org.springframework.stereotype.Component;
 
 /**
