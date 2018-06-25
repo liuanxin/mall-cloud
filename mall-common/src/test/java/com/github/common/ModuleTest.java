@@ -41,7 +41,8 @@ public class ModuleTest {
     }
 
     public static void main(String[] args) throws Exception {
-        generate("message-queue",  "8079", "消息队列");
+//        generate("0-search",  "8078", "搜索");
+//        generate("0-common",  "8090", "公共");
 //        generate("1-user",    "8091", "用户");
 //        generate("2-product", "8092", "商品");
 //        generate("3-order",   "8093", "订单");
@@ -52,7 +53,7 @@ public class ModuleTest {
     private static List<List<String>> moduleNameList = new ArrayList<>();
     private static List<List<String>> moduleList = new ArrayList<>();
     private static void generate(String basicModuleName, String port, String comment) throws Exception {
-        String moduleName = /*"module-" +*/ basicModuleName;
+        String moduleName = "module-" + basicModuleName;
         String packageName = basicModuleName;
         if (basicModuleName.contains("-")) {
             packageName = basicModuleName.substring(basicModuleName.indexOf("-") + 1);
@@ -569,7 +570,7 @@ class Server {
             "\n" +
             "        String msg = \"不支持此种请求方式.\";\n" +
             "        if (!online) {\n" +
-            "            msg += String.format(\" 当前(%s), 支持(%s)\", e.getMethod(), A.toStr(e.getSupportedMethods()));\n" +
+            "            msg += String.format(\" 当前(%%s), 支持(%%s)\", e.getMethod(), A.toStr(e.getSupportedMethods()));\n" +
             "        }\n" +
             "        return fail(msg);\n" +
             "    }\n" +

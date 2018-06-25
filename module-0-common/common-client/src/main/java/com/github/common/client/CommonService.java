@@ -5,7 +5,7 @@ import com.github.common.constant.CommonConst;
 import org.springframework.cloud.netflix.feign.FeignClient;
 
 /**
- * 公共服务相关的调用接口
+ * 公共相关的调用接口
  *
  * @author https://github.com/liuanxin
  */

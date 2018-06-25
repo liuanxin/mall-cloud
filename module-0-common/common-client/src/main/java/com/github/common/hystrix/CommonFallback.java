@@ -7,7 +7,7 @@ import com.github.common.util.LogUtil;
 import org.springframework.stereotype.Component;
 
 /**
- * 公共服务相关的断路器
+ * 公共相关的断路器
  *
  * @author https://github.com/liuanxin
  */

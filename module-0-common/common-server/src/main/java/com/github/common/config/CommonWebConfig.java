@@ -14,7 +14,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import java.util.List;
 
 /**
- * 公共服务模块的配置数据. 主要是 mybatis 的多配置目录和类型处理器
+ * 公共模块的配置数据. 主要是 mybatis 的多配置目录和类型处理器
  *
  * @author https://github.com/liuanxin
  */

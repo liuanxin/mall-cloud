@@ -5,14 +5,14 @@ import com.github.common.util.LogUtil;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ApplicationContext;
-import org.springframework.jms.annotation.EnableJms;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
-@EnableJms
-public class MessageApplication {
+@EnableScheduling
+public class SearchSyncApplication {
 
     public static void main(String[] args) {
-        ApplicationContext ctx = new SpringApplicationBuilder(MessageApplication.class).web(false).run(args);
+        ApplicationContext ctx = new SpringApplicationBuilder(SearchSyncApplication.class).web(false).run(args);
         if (LogUtil.ROOT_LOG.isDebugEnabled()) {
             String[] activeProfiles = ctx.getEnvironment().getActiveProfiles();
             if (A.isNotEmpty(activeProfiles)) {

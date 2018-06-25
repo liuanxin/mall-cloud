@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 公共服务模块的接口实现类
+ * 公共模块的接口实现类
  *
  * @author https://github.com/liuanxin
  */

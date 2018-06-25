@@ -22,7 +22,15 @@
 
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>queue-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>common-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>search-client</artifactId>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
