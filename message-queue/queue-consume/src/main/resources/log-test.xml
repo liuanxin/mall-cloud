@@ -15,17 +15,6 @@
         </encoder>
     </appender>
 
-    <appender name="SQL" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${FILE_PATH}-sql.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${FILE_PATH}-sql-%d{yyyy-MM-dd}.log</fileNamePattern>
-            <maxHistory>7</maxHistory>
-        </rollingPolicy>
-        <encoder>
-            <pattern>${SQL_PATTERN}</pattern>
-        </encoder>
-    </appender>
-
 
     <logger name="com.taiheiot.common.mvc" level="warn"/>
 
@@ -44,11 +33,6 @@
     <logger name="org.jboss" level="warn"/>
     <logger name="org.xnio" level="warn"/>
     <logger name="org.jooq" level="warn"/>
-
-
-    <logger name="sqlLog" level="debug" additivity="false">
-        <appender-ref ref="SQL" />
-    </logger>
 
 
     <root level="debug">
