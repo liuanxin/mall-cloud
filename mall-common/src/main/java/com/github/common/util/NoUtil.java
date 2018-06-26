@@ -50,6 +50,8 @@ public final class NoUtil {
     private static final String MP;
     /** 截取长度 */
     private static final int HORIZONTAL_LEN = 4;
+    /** 最大长度 */
+    private static final int MAX_LEN = 15;
     static {
         // 机器码 --> 本机 mac 地址的 hashcode 值
         int machineIdentifier = createMachineIdentifier();
@@ -144,11 +146,19 @@ public final class NoUtil {
                     lock.unlock();
                 }
             }
-            return behavior + unitCode() + increment + MP;
+            String no = unitCode() + increment + MP;
+            if (no.length() < MAX_LEN) {
+                StringBuilder sbd = new StringBuilder();
+                for (int i = 0; i < MAX_LEN - no.length(); i++) {
+                    sbd.append("0");
+                }
+                no = unitCode() + sbd.toString() + increment + MP;
+            }
+            return behavior + no;
         }
     }
 
-    /** 生成订单号. 最低 19 位: (到秒的 12 位 + 1 个占位 + 4 位网卡及进程 + 2 位进程自增值) */
+    /** 生成订单号 */
     public static String getOrderNo() {
         return Category.Order.no();
     }
