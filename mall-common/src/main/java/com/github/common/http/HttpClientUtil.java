@@ -44,54 +44,40 @@ public class HttpClientUtil {
 
     private static final int TIME_OUT = 20 * 1000;
 
-    private static final int MAX_TOTAL = 200;
-    private static final int MAX_PER_ROUTE = 40;
-
-    private static final SSLConnectionSocketFactory SSL_CONNECTION_SOCKET_FACTORY;
+    private static final PoolingHttpClientConnectionManager CONNECTION_MANAGER;
+    private static final HttpRequestRetryHandler HTTP_REQUEST_RETRY_HANDLER;
+    private static final int RETRY_COUNT = 3;
     static {
+        SSLConnectionSocketFactory sslConnectionSocketFactory;
         SSLContext ignoreVerifySSL = TrustAllCerts.SSL_CONTEXT;
         if (U.isBlank(ignoreVerifySSL)) {
-            SSL_CONNECTION_SOCKET_FACTORY = SSLConnectionSocketFactory.getSocketFactory();
+            sslConnectionSocketFactory = SSLConnectionSocketFactory.getSocketFactory();
         } else {
-            SSL_CONNECTION_SOCKET_FACTORY = new SSLConnectionSocketFactory(ignoreVerifySSL);
+            sslConnectionSocketFactory = new SSLConnectionSocketFactory(ignoreVerifySSL);
         }
-    }
 
-    private static void config(HttpRequestBase httpRequestBase) {
-        // 配置请求的超时设置
-        RequestConfig requestConfig = RequestConfig.custom()
-                .setConnectionRequestTimeout(TIME_OUT)
-                .setConnectTimeout(TIME_OUT)
-                .setSocketTimeout(TIME_OUT).build();
-        httpRequestBase.setConfig(requestConfig);
-    }
-
-    private static CloseableHttpClient createHttpClient() {
         Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create()
                 .register("http", PlainConnectionSocketFactory.INSTANCE)
-                .register("https", SSL_CONNECTION_SOCKET_FACTORY)
+                .register("https", sslConnectionSocketFactory)
                 .build();
 
-        PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager(registry);
-        // 将最大连接数增加
-        connectionManager.setMaxTotal(MAX_TOTAL);
-        // 将每个路由基础的连接增加
-        connectionManager.setDefaultMaxPerRoute(MAX_PER_ROUTE);
+        CONNECTION_MANAGER = new PoolingHttpClientConnectionManager(registry);
+        // 连接池中的最大连接数默认是 20
+        // CONNECTION_MANAGER.setMaxTotal(20);
 
-        // 请求重试处理
-        HttpRequestRetryHandler httpRequestRetryHandler = new HttpRequestRetryHandler() {
+        // 重试策略
+        HTTP_REQUEST_RETRY_HANDLER = new HttpRequestRetryHandler() {
             @Override
             public boolean retryRequest(IOException exception, int executionCount, HttpContext context) {
-                // 如果已经重试了 5 次就不再重试
-                if (executionCount >= 5) {
+                if (executionCount > RETRY_COUNT) {
                     return false;
                 }
-                // 服务器丢掉了连接就重试
+                // 服务器未响应时重试
                 if (exception instanceof NoHttpResponseException) {
                     return true;
                 }
                 // SSL 握手异常时不重试
-                if (exception instanceof SSLHandshakeException) {
+                if (exception instanceof SSLHandshakeException || exception instanceof SSLException) {
                     return false;
                 }
                 // 超时时不重试
@@ -102,72 +88,108 @@ public class HttpClientUtil {
                 if (exception instanceof UnknownHostException) {
                     return false;
                 }
-                // SSL 握手异常时不重试
-                if (exception instanceof SSLException) {
-                    return false;
-                }
 
                 HttpRequest request = HttpClientContext.adapt(context).getRequest();
                 // 如果请求是幂等的就重试
                 return !(request instanceof HttpEntityEnclosingRequest);
             }
         };
+    }
 
+    private static CloseableHttpClient createHttpClient() {
         return HttpClients.custom()
-                .setConnectionManager(connectionManager)
-                .setRetryHandler(httpRequestRetryHandler).build();
+                .setConnectionManager(CONNECTION_MANAGER)
+                .setRetryHandler(HTTP_REQUEST_RETRY_HANDLER).build();
+    }
+    private static void config(HttpRequestBase request) {
+        // 配置请求的超时设置
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectionRequestTimeout(TIME_OUT)
+                .setConnectTimeout(TIME_OUT)
+                .setSocketTimeout(TIME_OUT).build();
+        request.setConfig(requestConfig);
     }
 
+
+    /** 向指定 url 进行 get 请求 */
     public static String get(String url) {
-        url = urlHttp(url);
-        HttpGet request = new HttpGet(url);
-        return handle(request, null, null);
-    }
-
-    public static String get(String url, Map<String, Object> params) {
-        url = urlGet(url, params);
-        return get(url);
-    }
-
-    private static String urlGet(String url, Map<String, Object> params) {
-        if (A.isNotEmpty(params)) {
-            url = U.appendUrl(url) + U.formatParam(params);
+        if (U.isBlank(url)) {
+            return null;
         }
-        return url;
-    }
 
+        url = handleEmptyScheme(url);
+        return handleRequest(new HttpGet(url), null, null);
+    }
+    /** 向指定 url 进行 get 请求. 有参数 */
+    public static String get(String url, Map<String, Object> params) {
+        if (U.isBlank(url)) {
+            return null;
+        }
+
+        url = handleEmptyScheme(url);
+        url = handleGetParams(url, params);
+        return handleRequest(new HttpGet(url), null, null);
+    }
     /** 向指定 url 进行 get 请求. 有参数和头 */
     public static String getWithHeader(String url, Map<String, Object> params, Map<String, Object> headerMap) {
-        url = urlGet(url, params);
+        if (U.isBlank(url)) {
+            return null;
+        }
+
+        url = handleEmptyScheme(url);
+        url = handleGetParams(url, params);
 
         HttpGet request = new HttpGet(url);
-        handlerHeader(request, headerMap);
-        return handle(request, U.formatParam(params), U.formatParam(headerMap));
+        handleHeader(request, headerMap);
+        return handleRequest(request, U.formatParam(params), U.formatParam(headerMap));
     }
 
+
+    /** 向指定的 url 进行 post 请求. 有参数 */
     public static String post(String url, Map<String, Object> params) {
-        HttpPost request = handlerPostParams(url, params);
-        return handle(request, U.formatParam(params), null);
-    }
+        if (U.isBlank(url)) {
+            return null;
+        }
 
+        url = handleEmptyScheme(url);
+        HttpPost request = handlePostParams(url, params);
+        return handleRequest(request, U.formatParam(params), null);
+    }
+    /** 向指定的 url 进行 post 请求. 参数以 json 的方式一次传递 */
     public static String post(String url, String json) {
+        if (U.isBlank(url)) {
+            return null;
+        }
+
+        url = handleEmptyScheme(url);
         HttpPost request = new HttpPost(url);
         request.setEntity(new ByteArrayEntity(json.getBytes(StandardCharsets.UTF_8)));
-        return handle(request, json, null);
+        return handleRequest(request, json, null);
     }
-
-    /** 向指定 url 进行 post 请求. 有参数和头 */
+    /** 向指定的 url 进行 post 请求. 有参数和头 */
     public static String postWithHeader(String url, Map<String, Object> params, Map<String, Object> headers) {
-        HttpPost request = handlerPostParams(url, params);
-        handlerHeader(request, headers);
-        return handle(request, U.formatParam(params), U.formatParam(headers));
+        if (U.isBlank(url)) {
+            return null;
+        }
+
+        url = handleEmptyScheme(url);
+        HttpPost request = handlePostParams(url, params);
+        handleHeader(request, headers);
+        return handleRequest(request, U.formatParam(params), U.formatParam(headers));
     }
 
+
+    /** 向指定的 url 进行 post 操作, 有参数和文件 */
     public static String postFile(String url, Map<String, Object> params, Map<String, File> files) {
-        HttpPost request = handlerPostParams(url, params);
+        if (U.isBlank(url)) {
+            return null;
+        }
+
+        url = handleEmptyScheme(url);
         if (A.isEmpty(params)) {
             params = Maps.newHashMap();
         }
+        HttpPost request = handlePostParams(url, params);
         if (A.isNotEmpty(files)) {
             MultipartEntityBuilder entityBuilder = MultipartEntityBuilder.create().setLaxMode();
             for (Map.Entry<String, File> entry : files.entrySet()) {
@@ -179,26 +201,27 @@ public class HttpClientUtil {
             }
             request.setEntity(entityBuilder.build());
         }
-        return handle(request, U.formatParam(params), null);
+        return handleRequest(request, U.formatParam(params), null);
     }
 
-    /** 下载 url 到指定的文件 */
-    public static void download(String url, String file) {
-        url = urlHttp(url);
-        HttpGet request = new HttpGet(url);
-        config(request);
-        try (CloseableHttpResponse response = createHttpClient().execute(request, HttpClientContext.create())) {
-            response.getEntity().writeTo(new FileOutputStream(new File(file)));
-        } catch (IOException e) {
-            if (LogUtil.ROOT_LOG.isInfoEnabled()) {
-                LogUtil.ROOT_LOG.info("download ({}) exception", url, e);
-            }
+
+    /** url 如果不是以 http:// 或 https:// 开头就加上 http:// */
+    private static String handleEmptyScheme(String url) {
+        if (!url.startsWith("http://") && !url.startsWith("https://")) {
+            url = "http://" + url;
         }
+        return url;
     }
-
-    private static HttpPost handlerPostParams(String url, Map<String, Object> params) {
-        url = urlHttp(url);
-
+    /** 处理 get 请求的参数: 拼在 url 上即可 */
+    private static String handleGetParams(String url, Map<String, Object> params) {
+        if (A.isNotEmpty(params)) {
+            url = U.appendUrl(url) + U.formatParam(params);
+        }
+        return url;
+    }
+    /** 处理 post 请求的参数 */
+    private static HttpPost handlePostParams(String url, Map<String, Object> params) {
+        HttpPost request = new HttpPost(url);
         List<NameValuePair> nameValuePairs = Lists.newArrayList();
         if (A.isNotEmpty(params)) {
             for (Map.Entry<String, Object> entry : params.entrySet()) {
@@ -207,13 +230,12 @@ public class HttpClientUtil {
                     nameValuePairs.add(new BasicNameValuePair(entry.getKey(), value.toString()));
                 }
             }
+            request.setEntity(new UrlEncodedFormEntity(nameValuePairs, StandardCharsets.UTF_8));
         }
-        HttpPost request = new HttpPost(url);
-        request.setEntity(new UrlEncodedFormEntity(nameValuePairs, StandardCharsets.UTF_8));
         return request;
     }
-
-    private static void handlerHeader(HttpRequestBase request, Map<String, Object> headers) {
+    /** 处理请求时存到 header 中的数据 */
+    private static void handleHeader(HttpRequestBase request, Map<String, Object> headers) {
         if (A.isNotEmpty(headers)) {
             for (Map.Entry<String, Object> entry : headers.entrySet()) {
                 Object value = entry.getValue();
@@ -223,52 +245,85 @@ public class HttpClientUtil {
             }
         }
     }
-
-    private static String urlHttp(String url) {
-        if (!url.startsWith("http://") && !url.startsWith("https://")) {
-            url = "http://" + url;
+    /** 收集上下文中的数据, 以便记录日志 */
+    private static String collectContext(long start, String method, String url, String params,
+                                         String requestHeaders, Header[] responseHeaders, String result) {
+        long ms = System.currentTimeMillis() - start;
+        StringBuilder sbd = new StringBuilder();
+        sbd.append("HttpClient => (").append(method).append(" ").append(url).append(")");
+        if (U.isNotBlank(params)) {
+            sbd.append(" params(").append(params).append(")");
         }
-        return url;
+        if (U.isNotBlank(requestHeaders)) {
+            sbd.append(" request headers(").append(requestHeaders).append(")");
+        }
+        sbd.append(" time(").append(ms).append("ms)");
+
+        if (A.isNotEmpty(responseHeaders)) {
+            sbd.append(", response headers(");
+            for (Header header : responseHeaders) {
+                sbd.append("<").append(header.getName()).append(" : ").append(header.getValue()).append(">");
+            }
+            sbd.append(")");
+        }
+        if (U.isNotBlank(result)) {
+            // 如果长度大于 6000 就只输出前 200 个字符
+            if (result.length() > 6000) {
+                result = result.substring(0, 200) + " ...";
+            }
+            sbd.append(", return(").append(result).append(")");
+        } else {
+            sbd.append(" return nil");
+        }
+        return sbd.toString();
     }
-
-    private static String handle(HttpRequestBase request, String params, String headers) {
-        config(request);
-
+    /** 发起 http 请求 */
+    private static String handleRequest(HttpRequestBase request, String params, String headers) {
         String method = request.getMethod();
         String url = request.getURI().toString();
 
+        config(request);
         long start = System.currentTimeMillis();
         try (CloseableHttpResponse response = createHttpClient().execute(request, HttpClientContext.create())) {
             HttpEntity entity = response.getEntity();
-            String result = EntityUtils.toString(entity, StandardCharsets.UTF_8);
-            EntityUtils.consume(entity);
-            if (LogUtil.ROOT_LOG.isInfoEnabled()) {
-                long ms = System.currentTimeMillis() - start;
-                StringBuilder sbd = new StringBuilder();
-                sbd.append("HttpClient => (").append(method).append(" ").append(url).append(")");
-                if (U.isNotBlank(params)) {
-                    sbd.append(" params(").append(params).append(")");
+            if (U.isNotBlank(entity)) {
+                String result = EntityUtils.toString(entity, StandardCharsets.UTF_8);
+                if (LogUtil.ROOT_LOG.isInfoEnabled()) {
+                    Header[] allHeaders = response.getAllHeaders();
+                    LogUtil.ROOT_LOG.info(collectContext(start, method, url, params, headers, allHeaders, result));
                 }
-                if (U.isNotBlank(headers)) {
-                    sbd.append(" headers(").append(headers).append(")");
-                }
-                sbd.append(" time(").append(ms).append("ms), return(").append(result).append(")");
-                Header[] allHeaders = response.getAllHeaders();
-                if (A.isNotEmpty(allHeaders)) {
-                    sbd.append(", response headers(");
-                    for (Header header : allHeaders) {
-                        sbd.append("<").append(header.getName()).append(" : ").append(header.getValue()).append(">");
-                    }
-                    sbd.append(")");
-                }
-                LogUtil.ROOT_LOG.info(sbd.toString());
+                EntityUtils.consume(entity);
+                return result;
             }
-            return result;
         } catch (Exception e) {
             if (LogUtil.ROOT_LOG.isInfoEnabled()) {
-                LogUtil.ROOT_LOG.info("({} {}) exception", method, url, e);
+                LogUtil.ROOT_LOG.info(String.format("(%s %s) exception", method, url), e);
             }
-            return null;
+        }
+        return null;
+    }
+
+
+    /** 用 get 方式请求 url 并将响应结果保存指定的文件 */
+    public static void download(String url, String file) {
+        url = handleEmptyScheme(url);
+        HttpGet request = new HttpGet(url);
+
+        config(request);
+        long start = System.currentTimeMillis();
+        try (CloseableHttpResponse response = createHttpClient().execute(request, HttpClientContext.create())) {
+            HttpEntity entity = response.getEntity();
+            if (U.isNotBlank(entity)) {
+                entity.writeTo(new FileOutputStream(new File(file)));
+                if (LogUtil.ROOT_LOG.isInfoEnabled()) {
+                    long ms = (System.currentTimeMillis() - start);
+                    LogUtil.ROOT_LOG.info("download ({}) to file({}) success, time({}ms)", url, file, ms);
+                }
+            }
+        } catch (IOException e) {
+            if (LogUtil.ROOT_LOG.isInfoEnabled()) {
+                LogUtil.ROOT_LOG.info(String.format("download (%s) to file(%s) exception", url, file), e);
+            }
         }
     }
 }

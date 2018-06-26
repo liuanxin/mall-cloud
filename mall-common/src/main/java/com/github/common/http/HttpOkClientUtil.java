@@ -1,6 +1,5 @@
 package com.github.common.http;
 
-import com.github.common.json.JsonUtil;
 import com.github.common.util.A;
 import com.github.common.util.LogUtil;
 import com.github.common.util.U;
@@ -17,14 +16,17 @@ public class HttpOkClientUtil {
 
     private static final MediaType PNG = MediaType.parse("image/png");
     private static final MediaType JPG = MediaType.parse("image/jpeg");
+    private static final MediaType BMP = MediaType.parse("image/bmp");
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-    // private static final MediaType FORM = MediaType.parse("application/x-www-form-urlencoded");
 
     private static final OkHttpClient HTTP_CLIENT;
     static {
         OkHttpClient.Builder builder = new OkHttpClient().newBuilder()
                 .connectTimeout(10, TimeUnit.SECONDS)
-                .readTimeout(20, TimeUnit.SECONDS);
+                .readTimeout(20, TimeUnit.SECONDS)
+                // 连接池中的最大连接数默认是 5 且每个连接保持 5 分钟
+                // .connectionPool(new ConnectionPool(20, 5, TimeUnit.MINUTES));
+                .connectionPool(new ConnectionPool());
 
         SSLContext ignoreVerifySSL = TrustAllCerts.SSL_CONTEXT;
         if (U.isNotBlank(ignoreVerifySSL)) {
@@ -33,60 +35,73 @@ public class HttpOkClientUtil {
         HTTP_CLIENT = builder.build();
     }
 
+    /** 向指定 url 进行 get 请求 */
     public static String get(String url) {
-        return get(url, null);
-    }
-
-    public static String get(String url, Map<String, Object> params) {
-        url = urlGet(url, params);
-        return handle(url, new Request.Builder(), U.formatParam(params), null);
-    }
-
-    private static String urlGet(String url, Map<String, Object> params) {
-        if (A.isNotEmpty(params)) {
-            url = U.appendUrl(url) + U.formatParam(params);
+        if (U.isBlank(url)) {
+            return null;
         }
-        return url;
-    }
 
+        return handleRequest(url, new Request.Builder(), null, null);
+    }
+    /** 向指定 url 进行 get 请求. 有参数 */
+    public static String get(String url, Map<String, Object> params) {
+        if (U.isBlank(url)) {
+            return null;
+        }
+
+        url = handleGetParams(url, params);
+        return handleRequest(url, new Request.Builder(), U.formatParam(params), null);
+    }
     /** 向指定 url 进行 get 请求. 有参数和头 */
     public static String getWithHeader(String url, Map<String, Object> params, Map<String, Object> headerMap) {
-        url = urlGet(url, params);
+        if (U.isBlank(url)) {
+            return null;
+        }
+
+        url = handleGetParams(url, params);
         Request.Builder builder = new Request.Builder();
-        handlerHeader(builder, headerMap);
-        return handle(url, builder, null, U.formatParam(headerMap));
+        handleHeader(builder, headerMap);
+        return handleRequest(url, builder, null, U.formatParam(headerMap));
     }
 
+
+    /** 向指定的 url 进行 post 请求. 有参数 */
     public static String post(String url, Map<String, Object> params) {
-        String formatParam = U.formatParam(params);
-        RequestBody body = RequestBody.create(MultipartBody.FORM, formatParam);
-        Request.Builder builder = new Request.Builder().post(body);
-        return handle(url, builder, formatParam, null);
-    }
+        if (U.isBlank(url)) {
+            return null;
+        }
 
-    public static String post(String url, String params) {
-        RequestBody body = RequestBody.create(MultipartBody.FORM, params);
-        Request.Builder builder = new Request.Builder().post(body);
-        return handle(url, builder, params, null);
+        Request.Builder builder = handlePostParams(params);
+        return handleRequest(url, builder, U.formatParam(params), null);
     }
+    /** 向指定的 url 进行 post 请求. 参数以 json 的方式一次传递 */
+    public static String post(String url, String json) {
+        if (U.isBlank(url)) {
+            return null;
+        }
 
-    /** 向指定 url 进行 post 请求. 有参数和头 */
+        RequestBody body = RequestBody.create(JSON, json);
+        Request.Builder builder = new Request.Builder().post(body);
+        return handleRequest(url, builder, json, null);
+    }
+    /** 向指定的 url 进行 post 请求. 有参数和头 */
     public static String postWithHeader(String url, Map<String, Object> params, Map<String, Object> headers) {
-        RequestBody body = RequestBody.create(MultipartBody.FORM, U.formatParam(params));
-        Request.Builder builder = new Request.Builder().post(body);
-        handlerHeader(builder, headers);
-        return handle(url, builder, U.formatParam(params), U.formatParam(headers));
+        if (U.isBlank(url)) {
+            return null;
+        }
+
+        Request.Builder builder = handlePostParams(params);
+        handleHeader(builder, headers);
+        return handleRequest(url, builder, U.formatParam(params), U.formatParam(headers));
     }
 
-    /** 向指定 url post 请求, 参数使用 json 方式 */
-    public static String postWithJson(String url, Map<String, Object> params) {
-        Request.Builder builder = new Request.Builder().post(RequestBody.create(JSON, JsonUtil.toJson(params)));
-        return handle(url, builder, U.formatParam(params), null);
-    }
 
     /** 向指定 url 上传 png 图片文件 */
     public static String postFile(String url, Map<String, Object> params, Map<String, File> files) {
-        url = urlHttp(url);
+        if (U.isBlank(url)) {
+            return null;
+        }
+
         MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
         for (Map.Entry<String, Object> entry : params.entrySet()) {
             Object value = entry.getValue();
@@ -96,38 +111,49 @@ public class HttpOkClientUtil {
         }
         for (Map.Entry<String, File> entry : files.entrySet()) {
             File file = entry.getValue();
-            MediaType type = null;
-            String fileName = file.getName().toLowerCase();
-            if (fileName.endsWith(".png")) {
-                type = PNG;
-            } else if (fileName.endsWith(".jpg")) {
-                type = JPG;
-            }
-            if (type != null) {
-                RequestBody body = RequestBody.create(type, file);
-                builder.addFormDataPart(entry.getKey(), null, body);
-            }
-        }
-        return handle(url, new Request.Builder().post(builder.build()), U.formatParam(params), null);
-    }
-
-    /** 下载 url 到指定的文件 */
-    public static void download(String url, String file) {
-        url = urlHttp(url);
-        Request request = new Request.Builder().url(url).build();
-        try {
-            ResponseBody response = HTTP_CLIENT.newCall(request).execute().body();
-            if (response != null) {
-                Files.write(response.bytes(), new File(file));
-            }
-        } catch (IOException e) {
-            if (LogUtil.ROOT_LOG.isInfoEnabled()) {
-                LogUtil.ROOT_LOG.info("download ({}) exception", url, e);
+            if (U.isNotBlank(file)) {
+                MediaType type = null;
+                String fileName = file.getName().toLowerCase();
+                if (fileName.endsWith(".png")) {
+                    type = PNG;
+                } else if (fileName.endsWith(".jpg") || fileName.endsWith(".jpeg")) {
+                    type = JPG;
+                } else if (fileName.endsWith("bmp")) {
+                    type = BMP;
+                }
+                if (type != null) {
+                    RequestBody body = RequestBody.create(type, file);
+                    builder.addFormDataPart(entry.getKey(), null, body);
+                }
             }
         }
+        Request.Builder request = new Request.Builder().post(builder.build());
+        return handleRequest(url, request, U.formatParam(params), null);
     }
 
-    private static void handlerHeader(Request.Builder request, Map<String, Object> headers) {
+
+    /** url 如果不是以 「http://」 或 「https://」 开头就加上 「http://」 */
+    private static String handleEmptyScheme(String url) {
+        if (!url.startsWith("http://") && !url.startsWith("https://")) {
+            url = "http://" + url;
+        }
+        return url;
+    }
+    /** 处理 get 请求的参数: 拼在 url 上即可 */
+    private static String handleGetParams(String url, Map<String, Object> params) {
+        if (A.isNotEmpty(params)) {
+            url = U.appendUrl(url) + U.formatParam(params);
+        }
+        return url;
+    }
+    /** 处理 post 请求的参数 */
+    private static Request.Builder handlePostParams(Map<String, Object> params) {
+        String formatParam = U.formatParam(params);
+        RequestBody body = RequestBody.create(MultipartBody.FORM, formatParam);
+        return new Request.Builder().post(body);
+    }
+    /** 处理请求时存到 header 中的数据 */
+    private static void handleHeader(Request.Builder request, Map<String, Object> headers) {
         if (A.isNotEmpty(headers)) {
             for (Map.Entry<String, Object> entry : headers.entrySet()) {
                 String key = entry.getKey();
@@ -138,56 +164,86 @@ public class HttpOkClientUtil {
             }
         }
     }
-
-    private static String urlHttp(String url) {
-        if (!url.startsWith("http://") && !url.startsWith("https://")) {
-            url = "http://" + url;
+    /** 收集上下文中的数据, 以便记录日志 */
+    private static String collectContext(long start, String method, String url, String params,
+                                         String requestHeaders, Headers responseHeaders, String result) {
+        long ms = System.currentTimeMillis() - start;
+        StringBuilder sbd = new StringBuilder();
+        sbd.append("OkHttp3 => (").append(method).append(" ").append(url).append(")");
+        if (U.isNotBlank(params)) {
+            sbd.append(" params(").append(params).append(")");
         }
-        return url;
+        if (U.isNotBlank(requestHeaders)) {
+            sbd.append(" request headers(").append(requestHeaders).append(")");
+        }
+        sbd.append(" time(").append(ms).append("ms)");
+        if (U.isNotBlank(responseHeaders)) {
+            sbd.append(", response headers(");
+            for (String name : responseHeaders.names()) {
+                sbd.append("<").append(name).append(" : ").append(responseHeaders.get(name)).append(">");
+            }
+            sbd.append(")");
+        }
+        if (U.isNotBlank(result)) {
+            // 如果长度大于 6000 就只输出前 200 个字符
+            if (result.length() > 6000) {
+                result = result.substring(0, 200) + " ...";
+            }
+            sbd.append(", return(").append(result).append(")");
+        } else {
+            sbd.append(" return null");
+        }
+        return sbd.toString();
     }
-
-    private static String handle(String url, Request.Builder builder, String params, String headers) {
-        url = urlHttp(url);
-
+    /** 发起 http 请求 */
+    private static String handleRequest(String url, Request.Builder builder, String params, String headers) {
+        url = handleEmptyScheme(url);
         Request request = builder.url(url).build();
         String method = request.method();
-        String requestUrl = request.url().toString();
-        try {
-            long start = System.currentTimeMillis();
-            Response response = HTTP_CLIENT.newCall(request).execute();
+
+        long start = System.currentTimeMillis();
+        try (Response response = HTTP_CLIENT.newCall(request).execute()) {
             if (response != null) {
                 ResponseBody body = response.body();
                 if (body != null) {
                     String result = body.string();
                     if (LogUtil.ROOT_LOG.isInfoEnabled()) {
-                        long ms = System.currentTimeMillis() - start;
-                        StringBuilder sbd = new StringBuilder();
-                        sbd.append("OkHttp3 => (").append(method).append(" ").append(requestUrl).append(")");
-                        if (U.isNotBlank(params)) {
-                            sbd.append(" params(").append(params).append(")");
-                        }
-                        if (U.isNotBlank(headers)) {
-                            sbd.append(" headers(").append(headers).append(")");
-                        }
-                        sbd.append(" time(").append(ms).append("ms), return(").append(result).append(")");
-                        Headers h = response.headers();
-                        if (U.isNotBlank(h)) {
-                            sbd.append(", response headers(");
-                            for (String name : h.names()) {
-                                sbd.append("<").append(name).append(" : ").append(h.get(name)).append(">");
-                            }
-                            sbd.append(")");
-                        }
-                        LogUtil.ROOT_LOG.info(sbd.toString());
+                        Headers allHeaders = response.headers();
+                        LogUtil.ROOT_LOG.info(collectContext(start, method, url, params, headers, allHeaders, result));
                     }
                     return result;
                 }
             }
         } catch (IOException e) {
             if (LogUtil.ROOT_LOG.isInfoEnabled()) {
-                LogUtil.ROOT_LOG.info("({} {}) exception", method, requestUrl, e);
+                LogUtil.ROOT_LOG.info(String.format("(%s %s) exception", method, url), e);
             }
         }
         return null;
+    }
+
+
+    /** 用 get 方式请求 url 并将响应结果保存指定的文件 */
+    public static void download(String url, String file) {
+        url = handleEmptyScheme(url);
+        Request request = new Request.Builder().url(url).build();
+
+        long start = System.currentTimeMillis();
+        try (Response response = HTTP_CLIENT.newCall(request).execute()) {
+            if (response != null) {
+                ResponseBody body = response.body();
+                if (body != null) {
+                    Files.write(body.bytes(), new File(file));
+                    if (LogUtil.ROOT_LOG.isInfoEnabled()) {
+                        long ms = (System.currentTimeMillis() - start);
+                        LogUtil.ROOT_LOG.info("download ({}) to file({}) success, time({}ms)", url, file, ms);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            if (LogUtil.ROOT_LOG.isInfoEnabled()) {
+                LogUtil.ROOT_LOG.info(String.format("download (%s) to file(%s) exception", url, file), e);
+            }
+        }
     }
 }

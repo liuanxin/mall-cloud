@@ -60,13 +60,11 @@ public final class SpringMvc {
                     toRender = "/**/" + jsonp + "(" + toRender + ");";
                 }
 
-                int max = 6000;
-                int length = toRender.length();
-                if (length < max) {
-                    LogUtil.ROOT_LOG.info("return json: {}", toRender);
-                } else {
-                    LogUtil.ROOT_LOG.info("return data too long {}(> {}), ignore the print", length, max);
+                // 如果长度大于 6000 就只输出前 200 个字符
+                if (toRender.length() > 6000) {
+                    toRender = toRender.substring(0, 200) + " ...";
                 }
+                LogUtil.ROOT_LOG.info("return json: ({})", toRender);
             }
         }
     }

@@ -44,7 +44,6 @@ public class CacheService {
      * String value = uuid();
      * long seconds = yyy;
      * boolean flag = cacheService.setIfNotExists(key, value, seconds);
-     * // 返回 true 则表示获取到了锁
      * if (flag) {
      *   try {
      *     // 获取到锁之后的业务处理
@@ -63,6 +62,7 @@ public class CacheService {
      * @param key 键
      * @param value 值
      * @param seconds 超时时间, 单位: 秒
+     * @return 返回 true 则表示获取到了锁
      */
     public boolean setIfNotExists(String key, String value, long seconds) {
         Field jedisField = ReflectionUtils.findField(JedisConnection.class, "jedis");
