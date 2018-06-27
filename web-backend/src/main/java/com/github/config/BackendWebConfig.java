@@ -19,7 +19,7 @@ import java.util.List;
  * @see org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration.WebMvcAutoConfigurationAdapter
  */
 @Configuration
-public class BackendConfig extends WebMvcConfigurationSupport {
+public class BackendWebConfig extends WebMvcConfigurationSupport {
 
     @Override
     protected RequestMappingHandlerMapping createRequestMappingHandlerMapping() {

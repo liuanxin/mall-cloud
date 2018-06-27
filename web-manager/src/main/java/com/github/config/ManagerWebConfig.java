@@ -20,7 +20,7 @@ import java.util.List;
  * @see org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration.WebMvcAutoConfigurationAdapter
  */
 @Configuration
-public class ManagerConfig extends WebMvcConfigurationSupport {
+public class ManagerWebConfig extends WebMvcConfigurationSupport {
 
     @Value("${online:false}")
     private boolean online;
