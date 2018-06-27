@@ -10,9 +10,6 @@ import javax.activation.MimetypesFileTypeMap;
 import javax.net.ssl.SSLContext;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -24,25 +21,11 @@ public class HttpOkClientUtil {
 
     private static final OkHttpClient HTTP_CLIENT;
     static {
-        // 自动保存和更新 cookie
-        HashMap<String, List<Cookie>> cookieStore = new HashMap<>();
         OkHttpClient.Builder builder = new OkHttpClient().newBuilder()
                 // 连接超时时间
                 .connectTimeout(10, TimeUnit.SECONDS)
                 // 响应超时时间
                 .readTimeout(20, TimeUnit.SECONDS)
-                // 自动管理 cookie
-                .cookieJar(new CookieJar() {
-                    @Override
-                    public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
-                        cookieStore.put(url.host(), cookies);
-                    }
-                    @Override
-                    public List<Cookie> loadForRequest(HttpUrl url) {
-                        List<Cookie> cookies = cookieStore.get(url.host());
-                        return cookies != null ? cookies : new ArrayList<>();
-                    }
-                })
                 // 连接池中的最大连接数默认是 5 且每个连接保持 5 分钟
                 // .connectionPool(new ConnectionPool(20, 5, TimeUnit.MINUTES));
                 .connectionPool(new ConnectionPool());
@@ -60,7 +43,7 @@ public class HttpOkClientUtil {
             return null;
         }
 
-        return handleRequest(url, new Request.Builder(), null, null);
+        return handleRequest(url, new Request.Builder(), null);
     }
     /** 向指定 url 进行 get 请求. 有参数 */
     public static String get(String url, Map<String, Object> params) {
@@ -69,7 +52,7 @@ public class HttpOkClientUtil {
         }
 
         url = handleGetParams(url, params);
-        return handleRequest(url, new Request.Builder(), U.formatParam(params), null);
+        return handleRequest(url, new Request.Builder(), U.formatParam(params));
     }
     /** 向指定 url 进行 get 请求. 有参数和头 */
     public static String getWithHeader(String url, Map<String, Object> params, Map<String, Object> headerMap) {
@@ -80,7 +63,7 @@ public class HttpOkClientUtil {
         url = handleGetParams(url, params);
         Request.Builder builder = new Request.Builder();
         handleHeader(builder, headerMap);
-        return handleRequest(url, builder, null, U.formatParam(headerMap));
+        return handleRequest(url, builder, U.formatParam(params));
     }
 
 
@@ -91,7 +74,7 @@ public class HttpOkClientUtil {
         }
 
         Request.Builder builder = handlePostParams(params);
-        return handleRequest(url, builder, U.formatParam(params), null);
+        return handleRequest(url, builder, U.formatParam(params));
     }
     /** 向指定的 url 进行 post 请求. 参数以 json 的方式一次传递 */
     public static String post(String url, String json) {
@@ -101,7 +84,7 @@ public class HttpOkClientUtil {
 
         RequestBody body = RequestBody.create(JSON, json);
         Request.Builder builder = new Request.Builder().post(body);
-        return handleRequest(url, builder, json, null);
+        return handleRequest(url, builder, json);
     }
     /** 向指定的 url 进行 post 请求. 有参数和头 */
     public static String postWithHeader(String url, Map<String, Object> params, Map<String, Object> headers) {
@@ -111,7 +94,7 @@ public class HttpOkClientUtil {
 
         Request.Builder builder = handlePostParams(params);
         handleHeader(builder, headers);
-        return handleRequest(url, builder, U.formatParam(params), U.formatParam(headers));
+        return handleRequest(url, builder, U.formatParam(params));
     }
 
 
@@ -138,7 +121,7 @@ public class HttpOkClientUtil {
             }
         }
         Request.Builder request = new Request.Builder().post(builder.build());
-        return handleRequest(url, request, U.formatParam(params), null);
+        return handleRequest(url, request, U.formatParam(params));
     }
 
 
@@ -158,9 +141,7 @@ public class HttpOkClientUtil {
     }
     /** 处理 post 请求的参数 */
     private static Request.Builder handlePostParams(Map<String, Object> params) {
-        String formatParam = U.formatParam(params);
-        RequestBody body = RequestBody.create(MultipartBody.FORM, formatParam);
-        return new Request.Builder().post(body);
+        return new Request.Builder().post(RequestBody.create(MultipartBody.FORM, U.formatParam(params)));
     }
     /** 处理请求时存到 header 中的数据 */
     private static void handleHeader(Request.Builder request, Map<String, Object> headers) {
@@ -176,7 +157,7 @@ public class HttpOkClientUtil {
     }
     /** 收集上下文中的数据, 以便记录日志 */
     private static String collectContext(long start, String method, String url, String params,
-                                         String requestHeaders, Headers responseHeaders, String result) {
+                                         Headers requestHeaders, Headers responseHeaders, String result) {
         long ms = System.currentTimeMillis() - start;
         StringBuilder sbd = new StringBuilder();
         sbd.append("OkHttp3 => (").append(method).append(" ").append(url).append(")");
@@ -184,7 +165,11 @@ public class HttpOkClientUtil {
             sbd.append(" params(").append(params).append(")");
         }
         if (U.isNotBlank(requestHeaders)) {
-            sbd.append(" request headers(").append(requestHeaders).append(")");
+            sbd.append(" request headers(");
+            for (String name : requestHeaders.names()) {
+                sbd.append("<").append(name).append(" : ").append(requestHeaders.get(name)).append(">");
+            }
+            sbd.append(")");
         }
         sbd.append(" time(").append(ms).append("ms)");
         if (U.isNotBlank(responseHeaders)) {
@@ -206,7 +191,7 @@ public class HttpOkClientUtil {
         return sbd.toString();
     }
     /** 发起 http 请求 */
-    private static String handleRequest(String url, Request.Builder builder, String params, String headers) {
+    private static String handleRequest(String url, Request.Builder builder, String params) {
         url = handleEmptyScheme(url);
         Request request = builder.url(url).build();
         String method = request.method();
@@ -218,8 +203,10 @@ public class HttpOkClientUtil {
                 if (body != null) {
                     String result = body.string();
                     if (LogUtil.ROOT_LOG.isInfoEnabled()) {
-                        Headers allHeaders = response.headers();
-                        LogUtil.ROOT_LOG.info(collectContext(start, method, url, params, headers, allHeaders, result));
+                        Headers requestHeaders = request.headers();
+                        Headers responseHeaders = response.headers();
+                        String log = collectContext(start, method, url, params, requestHeaders, responseHeaders, result);
+                        LogUtil.ROOT_LOG.info(log);
                     }
                     return result;
                 }

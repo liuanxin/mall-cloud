@@ -118,7 +118,7 @@ public class HttpClientUtil {
         }
 
         url = handleEmptyScheme(url);
-        return handleRequest(new HttpGet(url), null, null);
+        return handleRequest(new HttpGet(url), null);
     }
     /** 向指定 url 进行 get 请求. 有参数 */
     public static String get(String url, Map<String, Object> params) {
@@ -128,7 +128,7 @@ public class HttpClientUtil {
 
         url = handleEmptyScheme(url);
         url = handleGetParams(url, params);
-        return handleRequest(new HttpGet(url), null, null);
+        return handleRequest(new HttpGet(url), U.formatParam(params));
     }
     /** 向指定 url 进行 get 请求. 有参数和头 */
     public static String getWithHeader(String url, Map<String, Object> params, Map<String, Object> headerMap) {
@@ -141,7 +141,7 @@ public class HttpClientUtil {
 
         HttpGet request = new HttpGet(url);
         handleHeader(request, headerMap);
-        return handleRequest(request, U.formatParam(params), U.formatParam(headerMap));
+        return handleRequest(request, U.formatParam(params));
     }
 
 
@@ -153,7 +153,7 @@ public class HttpClientUtil {
 
         url = handleEmptyScheme(url);
         HttpPost request = handlePostParams(url, params);
-        return handleRequest(request, U.formatParam(params), null);
+        return handleRequest(request, U.formatParam(params));
     }
     /** 向指定的 url 进行 post 请求. 参数以 json 的方式一次传递 */
     public static String post(String url, String json) {
@@ -164,7 +164,7 @@ public class HttpClientUtil {
         url = handleEmptyScheme(url);
         HttpPost request = new HttpPost(url);
         request.setEntity(new ByteArrayEntity(json.getBytes(StandardCharsets.UTF_8)));
-        return handleRequest(request, json, null);
+        return handleRequest(request, json);
     }
     /** 向指定的 url 进行 post 请求. 有参数和头 */
     public static String postWithHeader(String url, Map<String, Object> params, Map<String, Object> headers) {
@@ -175,7 +175,7 @@ public class HttpClientUtil {
         url = handleEmptyScheme(url);
         HttpPost request = handlePostParams(url, params);
         handleHeader(request, headers);
-        return handleRequest(request, U.formatParam(params), U.formatParam(headers));
+        return handleRequest(request, U.formatParam(params));
     }
 
 
@@ -201,7 +201,7 @@ public class HttpClientUtil {
             }
             request.setEntity(entityBuilder.build());
         }
-        return handleRequest(request, U.formatParam(params), null);
+        return handleRequest(request, U.formatParam(params));
     }
 
 
@@ -247,7 +247,7 @@ public class HttpClientUtil {
     }
     /** 收集上下文中的数据, 以便记录日志 */
     private static String collectContext(long start, String method, String url, String params,
-                                         String requestHeaders, Header[] responseHeaders, String result) {
+                                         Header[] requestHeaders, Header[] responseHeaders, String result) {
         long ms = System.currentTimeMillis() - start;
         StringBuilder sbd = new StringBuilder();
         sbd.append("HttpClient => (").append(method).append(" ").append(url).append(")");
@@ -255,7 +255,11 @@ public class HttpClientUtil {
             sbd.append(" params(").append(params).append(")");
         }
         if (U.isNotBlank(requestHeaders)) {
-            sbd.append(" request headers(").append(requestHeaders).append(")");
+            sbd.append(" request headers(");
+            for (Header header : requestHeaders) {
+                sbd.append("<").append(header.getName()).append(" : ").append(header.getValue()).append(">");
+            }
+            sbd.append(")");
         }
         sbd.append(" time(").append(ms).append("ms)");
 
@@ -278,7 +282,7 @@ public class HttpClientUtil {
         return sbd.toString();
     }
     /** 发起 http 请求 */
-    private static String handleRequest(HttpRequestBase request, String params, String headers) {
+    private static String handleRequest(HttpRequestBase request, String params) {
         String method = request.getMethod();
         String url = request.getURI().toString();
 
@@ -289,8 +293,10 @@ public class HttpClientUtil {
             if (U.isNotBlank(entity)) {
                 String result = EntityUtils.toString(entity, StandardCharsets.UTF_8);
                 if (LogUtil.ROOT_LOG.isInfoEnabled()) {
-                    Header[] allHeaders = response.getAllHeaders();
-                    LogUtil.ROOT_LOG.info(collectContext(start, method, url, params, headers, allHeaders, result));
+                    Header[] requestHeaders = request.getAllHeaders();
+                    Header[] responseHeaders = response.getAllHeaders();
+                    String log = collectContext(start, method, url, params, requestHeaders, responseHeaders, result);
+                    LogUtil.ROOT_LOG.info(log);
                 }
                 EntityUtils.consume(entity);
                 return result;
