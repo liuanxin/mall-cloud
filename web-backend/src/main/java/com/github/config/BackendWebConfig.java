@@ -41,10 +41,15 @@ public class BackendWebConfig extends WebMvcConfigurationSupport {
         SpringMvc.handlerArgument(argumentResolvers);
     }
 
+    /**
+     * 这种方式下方法上将不能标 @ResponseBody,
+     * 标了的话会被 {@link org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor} 处理.
+     *
+     * @see com.github.config.BackendJsonResultAdvice
+     */
     @Override
     public void addReturnValueHandlers(List<HandlerMethodReturnValueHandler> returnValueHandlers) {
-        // 只在 app 调用的地方需要处理 token
-        SpringMvc.handlerReturn(returnValueHandlers);
+        // SpringMvc.handlerReturn(returnValueHandlers);
     }
 
     @Override
