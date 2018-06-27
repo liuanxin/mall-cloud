@@ -115,6 +115,12 @@ public final class SpringMvc {
         });
     }
 
+    /*
+     * 这种方式下方法上将不能标 @ResponseBody,
+     * 标了的话会被 {@link org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor} 处理.
+     *
+     * 见 com.github.config.BackendJsonResultAdvice 的处理方式
+     *
     public static void handlerReturn(List<HandlerMethodReturnValueHandler> returnValueHandlers) {
         // 当返回类型是 JsonResult 对象时
         returnValueHandlers.add(new HandlerMethodReturnValueHandler() {
@@ -126,6 +132,7 @@ public final class SpringMvc {
             @Override
             public void handleReturnValue(Object returnValue, MethodParameter returnType,
                                           ModelAndViewContainer container, NativeWebRequest request) throws Exception {
+                container.setRequestHandled(true);
                 String token = AppTokenHandler.resetTokenExpireTime();
                 if (U.isNotBlank(token)) {
                     ((JsonResult) returnValue).setToken(token);
@@ -133,4 +140,5 @@ public final class SpringMvc {
             }
         });
     }
+    */
 }
