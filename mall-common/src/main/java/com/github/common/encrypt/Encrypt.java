@@ -99,9 +99,9 @@ public final class Encrypt {
         return JWT_SIGNER.sign(map);
     }
 
-    /** 使用 jwt 将 map 加密, 并设置一个过期时间(单位: 秒). 其内部默认使用 HmacSHA256 算法 */
-    public static String jwtEncode(Map<String, Object> map, long time) {
-        map.put(JWTVerifier.EXP, System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(time));
+    /** 使用 jwt 将 map 加密, 并设置一个过期时间. 其内部默认使用 HmacSHA256 算法 */
+    public static String jwtEncode(Map<String, Object> map, long time, TimeUnit unit) {
+        map.put(JWTVerifier.EXP, System.currentTimeMillis() + unit.toMillis(time));
         return jwtEncode(map);
     }
 
