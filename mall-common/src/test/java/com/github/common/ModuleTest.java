@@ -680,7 +680,7 @@ class Server {
             "    @Override\n" +
             "    protected void addResourceHandlers(ResourceHandlerRegistry registry) {\n" +
             "        // 继承至 Support 之后且处理了版本需要手动路由静态资源\n" +
-            "        registry.addResourceHandler(\"/static/**\").addResourceLocations( \"classpath:/static/\");\n" +
+            "        registry.addResourceHandler(\"/static/**\").addResourceLocations(\"classpath:/static/\");\n" +
             "    }\n" +
             "\n" +
             "    @Override\n" +
