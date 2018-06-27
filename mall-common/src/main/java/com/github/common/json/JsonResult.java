@@ -1,6 +1,7 @@
 package com.github.common.json;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.github.common.Const;
 import com.github.liuanxin.api.annotation.ApiReturn;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,6 +29,10 @@ public class JsonResult<T> {
     @ApiReturn("返回的数据. 实体 {\"id\":1} 还是列表 [{\"id\":1},{\"id\":2}] 依具体的业务而定")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private T data;
+
+    @ApiReturn("需要 app 保存到本地的值(pc 无视), 每次请求都带上, key 是" + Const.TOKEN + ", header 或 param 都可")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private String token;
 
     private JsonResult(JsonCode code, String msg) {
         this.code = code.flag;

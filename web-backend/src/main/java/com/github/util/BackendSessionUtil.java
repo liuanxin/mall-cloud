@@ -1,9 +1,18 @@
 package com.github.util;
 
+import com.github.common.Const;
+import com.github.common.encrypt.Encrypt;
 import com.github.common.exception.NotLoginException;
+import com.github.common.json.JsonUtil;
+import com.github.common.mvc.AppTokenHandler;
+import com.github.common.util.A;
 import com.github.common.util.LogUtil;
 import com.github.common.util.RequestUtils;
 import com.github.common.util.U;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /** !!! 操作 session 都基于此, 其他地方不允许操作! 避免 session 被滥用 !!! */
 public class BackendSessionUtil {
@@ -12,6 +21,11 @@ public class BackendSessionUtil {
     private static final String CODE = BackendSessionUtil.class.getName() + "-CODE";
     /** 放在 session 里的用户 的 key */
     private static final String USER = BackendSessionUtil.class.getName() + "-USER";
+
+    /** 生成 token 的过期时间 */
+    private static final Long TOKEN_EXPIRE_TIME = 7L;
+    /** 生成 token 的过期时间单位 */
+    private static final TimeUnit TOKEN_EXPIRE_TIME_UNIT = TimeUnit.DAYS;
 
     /** 将图片验证码的值放入 session */
     public static void putImageCode(String code) {
@@ -30,9 +44,9 @@ public class BackendSessionUtil {
         return securityCode != null && code.equalsIgnoreCase(securityCode.toString());
     }
 
-    // /** 登录之后调用此方法, 主要就是将 用户信息、可访问的 url 等放入 session */
+    // /** 登录之后调用此方法, 主要就是将 用户信息 放入 session */
     /*
-    public static void whenLogin(User user) {
+    public static String whenLogin(User user) {
         BackendSessionModel sessionModel = BackendSessionModel.assemblyData(user) ;
         if (U.isNotBlank(sessionModel)) {
             if (LogUtil.ROOT_LOG.isDebugEnabled()) {
@@ -41,13 +55,20 @@ public class BackendSessionUtil {
             }
             RequestUtils.getSession().setAttribute(USER, sessionModel);
         }
+        return AppTokenHandler.generateToken(sessionModel);
     }
     */
 
 
     /** 获取用户信息. 没有则使用默认信息 */
     private static BackendSessionModel getSessionInfo() {
-        BackendSessionModel sessionModel = (BackendSessionModel) RequestUtils.getSession().getAttribute(USER);
+        // 从 token 中读
+        BackendSessionModel sessionModel = AppTokenHandler.getSessionInfoWithToken(BackendSessionModel.class);
+        // 为空再从 session 中读
+        if (U.isBlank(sessionModel)) {
+            sessionModel = (BackendSessionModel) RequestUtils.getSession().getAttribute(USER);
+        }
+        // 还是为空则使用默认值
         return sessionModel == null ? BackendSessionModel.defaultUser() : sessionModel;
     }
 

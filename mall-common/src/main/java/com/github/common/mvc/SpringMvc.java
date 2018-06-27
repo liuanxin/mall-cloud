@@ -2,6 +2,7 @@ package com.github.common.mvc;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.github.common.converter.*;
+import com.github.common.json.JsonResult;
 import com.github.common.json.JsonUtil;
 import com.github.common.page.Page;
 import com.github.common.util.A;
@@ -17,6 +18,7 @@ import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
 import java.io.IOException;
@@ -109,6 +111,25 @@ public final class SpringMvc {
             public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
                                           NativeWebRequest request, WebDataBinderFactory factory) throws Exception {
                 return Page.handlerLimit(request.getParameter(Page.GLOBAL_LIMIT));
+            }
+        });
+    }
+
+    public static void handlerReturn(List<HandlerMethodReturnValueHandler> returnValueHandlers) {
+        // 当返回类型是 JsonResult 对象时
+        returnValueHandlers.add(new HandlerMethodReturnValueHandler() {
+            @Override
+            public boolean supportsReturnType(MethodParameter parameter) {
+                return JsonResult.class.isAssignableFrom(parameter.getParameterType());
+            }
+
+            @Override
+            public void handleReturnValue(Object returnValue, MethodParameter returnType,
+                                          ModelAndViewContainer container, NativeWebRequest request) throws Exception {
+                String token = AppTokenHandler.resetTokenExpireTime();
+                if (U.isNotBlank(token)) {
+                    ((JsonResult) returnValue).setToken(token);
+                }
             }
         });
     }

@@ -110,17 +110,17 @@ public final class Encrypt {
         try {
             return JWT_VERIFIER.verify(data);
         } catch (JWTExpiredException e) {
-            if (LogUtil.ROOT_LOG.isTraceEnabled()) {
-                LogUtil.ROOT_LOG.trace("使用 jwt 解密(" + data + ")时, 数据已过期", e);
+            if (LogUtil.ROOT_LOG.isDebugEnabled()) {
+                LogUtil.ROOT_LOG.debug("使用 jwt 解密(" + data + ")时, 数据已过期", e);
             }
         } catch (NoSuchAlgorithmException | InvalidKeyException | IOException |
                 SignatureException | JWTVerifyException e) {
-            if (LogUtil.ROOT_LOG.isTraceEnabled()) {
-                LogUtil.ROOT_LOG.trace("使用 jwt 解密(" + data + ")失败", e);
+            if (LogUtil.ROOT_LOG.isDebugEnabled()) {
+                LogUtil.ROOT_LOG.debug("使用 jwt 解密(" + data + ")失败", e);
             }
         } catch (Exception e) {
-            if (LogUtil.ROOT_LOG.isTraceEnabled()) {
-                LogUtil.ROOT_LOG.trace("使用 jwt 解密(" + data + ")异常", e);
+            if (LogUtil.ROOT_LOG.isDebugEnabled()) {
+                LogUtil.ROOT_LOG.debug("使用 jwt 解密(" + data + ")异常", e);
             }
         }
         return Collections.emptyMap();

@@ -3,6 +3,7 @@ package com.github.common.json;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.common.util.LogUtil;
 
 import java.util.List;
 
@@ -62,6 +63,9 @@ public class JsonUtil {
         try {
             return RENDER.readValue(json, clazz);
         } catch (Exception e) {
+            if (LogUtil.ROOT_LOG.isErrorEnabled()) {
+                LogUtil.ROOT_LOG.error(String.format("json(%s) to class(%s) exception", json, clazz), e);
+            }
             return null;
         }
     }
@@ -79,6 +83,9 @@ public class JsonUtil {
         try {
             return RENDER.readValue(json, RENDER.getTypeFactory().constructCollectionType(List.class, clazz));
         } catch (Exception e) {
+            if (LogUtil.ROOT_LOG.isErrorEnabled()) {
+                LogUtil.ROOT_LOG.error(String.format("json(%s) to List<%s> exception", json, clazz), e);
+            }
             return null;
         }
     }
