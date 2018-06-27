@@ -974,23 +974,23 @@ class Server {
             "        <appender-ref ref =\"PROJECT\"/>\n" +
             "    </appender>\n" +
             "\n\n" +
-            "    <logger name=\"zipkin.autoconfigure\" level=\"warn\"/>\n" +
-            "    <logger name=\"io.undertow\" level=\"warn\"/>\n" +
-            "    <logger name=\"freemarker\" level=\"warn\"/>\n" +
+            "    <logger name=\"zipkin.autoconfigure\" level=\"error\"/>\n" +
+            "    <logger name=\"io.undertow\" level=\"error\"/>\n" +
+            "    <logger name=\"freemarker\" level=\"error\"/>\n" +
             "\n" +
-            "    <logger name=\"" + PACKAGE + ".~MODULE_NAME~.repository\" level=\"warn\"/>\n" +
-            "    <logger name=\"" + PACKAGE + ".common.mvc\" level=\"warn\"/>\n" +
+            "    <logger name=\"" + PACKAGE + ".~MODULE_NAME~.repository\" level=\"error\"/>\n" +
+            "    <logger name=\"" + PACKAGE + ".common.mvc\" level=\"error\"/>\n" +
             "\n" +
-            "    <logger name=\"com.netflix\" level=\"warn\"/>\n" +
-            "    <!--<logger name=\"com.github\" level=\"warn\"/>-->\n" +
-            "    <logger name=\"com.zaxxer\" level=\"warn\"/>\n" +
-            "    <logger name=\"com.sun\" level=\"warn\"/>\n" +
+            "    <logger name=\"com.netflix\" level=\"error\"/>\n" +
+            "    <!--<logger name=\"com.github\" level=\"error\"/>-->\n" +
+            "    <logger name=\"com.zaxxer\" level=\"error\"/>\n" +
+            "    <logger name=\"com.sun\" level=\"error\"/>\n" +
             "\n" +
-            "    <logger name=\"org.springframework\" level=\"warn\"/>\n" +
-            "    <logger name=\"org.hibernate\" level=\"warn\"/>\n" +
-            "    <logger name=\"org.mybatis\" level=\"warn\"/>\n" +
-            "    <logger name=\"org.apache\" level=\"warn\"/>\n" +
-            "    <logger name=\"org.jboss\" level=\"warn\"/>\n" +
+            "    <logger name=\"org.springframework\" level=\"error\"/>\n" +
+            "    <logger name=\"org.hibernate\" level=\"error\"/>\n" +
+            "    <logger name=\"org.mybatis\" level=\"error\"/>\n" +
+            "    <logger name=\"org.apache\" level=\"error\"/>\n" +
+            "    <logger name=\"org.jboss\" level=\"error\"/>\n" +
             "\n\n" +
             "    <root level=\"info\">\n" +
             "        <appender-ref ref=\"ASYNC\"/>\n" +

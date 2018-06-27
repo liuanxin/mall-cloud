@@ -21,23 +21,23 @@
     </appender>
 
 
-    <logger name="zipkin.autoconfigure" level="warn"/>
-    <logger name="io.undertow" level="warn"/>
-    <logger name="freemarker" level="warn"/>
+    <logger name="zipkin.autoconfigure" level="error"/>
+    <logger name="io.undertow" level="error"/>
+    <logger name="freemarker" level="error"/>
 
-    <logger name="com.github.queue.repository" level="warn"/>
-    <logger name="com.github.common.mvc" level="warn"/>
+    <logger name="com.github.queue.repository" level="error"/>
+    <logger name="com.github.common.mvc" level="error"/>
 
-    <logger name="com.netflix" level="warn"/>
-    <!--<logger name="com.github" level="warn"/>-->
-    <logger name="com.zaxxer" level="warn"/>
-    <logger name="com.sun" level="warn"/>
+    <logger name="com.netflix" level="error"/>
+    <!--<logger name="com.github" level="error"/>-->
+    <logger name="com.zaxxer" level="error"/>
+    <logger name="com.sun" level="error"/>
 
-    <logger name="org.springframework" level="warn"/>
-    <logger name="org.hibernate" level="warn"/>
-    <logger name="org.mybatis" level="warn"/>
-    <logger name="org.apache" level="warn"/>
-    <logger name="org.jboss" level="warn"/>
+    <logger name="org.springframework" level="error"/>
+    <logger name="org.hibernate" level="error"/>
+    <logger name="org.mybatis" level="error"/>
+    <logger name="org.apache" level="error"/>
+    <logger name="org.jboss" level="error"/>
 
 
     <root level="info">
