@@ -1,7 +1,7 @@
 package com.github.web;
 
-import com.github.common.annotation.ApiVersion;
-import com.github.common.AppVersion;
+import com.github.common.mvc.ApiVersion;
+import com.github.common.mvc.AppVersion;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

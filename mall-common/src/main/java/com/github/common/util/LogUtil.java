@@ -64,16 +64,17 @@ public final class LogUtil {
             this.heads = heads;
         }
 
+        /** 输出 " [ip (id/name) (method url) params(...) headers(...)]" */
         private String requestInfo() {
             StringBuilder sbd = new StringBuilder();
             sbd.append(" [");
-            if (U.isBlank(id) && U.isBlank(name)) {
-                sbd.append(String.format("%s (%s %s) params(%s)", ip, method, url, params));
-            } else {
-                sbd.append(String.format("%s (%s/%s) (%s %s) params(%s)", ip, id, name, method, url, params));
+            sbd.append(ip);
+            if (U.isNotBlank(id) && U.isNotBlank(name)) {
+                sbd.append(" (").append(id).append("/").append(name).append(")");
             }
-            sbd.append(" ");
-            sbd.append(String.format("headers(%s)", heads));
+            sbd.append(" (").append(method).append(" ").append(url).append(")");
+            sbd.append(" params(").append(params).append(")");
+            sbd.append(" headers(").append(heads).append(")");
             sbd.append("]");
             return sbd.toString();
         }

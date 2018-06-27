@@ -1,6 +1,6 @@
 package com.github.global.constant;
 
-import com.github.common.AppVersion;
+import com.github.common.mvc.AppVersion;
 
 public class Develop {
 

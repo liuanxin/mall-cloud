@@ -5,6 +5,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class EncryptTest {
 
@@ -36,7 +37,7 @@ public class EncryptTest {
         Assert.assertTrue(System.currentTimeMillis() > Long.parseLong(decode.get("time").toString()));
 
 
-        encode = Encrypt.jwtEncode(A.maps("id", "张三"), 2L);
+        encode = Encrypt.jwtEncode(A.maps("id", "张三"), 2L, TimeUnit.SECONDS);
         // LogUtil.ROOT_LOG.debug("jwt 加密: " + encode);
         Assert.assertTrue(encode.length() > 0);
 
@@ -44,7 +45,7 @@ public class EncryptTest {
         Assert.assertEquals("张三", decode.get("id"));
 
 
-        encode = Encrypt.jwtEncode(A.maps("id", "张三"), 1L);
+        encode = Encrypt.jwtEncode(A.maps("id", "张三"), 1L, TimeUnit.SECONDS);
         // LogUtil.ROOT_LOG.debug("jwt 加密: " + encode);
         Assert.assertTrue(encode.length() > 0);
 

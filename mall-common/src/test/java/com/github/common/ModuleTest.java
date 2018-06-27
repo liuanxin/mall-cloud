@@ -41,10 +41,12 @@ public class ModuleTest {
     }
 
     public static void main(String[] args) throws Exception {
-        generate("0-common",  "8090", "公共服务");
-        generate("1-user",    "8091", "用户");
-        generate("2-product", "8092", "商品");
-        generate("3-order",   "8093", "订单");
+//        generate("0-common",  "8070", "公共");
+//        generate("0-queue",   "8071", "消息队列");
+//        generate("0-search",  "8072", "搜索");
+//        generate("1-user",    "8091", "用户");
+//        generate("2-product", "8092", "商品");
+//        generate("3-order",   "8093", "订单");
 
         soutInfo();
     }
@@ -160,7 +162,7 @@ class Client {
             AUTHOR +
             " */\n" +
             "@FeignClient(value = %sConst.MODULE_NAME" + (fallback ? ", fallback = %sFallback.class" : "") + ")\n" +
-            "public interface %sClient extends %sInterface {\n" +
+            "public interface %sService extends %sInterface {\n" +
             "}\n";
 
     private static final String FALLBACK = "package " + PACKAGE + ".%s.hystrix;\n" +
@@ -176,7 +178,7 @@ class Client {
             AUTHOR +
             " */\n" +
             "@Component\n" +
-            "public class %sFallback implements %sClient {\n" +
+            "public class %sFallback implements %sService {\n" +
             "\n" +
             "    @Override\n" +
             "    public PageInfo demo(String xx, Integer page, Integer limit) {\n" +
@@ -199,7 +201,7 @@ class Client {
             "    <modelVersion>4.0.0</modelVersion>\n" +
             "\n" +
             "    <artifactId>%s-client</artifactId>\n" +
-            "    <description>%s模块的客户端包(单独分包的原因是: 只在调用的地方才需要引入 feign 包和开启 @EnableFeignClients 注解)</description>\n" +
+            "    <description>%s 模块中将 restful 调用封装成 FeignClient 以达到 rpc 的调用形式(需要引入 feign 包和开启 @EnableFeignClients 注解)</description>\n" +
             "\n" +
             "    <dependencies>\n" +
             "        <dependency>\n" +
@@ -250,7 +252,7 @@ class Client {
                     parentPackageName, clazzName, parentPackageName, clazzName,
                     comment, clazzName, clazzName, clazzName, clazzName);
         }
-        writeFile(new File(model_client, clazzName + "Client.java"), constModel);
+        writeFile(new File(model_client, clazzName + "Service.java"), constModel);
     }
 }
 
@@ -567,7 +569,11 @@ class Server {
             "    public ResponseEntity<JsonResult> notSupported(HttpRequestMethodNotSupportedException e) {\n" +
             "        bindAndPrintLog(e);\n" +
             "\n" +
-            "        return fail(String.format(\"不支持此请求方式! 当前(%%s), 支持(%%s)\", e.getMethod(), A.toStr(e.getSupportedMethods())));\n" +
+            "        String msg = \"不支持此种请求方式.\";\n" +
+            "        if (!online) {\n" +
+            "            msg += String.format(\" 当前(%%s), 支持(%%s)\", e.getMethod(), A.toStr(e.getSupportedMethods()));\n" +
+            "        }\n" +
+            "        return fail(msg);\n" +
             "    }\n" +
             "    @ExceptionHandler(MaxUploadSizeExceededException.class)\n" +
             "    public ResponseEntity<JsonResult> uploadSizeExceeded(MaxUploadSizeExceededException e) {\n" +
@@ -674,7 +680,7 @@ class Server {
             "    @Override\n" +
             "    protected void addResourceHandlers(ResourceHandlerRegistry registry) {\n" +
             "        // 继承至 Support 之后且处理了版本需要手动路由静态资源\n" +
-            "        registry.addResourceHandler(\"/static/**\").addResourceLocations( \"classpath:/static/\");\n" +
+            "        registry.addResourceHandler(\"/static/**\").addResourceLocations(\"classpath:/static/\");\n" +
             "    }\n" +
             "\n" +
             "    @Override\n" +
@@ -712,7 +718,7 @@ class Server {
             AUTHOR +
             " */\n" +
             "@RestController\n" +
-            "public class %sService implements %sInterface {\n" +
+            "public class %sServiceImpl implements %sInterface {\n" +
             "    \n" +
             "    @Override\n" +
             "    public PageInfo demo(String xx, Integer page, Integer limit) {\n" +
@@ -769,7 +775,7 @@ class Server {
             "## org.springframework.cloud.sleuth.zipkin2.ZipkinProperties\n" +
             "#spring:\n" +
             "#  zipkin.base-url: http://127.0.0.1:9411\n" +
-            "#  # 抽样比例, 默认是 10%%, 如果 值是 1 则表示 100%%, 分页式追踪数据量可能会非常大\n" +
+            "#  # 抽样比例, 默认是 10%%, 如果 值是 1 则表示 100%%, 分布式追踪数据量可能会非常大\n" +
             "#  sleuth.sampler.percentage: 0.1\n";
 
     private static final String APPLICATION_TEST_YML = "\n" +
@@ -968,23 +974,23 @@ class Server {
             "        <appender-ref ref =\"PROJECT\"/>\n" +
             "    </appender>\n" +
             "\n\n" +
-            "    <logger name=\"zipkin.autoconfigure\" level=\"warn\"/>\n" +
-            "    <logger name=\"io.undertow\" level=\"warn\"/>\n" +
-            "    <logger name=\"freemarker\" level=\"warn\"/>\n" +
+            "    <logger name=\"zipkin.autoconfigure\" level=\"error\"/>\n" +
+            "    <logger name=\"io.undertow\" level=\"error\"/>\n" +
+            "    <logger name=\"freemarker\" level=\"error\"/>\n" +
             "\n" +
-            "    <logger name=\"" + PACKAGE + ".~MODULE_NAME~.repository\" level=\"warn\"/>\n" +
-            "    <logger name=\"" + PACKAGE + ".common.mvc\" level=\"warn\"/>\n" +
+            "    <logger name=\"" + PACKAGE + ".~MODULE_NAME~.repository\" level=\"error\"/>\n" +
+            "    <logger name=\"" + PACKAGE + ".common.mvc\" level=\"error\"/>\n" +
             "\n" +
-            "    <logger name=\"com.netflix\" level=\"warn\"/>\n" +
-            "    <!--<logger name=\"com.github\" level=\"warn\"/>-->\n" +
-            "    <logger name=\"com.zaxxer\" level=\"warn\"/>\n" +
-            "    <logger name=\"com.sun\" level=\"warn\"/>\n" +
+            "    <logger name=\"com.netflix\" level=\"error\"/>\n" +
+            "    <!--<logger name=\"com.github\" level=\"error\"/>-->\n" +
+            "    <logger name=\"com.zaxxer\" level=\"error\"/>\n" +
+            "    <logger name=\"com.sun\" level=\"error\"/>\n" +
             "\n" +
-            "    <logger name=\"org.springframework\" level=\"warn\"/>\n" +
-            "    <logger name=\"org.hibernate\" level=\"warn\"/>\n" +
-            "    <logger name=\"org.mybatis\" level=\"warn\"/>\n" +
-            "    <logger name=\"org.apache\" level=\"warn\"/>\n" +
-            "    <logger name=\"org.jboss\" level=\"warn\"/>\n" +
+            "    <logger name=\"org.springframework\" level=\"error\"/>\n" +
+            "    <logger name=\"org.hibernate\" level=\"error\"/>\n" +
+            "    <logger name=\"org.mybatis\" level=\"error\"/>\n" +
+            "    <logger name=\"org.apache\" level=\"error\"/>\n" +
+            "    <logger name=\"org.jboss\" level=\"error\"/>\n" +
             "\n\n" +
             "    <root level=\"info\">\n" +
             "        <appender-ref ref=\"ASYNC\"/>\n" +
@@ -1148,7 +1154,7 @@ class Server {
 
         String service = String.format(SERVICE, parentPackageName, comment, clazzName, clazzName,
                 clazzName, comment, clazzName.toUpperCase(), parentPackageName);
-        writeFile(new File(servicePath, clazzName + "Service.java"), service);
+        writeFile(new File(servicePath, clazzName + "ServiceImpl.java"), service);
 
 
         File resourcePath = new File(module + "/" + server + "/src/main/resources");

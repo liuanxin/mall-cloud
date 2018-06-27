@@ -29,7 +29,7 @@ public class OrderWebConfig extends WebMvcConfigurationSupport {
     @Override
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
         // 继承至 Support 之后且处理了版本需要手动路由静态资源
-        registry.addResourceHandler("/static/**").addResourceLocations( "classpath:/static/");
+        registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
     }
 
     @Override

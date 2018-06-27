@@ -9,11 +9,11 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
-import javax.servlet.Servlet;
+import javax.servlet.Filter;
 import java.nio.charset.StandardCharsets;
 
 @Configuration
-@ConditionalOnClass({ Servlet.class })
+@ConditionalOnClass({ Filter.class })
 public class GlobalWebConfig {
 
     @Bean
@@ -26,12 +26,8 @@ public class GlobalWebConfig {
 
     @Bean
     public FilterRegistrationBean characterFilter() {
-        CharacterEncodingFilter encodingFilter = new CharacterEncodingFilter();
-        encodingFilter.setEncoding(StandardCharsets.UTF_8.displayName());
-        encodingFilter.setForceEncoding(true);
-
-        FilterRegistrationBean registrationBean = new FilterRegistrationBean();
-        registrationBean.setFilter(encodingFilter);
-        return registrationBean;
+        FilterRegistrationBean filterBean = new FilterRegistrationBean();
+        filterBean.setFilter(new CharacterEncodingFilter(StandardCharsets.UTF_8.displayName(), true));
+        return filterBean;
     }
 }

@@ -3,13 +3,17 @@ package com.github.common.util;
 import com.github.common.date.DateUtil;
 import com.github.common.exception.ServiceException;
 import com.github.common.exception.ServiceMustHandleException;
+import com.github.common.json.JsonUtil;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.security.CodeSource;
+import java.security.ProtectionDomain;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
@@ -20,15 +24,12 @@ import java.util.regex.Pattern;
 /** 工具类 */
 public final class U {
 
-    public static final Charset UTF8 = StandardCharsets.UTF_8;
     public static final ThreadLocalRandom RANDOM = ThreadLocalRandom.current();
 
     /** 本机的 cpu 核心数 */
     public static final int PROCESSORS = Runtime.getRuntime().availableProcessors();
 
     public static final String EMPTY = "";
-    public static final String SPACE = " ";
-    public static final String SPLIT = ",|，";
 
     private static final String LIKE = "%";
     private static final String PHONE = "^1[0-9]{10}$";
@@ -80,6 +81,7 @@ public final class U {
         return sbd.toString();
     }
 
+    // ========== enum ==========
     /**
      * 获取枚举中的值, 先匹配 name, 再匹配 getCode(数字), 再匹配 getValue(中文), 都匹配不上则返回 null
      *
@@ -117,6 +119,96 @@ public final class U {
         return null;
     }
 
+    private static final String ENUM_CODE = "code";
+    private static final String ENUM_VALUE = "value";
+    /**
+     * <pre>
+     * 序列化枚举, 属性是枚举时, 返回给前端时, 可以将 传递 和 显示的都返回, 如以下示例
+     *
+     * public enum Gender {
+     *   Male(0, "男"), Female(1, "女");
+     *   int code;
+     *   String value;
+     *
+     *   Gender(int code, String value) {
+     *     this.code = code;
+     *     this.value = value;
+     *   }
+     *   // get etc...
+     *
+     *   &#064;JsonValue
+     *   public Map<String, String> serializer() {
+     *     return <span style="color:red">U.serializerEnum(code, value);</span>
+     *   }
+     *   &#064;JsonCreator
+     *   public static Gender deserializer(Object obj) {
+     *     return U.enumDeserializer(obj, Gender.class);
+     *   }
+     * }
+     * </pre>
+     */
+    public static Map<String, String> serializerEnum(int code, String value) {
+        return A.maps(ENUM_CODE, code, ENUM_VALUE, value);
+    }
+    /**
+     * <pre>
+     * 枚举反序列化, 如以下示例
+     *
+     * public enum Gender {
+     *   Male(0, "男"), Female(1, "女");
+     *   int code;
+     *   String value;
+     *
+     *   Gender(int code, String value) {
+     *     this.code = code;
+     *     this.value = value;
+     *   }
+     *   // get etc...
+     *
+     *   &#064;JsonValue
+     *   public Map<String, String> serializer() {
+     *     return U.serializerEnum(code, value);
+     *   }
+     *   &#064;JsonCreator
+     *   public static Gender deserializer(Object obj) {
+     *     return <span style="color:red">U.enumDeserializer(obj, Gender.class);</span>
+     *   }
+     * }
+     * </pre>
+     */
+    public static <E extends Enum> E enumDeserializer(Object obj, Class<E> enumClass) {
+        if (isBlank(obj)) {
+            return null;
+        }
+
+        Object tmp = null;
+        if (obj instanceof Map) {
+            tmp = getEnumInMap((Map) obj);
+        } else {
+            String tmpStr = obj.toString();
+            if (tmpStr.startsWith("{") && tmpStr.endsWith("}")) {
+                tmp = getEnumInMap(JsonUtil.toObjectNil(obj.toString(), Map.class));
+            }
+        }
+
+        if (isBlank(tmp)) {
+            tmp = obj;
+        }
+        return toEnum(enumClass, tmp);
+    }
+    private static Object getEnumInMap(Map map) {
+        if (A.isNotEmpty(map)) {
+            Object tmp = map.get(ENUM_CODE);
+            if (isBlank(tmp)) {
+                tmp = map.get(ENUM_VALUE);
+            }
+            return tmp;
+        } else {
+            return null;
+        }
+    }
+    // ========== enum ==========
+
 
     // ========== number ==========
     /** 传入的数不为 null 且 大于 0 就返回 true */
@@ -145,13 +237,7 @@ public final class U {
     public static boolean notBetween(Number num, Number min, Number max) {
         return !between(num, min, max);
     }
-    // ========== number ==========
 
-
-    // ========== object & string ==========
-    public static String toStr(Object obj) {
-        return isBlank(obj) ? EMPTY : obj.toString();
-    }
     public static int toInt(Object obj) {
         if (isBlank(obj)) {
             return 0;
@@ -193,8 +279,69 @@ public final class U {
         }
     }
 
+    // + ==> add
+    // - ==> subtract
+    // * ==> multiply
+    // / ==> divide
+
+    /** num1 + num2, num2 为空则返回 num1, 两个都为空则返回 0 */
+    public static BigDecimal add(BigDecimal num1, BigDecimal num2) {
+        if (isNotBlank(num1)) {
+            if (isNotBlank(num2)) {
+                return num1.add(num2);
+            } else {
+                return num1;
+            }
+        } else {
+            return BigDecimal.ZERO;
+        }
+    }
+    /** num1 - num2, num2 为空则返回 num1, 两个都为空则返回 0 */
+    public static BigDecimal subtract(BigDecimal num1, BigDecimal num2) {
+        if (isNotBlank(num1)) {
+            if (isNotBlank(num2)) {
+                return num1.subtract(num2);
+            } else {
+                return num1;
+            }
+        } else {
+            return BigDecimal.ZERO;
+        }
+    }
+    /** num1 * num2, num2 为空则返回 num1, 两个都为空则返回 0 */
+    public static BigDecimal multiply(BigDecimal num1, BigDecimal num2) {
+        if (isNotBlank(num1)) {
+            if (isNotBlank(num2)) {
+                return num1.multiply(num2);
+            } else {
+                return num1;
+            }
+        } else {
+            return BigDecimal.ZERO;
+        }
+    }
+    /** num1 / num2, num2 为空则返回 num1, 两个都为空则返回 0. 返回结果有两位小数点精度 */
+    public static BigDecimal divide(BigDecimal num1, BigDecimal num2) {
+        if (isNotBlank(num1)) {
+            if (isNotBlank(num2) && num2.doubleValue() != 0) {
+                return num1.divide(num2, 2, BigDecimal.ROUND_UP);
+            } else {
+                return num1;
+            }
+        } else {
+            return BigDecimal.ZERO;
+        }
+    }
+    // ========== number ==========
+
+
+    // ========== object & string ==========
+    public static String toStr(Object obj) {
+        return isBlank(obj) ? EMPTY : obj.toString();
+    }
+
     /** 去掉所有的制表符 和 换行符 */
-    public static String tabAndWrap(String str) {
+    public static String replaceTabAndWrap(String str) {
         return isBlank(str) ? EMPTY : str.replace("\t", "").replace("\n", "");
     }
 
@@ -235,13 +382,13 @@ public final class U {
     }
 
     public static String like(String param) {
-        return isBlank(param) ? U.EMPTY : LIKE + param + LIKE;
+        return isBlank(param) ? EMPTY : LIKE + param + LIKE;
     }
     public static String leftLike(String param) {
-        return isBlank(param) ? U.EMPTY : LIKE + param;
+        return isBlank(param) ? EMPTY : LIKE + param;
     }
     public static String rightLike(String param) {
-        return isBlank(param) ? U.EMPTY : param + LIKE;
+        return isBlank(param) ? EMPTY : param + LIKE;
     }
     // ========== object & string ==========
 
@@ -283,7 +430,7 @@ public final class U {
     }
 
     /** 只要找到匹配即返回 true */
-    static boolean checkRegexWithRelax(String param, String regex) {
+    public static boolean checkRegexWithRelax(String param, String regex) {
         return isNotBlank(param) && Pattern.compile(regex).matcher(param).find();
     }
     /** 传入的参数只要包含中文就返回 true */
@@ -325,7 +472,7 @@ public final class U {
         }
         try {
             // java 中的 encode 是把空格变成 +, 转义后需要将 + 替换成 %20
-            return URLEncoder.encode(url, UTF8.displayName());//.replaceAll("\\+", "%20");
+            return URLEncoder.encode(url, StandardCharsets.UTF_8.displayName());//.replaceAll("\\+", "%20");
         } catch (UnsupportedEncodingException e) {
             return EMPTY;
         }
@@ -337,7 +484,7 @@ public final class U {
         }
         try {
             // java 中的 encode 是把空格变成 +, 反转义前需要将 %20 替换成 +
-            return URLDecoder.decode(src/*.replaceAll("%20", "\\+")*/, UTF8.displayName());
+            return URLDecoder.decode(src/*.replaceAll("%20", "\\+")*/, StandardCharsets.UTF_8.displayName());
         } catch (UnsupportedEncodingException e) {
             return EMPTY;
         }
@@ -425,11 +572,12 @@ public final class U {
             return EMPTY;
         }
 
+        String[] split = field.split("\\|");
         Object value;
         if (data instanceof Map) {
-            value = ((Map) data).get(field);
+            value = ((Map) data).get(split[0]);
         } else {
-            value = getMethod(data, fieldToMethod(field));
+            value = getMethod(data, fieldToMethod(split[0]));
         }
 
         if (isBlank(value)) {
@@ -437,16 +585,20 @@ public final class U {
         } else if (value.getClass().isEnum()) {
             // 如果是枚举, 则调用其 getValue 方法, getValue 没有值则使用枚举的 name
             Object enumValue = getMethod(value, "getValue");
-            return getNil(enumValue != null ? enumValue : value.toString());
+            return getNil(enumValue != null ? enumValue : value);
         } else if (value instanceof Date) {
             // 如果是日期, 则格式化
-            return getNil(DateUtil.formatFull((Date) value));
+            if (split.length > 1 && isNotBlank(split[1])) {
+                return getNil(DateUtil.format((Date) value, split[1]));
+            } else {
+                return getNil(DateUtil.formatFull((Date) value));
+            }
         } else {
             return getNil(value);
         }
     }
 
-    /** 调用对象的公有方法. 将会忽略异常只返回 null, 如果要对异常专门记录勿调用此方法 */
+    /** 调用对象的公有方法. 异常将被忽略并返回 null */
     public static Object getMethod(Object obj, String method, Object... param) {
         if (isNotBlank(method)) {
             try {
@@ -495,6 +647,23 @@ public final class U {
             }
         }
         return sbd.toString();
+    }
+
+    /** 获取指定类所在 jar 包的地址 */
+    public static String getClassInFile(Class<?> clazz) {
+        if (isNotBlank(clazz)) {
+            ProtectionDomain domain = clazz.getProtectionDomain();
+            if (isNotBlank(domain)) {
+                CodeSource source = domain.getCodeSource();
+                if (isNotBlank(source)) {
+                    URL location = source.getLocation();
+                    if (isNotBlank(location)) {
+                        return location.getFile();
+                    }
+                }
+            }
+        }
+        return null;
     }
 
 

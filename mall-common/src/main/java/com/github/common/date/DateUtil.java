@@ -48,7 +48,11 @@ public class DateUtil {
             return U.EMPTY;
         }
 
-        return DateTimeFormat.forPattern(type.getValue()).print(date.getTime());
+        return format(date, type.getValue());
+    }
+
+    public static String format(Date date, String type) {
+        return DateTimeFormat.forPattern(type).print(date.getTime());
     }
 
     /**
@@ -164,12 +168,6 @@ public class DateUtil {
      */
     public static Date addWeeks(Date date, int week) {
         return new DateTime(date).plusWeeks(week).toDate();
-    }
-
-    /** 传入的时间晚于当前时间就返回传入的时间, 否则就返回当前时间 */
-    public static Date before(Date date) {
-        Date now = now();
-        return now.after(date) ? now : date;
     }
 
     /** 传入的时间是不是当月当日. 用来验证生日 */

@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * 公共服务模块的 web 拦截器
+ * 公共模块的 web 拦截器
  *
  * @author https://github.com/liuanxin
  */

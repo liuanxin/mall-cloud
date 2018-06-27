@@ -22,7 +22,6 @@ public class GenderHandler extends BaseTypeHandler<Gender> {
     @Override
     public void setNonNullParameter(PreparedStatement ps, int i, Gender parameter,
                                     JdbcType jdbcType) throws SQLException {
-        // 使用 getCode 返回的 int 值来存储
         ps.setInt(i, parameter.getCode());
     }
 

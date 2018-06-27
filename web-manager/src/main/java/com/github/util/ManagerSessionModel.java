@@ -1,19 +1,19 @@
 package com.github.util;
 
 import com.github.common.util.A;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 @Setter
 @Getter
 @NoArgsConstructor
 @Accessors(chain = true)
-@ToString
 class ManagerSessionModel implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -24,53 +24,43 @@ class ManagerSessionModel implements Serializable {
     /** 超级管理员账号 */
     private static final List<String> SUPER_USER = Arrays.asList("admin", "root");
 
-
-    // ========== 存放在 session 中的数据 ==========
-
-    /** 存放在 session 中的(用户 id) */
+    /** 用户 id */
     private Long id;
-    /** 存放在 session 中的(用户名) */
-    private String name;
-    // /** 存放在 session 中的权限 */
+    /** 用户名 */
+    private String userName;
+    /** 权限列表 */
     private List<Permission> permissionList;
-
-    // ========== 存放在 session 中的数据 ==========
 
     @Setter
     @Getter
-    @ToString
     @NoArgsConstructor
-    @AllArgsConstructor
     @Accessors(chain = true)
     private static class Permission implements Serializable {
         private static final long serialVersionUID = 1L;
 
         /** 权限路径 */
         private String url;
-        /** 权限方法(get,head,post,put,delete), 多个用逗号隔开, 通配 * 表示匹配所有 */
+        /** 权限方法, 包括(get,head,post,put,delete)五种, 多个用逗号隔开 */
         private String method;
     }
 
-
-    /** 当前用户在指定域名下是否已登录. 已登录就返回 true */
     boolean wasLogin() {
-        return !Objects.equals(DEFAULT_ID, id) && !Objects.equals(DEFAULT_NAME, name);
+        return !DEFAULT_ID.equals(id) && !DEFAULT_NAME.equals(userName);
     }
-    /** 是否是超级管理员. 是就返回 true */
     boolean wasSuper() {
-        return SUPER_USER.contains(name);
+        return SUPER_USER.contains(userName);
     }
-    /** 在指定域名下, 是否有对指定 url 的访问权限. 有就返回 true */
-    boolean hasPermission(String url, String method) {
+    boolean wasPermission(String url, String method) {
         if (A.isNotEmpty(permissionList)) {
             for (Permission permission : permissionList) {
-                String permissionUrl = permission.getUrl();
-                String permissionMethod = permission.getMethod().toUpperCase();
+                // 如果配置的 url 是 /user/*, 传进来的是 /user/info 也可以通过, 通配 或 全字
+                boolean matchUrl = permission.url.endsWith("/*") && url.startsWith(permission.url.replace("*", ""));
+                boolean urlCheck = matchUrl || url.equals(permission.url);
+                // 如果配置的 method 是 *, 传进来的是 GET 也可以通过, 通配 或 全字
+                boolean methodCheck = (("*").equals(permission.method) || permission.method.contains(method));
 
-                // 全字 或 通配. 通配是指: 如果配置的 url 是 /user/*, 传进来的是 /user/info 也可以通过
-                if ((url.equals(permissionUrl) || url.matches(permissionUrl.replace("*", ".*"))) &&
-                        // 全字 或 通配. 通配是指: 如果配置的 method 是 * 即可
-                        (permissionMethod.contains(method.toUpperCase()) || "*".equals(permissionMethod))) {
+                // url 和 method 都通过才表示有访问权限
+                if (urlCheck && methodCheck) {
                     return true;
                 }
             }
@@ -78,34 +68,16 @@ class ManagerSessionModel implements Serializable {
         return false;
     }
 
+    static ManagerSessionModel defaultUser() {
+        return new ManagerSessionModel().setId(DEFAULT_ID).setUserName(DEFAULT_NAME);
+    }
 
-    // 以下为静态方法
-
-    // /** 将 域名、账号及权限 组装成放进 session 的数据对象 */
+    // todo
     /*
-    static ManagerSessionModel assemblyData(ManagerSessionModel sessionModel, String domain,
-                                        User account, List<com.github.erp.user.model.Permission> permissions) {
-        if (U.isBlank(domain) || U.isBlank(account) || A.isEmpty(permissions)) {
-            return sessionModel;
-        }
-
-        ManagerSessionModel session = JsonUtil.convert(account, ManagerSessionModel.class);
-        List<Permission> permissionList = JsonUtil.convertList(permissions, Permission.class);
-        // 是否是第一次向 session 中存放
-        if (U.isBlank(sessionModel)) {
-            // session 中没有信息就放进去
-            session.setDomainInfoMap(A.maps(domain, permissionList));
-        } else {
-            // session 中有信息就把当前域名对应的权限加进去
-            session.getDomainInfoMap().put(domain, permissionList);
-        }
-        return session;
+    static ManagerSessionModel assemblyData(Account account, List<AccountPermission> permissions) {
+        ManagerSessionModel sessionModel = JsonUtil.convert(account, ManagerSessionModel.class);
+        sessionModel.setPermissionList(JsonUtil.convertList(permissions, Permission.class));
+        return sessionModel;
     }
     */
-
-    /** 未登录时的默认用户信息 */
-    static ManagerSessionModel defaultUser() {
-        return new ManagerSessionModel().setId(DEFAULT_ID).setName(DEFAULT_NAME);
-    }
-
 }

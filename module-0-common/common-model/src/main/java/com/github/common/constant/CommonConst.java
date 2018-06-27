@@ -1,7 +1,7 @@
 package com.github.common.constant;
 
 /**
- * 公共服务模块相关的常数设置类
+ * 公共模块相关的常数设置类
  *
  * @author https://github.com/liuanxin
  */
@@ -11,7 +11,7 @@ public final class CommonConst {
     public static final String MODULE_NAME = "common";
 
     /** 当前模块说明. 当用在文档中时有用 */
-    public static final String MODULE_INFO = MODULE_NAME + "-公共服务";
+    public static final String MODULE_INFO = MODULE_NAME + "-公共";
 
 
     // ========== url 说明 ==========

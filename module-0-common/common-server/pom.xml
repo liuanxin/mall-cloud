@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>common-server</artifactId>
-    <description>公共服务模块的服务端</description>
+    <description>公共模块的服务端</description>
 
     <dependencies>
         <dependency>
@@ -79,7 +79,7 @@
     </dependencies>
 
     <build>
-        <finalName>common-server-8090</finalName>
+        <finalName>common-server-8070</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

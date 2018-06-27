@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
- * 公共服务相关的接口
+ * 公共相关的接口
  *
  * @author https://github.com/liuanxin
  */

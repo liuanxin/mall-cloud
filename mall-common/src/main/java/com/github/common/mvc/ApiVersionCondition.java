@@ -1,6 +1,5 @@
 package com.github.common.mvc;
 
-import com.github.common.AppVersion;
 import com.github.common.Const;
 import com.github.common.util.U;
 import org.springframework.web.servlet.mvc.condition.RequestCondition;

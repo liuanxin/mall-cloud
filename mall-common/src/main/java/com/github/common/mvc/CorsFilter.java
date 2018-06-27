@@ -3,7 +3,6 @@ package com.github.common.mvc;
 import com.github.common.Const;
 import com.github.common.util.A;
 import com.github.common.util.U;
-import org.springframework.http.HttpHeaders;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -13,24 +12,31 @@ import java.io.IOException;
 /** 处理跨域 */
 public class CorsFilter implements Filter {
 
+    /** @see org.springframework.http.HttpHeaders */
+    private static final String ORIGIN = "Origin";
+    private static final String ACCESS_CONTROL_ALLOW_CREDENTIALS = "Access-Control-Allow-Credentials";
+    private static final String ACCESS_CONTROL_ALLOW_HEADERS = "Access-Control-Allow-Headers";
+    private static final String ACCESS_CONTROL_ALLOW_METHODS = "Access-Control-Allow-Methods";
+    private static final String ACCESS_CONTROL_ALLOW_ORIGIN = "Access-Control-Allow-Origin";
+
     // /** for ie: https://www.lovelucy.info/ie-accept-third-party-cookie.html */
     // private static final String P3P = "P3P";
 
     private void handlerCors(HttpServletRequest request, HttpServletResponse response) {
-        String origin = request.getHeader(HttpHeaders.ORIGIN);
+        String origin = request.getHeader(ORIGIN);
         if (U.isNotBlank(origin)) {
-            if (U.isBlank(response.getHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN))) {
-                response.addHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin);
+            if (U.isBlank(response.getHeader(ACCESS_CONTROL_ALLOW_ORIGIN))) {
+                response.addHeader(ACCESS_CONTROL_ALLOW_ORIGIN, origin);
             }
-            if (U.isBlank(response.getHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS))) {
-                response.addHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
+            if (U.isBlank(response.getHeader(ACCESS_CONTROL_ALLOW_CREDENTIALS))) {
+                response.addHeader(ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
             }
-            if (U.isBlank(response.getHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS))) {
-                response.addHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, A.toStr(Const.SUPPORT_METHODS));
+            if (U.isBlank(response.getHeader(ACCESS_CONTROL_ALLOW_METHODS))) {
+                response.addHeader(ACCESS_CONTROL_ALLOW_METHODS, A.toStr(Const.SUPPORT_METHODS));
             }
-            if (U.isBlank(response.getHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS))) {
+            if (U.isBlank(response.getHeader(ACCESS_CONTROL_ALLOW_HEADERS))) {
                 // 如果有自定义头, 附加进去, 避免用 *
-                response.addHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS,
+                response.addHeader(ACCESS_CONTROL_ALLOW_HEADERS,
                         "Accept, Accept-Encoding, Accept-Language, Cache-Control, " +
                                 "Connection, Cookie, DNT, Host, User-Agent, Content-Type, Authorization, " +
                                 "X-Requested-With, Origin, Access-Control-Request-headers");

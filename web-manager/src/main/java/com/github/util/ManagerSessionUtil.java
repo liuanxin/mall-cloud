@@ -6,7 +6,9 @@ import com.github.common.util.LogUtil;
 import com.github.common.util.RequestUtils;
 import com.github.common.util.U;
 
-/** !!! 操作 session 都基于此, 其他地方不允许操作! 避免 session 被滥用 !!! */
+import javax.servlet.http.HttpServletRequest;
+
+/** 操作 session 都基于此, 其他地方不允许操作! 避免 session 被滥用 */
 public class ManagerSessionUtil {
 
     /** 放在 session 里的图片验证码 key */
@@ -27,80 +29,57 @@ public class ManagerSessionUtil {
     public static void putImageCode(String code) {
         RequestUtils.getSession().setAttribute(CODE, code);
         if (LogUtil.ROOT_LOG.isDebugEnabled()) {
-            LogUtil.ROOT_LOG.debug("put image code({}) in session({})", code, RequestUtils.getSession().getId());
+            LogUtil.ROOT_LOG.debug("put image code ({}) in session ({})", code, RequestUtils.getSession().getId());
         }
     }
 
-    // /** 登录之后调用此方法, 主要就是将 用户信息、可访问的 url 等放入 session */
+    /* 用户在登录之后调用此方法, 主要就是将 用户信息、可访问的 url 等放入 session */
     /*
-    public static void whenLogin(User account, List<Permission> permissionList) {
-        ManagerSessionModel sessionModel = ManagerSessionModel.assemblyData(
-                getSessionInfo(), RequestUtils.getDomain(), account,permissionList) ;
+    public static void toSession(Account account, List<AccountPermission> permissions) {
+        ManagerSessionModel sessionModel = ManagerSessionModel.assemblyData(account, permissions);
         if (U.isNotBlank(sessionModel)) {
             if (LogUtil.ROOT_LOG.isDebugEnabled()) {
-                LogUtil.ROOT_LOG.debug("put ({}) in session({})", sessionModel, RequestUtils.getSession().getId());
+                LogUtil.ROOT_LOG.debug("put ({}) in session({})",
+                        JsonUtil.toJson(sessionModel), RequestUtils.getSession().getId());
             }
+            RequestUtils.getSession().setAttribute(USER, sessionModel);
         }
-        RequestUtils.getSession().setAttribute(USER, sessionModel);
     }
     */
 
-
-    /** 获取用户信息 */
+    /** 获取用户信息, 从 token 中获取, 没有则从 session 中获取 */
     private static ManagerSessionModel getSessionInfo() {
-        return (ManagerSessionModel) RequestUtils.getSession().getAttribute(USER);
-    }
-
-    /** 获取用户信息. 没有则使用默认信息 */
-    private static ManagerSessionModel getSessionInfoWithDefault() {
-        ManagerSessionModel sessionModel = getSessionInfo();
+        ManagerSessionModel sessionModel = (ManagerSessionModel) RequestUtils.getSession().getAttribute(USER);
         return sessionModel == null ? ManagerSessionModel.defaultUser() : sessionModel;
     }
 
     /** 从 session 中获取用户 id */
     public static Long getUserId() {
-        return getSessionInfoWithDefault().getId();
+        return getSessionInfo().getId();
     }
 
     /** 从 session 中获取用户名 */
     public static String getUserName() {
-        return getSessionInfoWithDefault().getName();
+        return getSessionInfo().getUserName();
     }
 
-    /** 是否是超级管理员, 是则返回 true */
-    public static boolean isSuper() {
-        return getSessionInfoWithDefault().wasSuper();
-    }
-
-    /** 验证用户是否有登录, 如果有则返回 true */
-    public static boolean hasLogin() {
-        return getSessionInfoWithDefault().wasLogin();
-    }
     /** 验证登录, 未登录则抛出异常 */
     public static void checkLogin() {
-        if (!hasLogin()) {
+        if (!getSessionInfo().wasLogin()) {
             throw new NotLoginException();
         }
     }
 
-    /** 是否有访问权限, 有则返回 true */
-    public static boolean hasPermission() {
-        // 没有登录当然也就表示没有权限了
-        checkLogin();
-        // 管理员直接放过权限检查
-        if (isSuper()) {
-            return true;
-        }
-
-        String url = RequestUtils.getRequest().getRequestURI();
-        String method = RequestUtils.getRequest().getMethod();
-        return getSessionInfo().hasPermission(url, method);
-    }
-
     /** 检查权限, 无权限则抛出异常 */
     public static void checkPermission() {
-        if (!hasPermission()) {
-            throw new ForbiddenException("您没有(" + RequestUtils.getRequest().getRequestURL().toString() + ")的访问权限");
+        // 非超级管理员才验证权限
+        if (!getSessionInfo().wasSuper()) {
+            HttpServletRequest request = RequestUtils.getRequest();
+            String url = request.getRequestURI();
+            String method = request.getMethod();
+            if (!getSessionInfo().wasPermission(url, method)) {
+                throw new ForbiddenException(String.format("您没有(%s)的 %s 访问权限", url, method));
+            }
         }
     }
 

@@ -3,7 +3,6 @@ package com.github.util;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
@@ -13,7 +12,6 @@ import java.util.Objects;
 @Getter
 @NoArgsConstructor
 @Accessors(chain = true)
-@ToString
 class BackendSessionModel implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -41,8 +39,8 @@ class BackendSessionModel implements Serializable {
     // 以下为静态方法
 
     /*
-    static WebSessionModel assemblyData(User account) {
-        return JsonUtil.convert(account, WebSessionModel.class);
+    static BackendSessionModel assemblyData(User user) {
+        return JsonUtil.convert(user, BackendSessionModel.class);
     }
     */
 

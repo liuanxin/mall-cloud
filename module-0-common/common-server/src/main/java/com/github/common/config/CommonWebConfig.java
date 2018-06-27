@@ -14,7 +14,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import java.util.List;
 
 /**
- * 公共服务模块的配置数据. 主要是 mybatis 的多配置目录和类型处理器
+ * 公共模块的配置数据. 主要是 mybatis 的多配置目录和类型处理器
  *
  * @author https://github.com/liuanxin
  */
@@ -29,7 +29,7 @@ public class CommonWebConfig extends WebMvcConfigurationSupport {
     @Override
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
         // 继承至 Support 之后且处理了版本需要手动路由静态资源
-        registry.addResourceHandler("/static/**").addResourceLocations( "classpath:/static/");
+        registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
     }
 
     @Override
