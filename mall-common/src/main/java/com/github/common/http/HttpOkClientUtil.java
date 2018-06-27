@@ -6,24 +6,43 @@ import com.github.common.util.U;
 import com.google.common.io.Files;
 import okhttp3.*;
 
+import javax.activation.MimetypesFileTypeMap;
 import javax.net.ssl.SSLContext;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class HttpOkClientUtil {
 
-    private static final MediaType PNG = MediaType.parse("image/png");
-    private static final MediaType JPG = MediaType.parse("image/jpeg");
-    private static final MediaType BMP = MediaType.parse("image/bmp");
+    // MIME 说明: http://www.w3school.com.cn/media/media_mimeref.asp
+
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
     private static final OkHttpClient HTTP_CLIENT;
     static {
+        // 自动保存和更新 cookie
+        HashMap<String, List<Cookie>> cookieStore = new HashMap<>();
         OkHttpClient.Builder builder = new OkHttpClient().newBuilder()
+                // 连接超时时间
                 .connectTimeout(10, TimeUnit.SECONDS)
+                // 响应超时时间
                 .readTimeout(20, TimeUnit.SECONDS)
+                // 自动管理 cookie
+                .cookieJar(new CookieJar() {
+                    @Override
+                    public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
+                        cookieStore.put(url.host(), cookies);
+                    }
+                    @Override
+                    public List<Cookie> loadForRequest(HttpUrl url) {
+                        List<Cookie> cookies = cookieStore.get(url.host());
+                        return cookies != null ? cookies : new ArrayList<>();
+                    }
+                })
                 // 连接池中的最大连接数默认是 5 且每个连接保持 5 分钟
                 // .connectionPool(new ConnectionPool(20, 5, TimeUnit.MINUTES));
                 .connectionPool(new ConnectionPool());
@@ -112,19 +131,10 @@ public class HttpOkClientUtil {
         for (Map.Entry<String, File> entry : files.entrySet()) {
             File file = entry.getValue();
             if (U.isNotBlank(file)) {
-                MediaType type = null;
-                String fileName = file.getName().toLowerCase();
-                if (fileName.endsWith(".png")) {
-                    type = PNG;
-                } else if (fileName.endsWith(".jpg") || fileName.endsWith(".jpeg")) {
-                    type = JPG;
-                } else if (fileName.endsWith("bmp")) {
-                    type = BMP;
-                }
-                if (type != null) {
-                    RequestBody body = RequestBody.create(type, file);
-                    builder.addFormDataPart(entry.getKey(), null, body);
-                }
+                MediaType type = MediaType.parse(new MimetypesFileTypeMap().getContentType(file));
+
+                RequestBody body = RequestBody.create(type, file);
+                builder.addFormDataPart(entry.getKey(), null, body);
             }
         }
         Request.Builder request = new Request.Builder().post(builder.build());
