@@ -115,8 +115,8 @@ public final class Encrypt {
             }
         } catch (NoSuchAlgorithmException | InvalidKeyException | IOException |
                 SignatureException | JWTVerifyException e) {
-            if (LogUtil.ROOT_LOG.isDebugEnabled()) {
-                LogUtil.ROOT_LOG.debug("使用 jwt 解密(" + data + ")失败", e);
+            if (LogUtil.ROOT_LOG.isTraceEnabled()) {
+                LogUtil.ROOT_LOG.trace("使用 jwt 解密(" + data + ")失败", e);
             }
         } catch (Exception e) {
             if (LogUtil.ROOT_LOG.isDebugEnabled()) {
