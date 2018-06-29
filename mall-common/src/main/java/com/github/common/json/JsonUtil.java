@@ -55,7 +55,7 @@ public class JsonUtil {
 		try {
 			return RENDER.readValue(json, clazz);
 		} catch (Exception e) {
-			throw new RuntimeException("json (" + json + ") to object(" + clazz.getName() + ") exception", e);
+			throw new RuntimeException(String.format("json(%s) to Object(%s) exception", json, clazz.getName()), e);
 		}
 	}
     /** 将 json 字符串转换为对象, 当转换异常时, 返回 null */
@@ -64,7 +64,7 @@ public class JsonUtil {
             return RENDER.readValue(json, clazz);
         } catch (Exception e) {
             if (LogUtil.ROOT_LOG.isErrorEnabled()) {
-                LogUtil.ROOT_LOG.error(String.format("json(%s) to class(%s) exception", json, clazz), e);
+                LogUtil.ROOT_LOG.error(String.format("json(%s) to Object(%s) exception", json, clazz.getName()), e);
             }
             return null;
         }
@@ -75,7 +75,7 @@ public class JsonUtil {
         try {
             return RENDER.readValue(json, RENDER.getTypeFactory().constructCollectionType(List.class, clazz));
         } catch (Exception e) {
-            throw new RuntimeException("json(" + json + ") to list(" + clazz.getName() + ") exception.", e);
+            throw new RuntimeException(String.format("json(%s) to List<%s> exception", json, clazz.getName()), e);
         }
     }
     /** 将 json 字符串转换为指定的数组列表 */
@@ -84,7 +84,7 @@ public class JsonUtil {
             return RENDER.readValue(json, RENDER.getTypeFactory().constructCollectionType(List.class, clazz));
         } catch (Exception e) {
             if (LogUtil.ROOT_LOG.isErrorEnabled()) {
-                LogUtil.ROOT_LOG.error(String.format("json(%s) to List<%s> exception", json, clazz), e);
+                LogUtil.ROOT_LOG.error(String.format("json(%s) to List<%s> exception", json, clazz.getName()), e);
             }
             return null;
         }
