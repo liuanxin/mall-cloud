@@ -7,7 +7,6 @@ import com.github.common.util.A;
 import com.github.common.util.RequestUtils;
 import com.github.common.util.U;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -19,7 +18,7 @@ public final class AppTokenHandler {
     /** 生成 token 的过期时间单位 */
     private static final TimeUnit TOKEN_EXPIRE_TIME_UNIT = TimeUnit.DAYS;
 
-    /** 基于存进 session 的数据生成 token 返回 */
+    /** 基于存进 session 的数据生成 token 返回, 登录后调用返回给 app 由其保存下来 */
     @SuppressWarnings("unchecked")
     public static <T> String generateToken(T session) {
         if (U.isNotBlank(session)) {
@@ -46,12 +45,7 @@ public final class AppTokenHandler {
 
     /** 从请求中获取 token 数据 */
     private static String getToken() {
-        HttpServletRequest request = RequestUtils.getRequest();
-        String token = request.getHeader(Const.TOKEN);
-        if (U.isBlank(token)) {
-            token = request.getParameter(Const.TOKEN);
-        }
-        return token;
+        return RequestUtils.getHeaderOrParam(Const.TOKEN);
     }
 
     /** 从 token 中读 session 信息 */

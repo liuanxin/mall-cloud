@@ -11,7 +11,8 @@ import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
-@ControllerAdvice
+@Deprecated
+//@ControllerAdvice
 public class BackendJsonResultAdvice implements ResponseBodyAdvice<JsonResult> {
 
     @Override
@@ -24,10 +25,10 @@ public class BackendJsonResultAdvice implements ResponseBodyAdvice<JsonResult> {
                                       Class<? extends HttpMessageConverter<?>> selectedConverterType,
                                       ServerHttpRequest request, ServerHttpResponse response) {
         // 刷新一下 JsonResult 中 token 对应的超时时间
-        String token = AppTokenHandler.resetTokenExpireTime();
+        /*String token = AppTokenHandler.resetTokenExpireTime();
         if (U.isNotBlank(token)) {
             body.setToken(token);
-        }
+        }*/
         return body;
     }
 }

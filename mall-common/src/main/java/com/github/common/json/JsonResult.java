@@ -30,9 +30,11 @@ public class JsonResult<T> {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private T data;
 
+    /*
     @ApiReturn("需要 app 保存到本地的值(pc 无视), 每次请求都带上, key 是" + Const.TOKEN + ", header 或 param 都可")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private String token;
+    */
 
     private JsonResult(JsonCode code, String msg) {
         this.code = code.flag;
