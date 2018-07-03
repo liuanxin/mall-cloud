@@ -278,13 +278,24 @@ public final class U {
             return 0D;
         }
     }
+    public static boolean isNumber(Object obj) {
+        if (isBlank(obj)) {
+            return false;
+        }
+        try {
+            Double.parseDouble(obj.toString());
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
 
     // + ==> add
     // - ==> subtract
     // * ==> multiply
     // / ==> divide
 
-    /** num1 + num2, num2 为空则返回 num1, 两个都为空则返回 0 */
+    /** num1 + num2 */
     public static BigDecimal add(BigDecimal num1, BigDecimal num2) {
         if (isNotBlank(num1)) {
             if (isNotBlank(num2)) {
@@ -293,10 +304,14 @@ public final class U {
                 return num1;
             }
         } else {
-            return BigDecimal.ZERO;
+            if (isNotBlank(num2)) {
+                return num2;
+            } else {
+                return BigDecimal.ZERO;
+            }
         }
     }
-    /** num1 - num2, num2 为空则返回 num1, 两个都为空则返回 0 */
+    /** num1 - num2 */
     public static BigDecimal subtract(BigDecimal num1, BigDecimal num2) {
         if (isNotBlank(num1)) {
             if (isNotBlank(num2)) {
@@ -305,14 +320,18 @@ public final class U {
                 return num1;
             }
         } else {
-            return BigDecimal.ZERO;
+            if (isNotBlank(num2)) {
+                return BigDecimal.valueOf(-num2.doubleValue());
+            } else {
+                return BigDecimal.ZERO;
+            }
         }
     }
-    /** num1 * num2, num2 为空则返回 num1, 两个都为空则返回 0 */
-    public static BigDecimal multiply(BigDecimal num1, BigDecimal num2) {
+    /** num1 * num2 */
+    public static BigDecimal multiply(BigDecimal num1, Integer num2) {
         if (isNotBlank(num1)) {
-            if (isNotBlank(num2)) {
-                return num1.multiply(num2);
+            if (greater0(num2)) {
+                return num1.multiply(new BigDecimal(num2));
             } else {
                 return num1;
             }
@@ -320,11 +339,15 @@ public final class U {
             return BigDecimal.ZERO;
         }
     }
-    /** num1 / num2, num2 为空则返回 num1, 两个都为空则返回 0. 返回结果有两位小数点精度 */
-    public static BigDecimal divide(BigDecimal num1, BigDecimal num2) {
+    /** num1 / num2. 返回有 2 位小数点精度的结果 */
+    public static BigDecimal divide(BigDecimal num1, Integer num2) {
+        return divide(num1, num2, 2);
+    }
+    /** num1 / num2. 返回有指定位小数点精度的结果 */
+    public static BigDecimal divide(BigDecimal num1, Integer num2, int scale) {
         if (isNotBlank(num1)) {
-            if (isNotBlank(num2) && num2.doubleValue() != 0) {
-                return num1.divide(num2, 2, BigDecimal.ROUND_UP);
+            if (greater0(num2)) {
+                return num1.divide(new BigDecimal(num2), scale, BigDecimal.ROUND_UP);
             } else {
                 return num1;
             }
