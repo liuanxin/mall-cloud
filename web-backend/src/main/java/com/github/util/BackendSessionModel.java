@@ -1,5 +1,6 @@
 package com.github.util;
 
+import com.github.common.json.JsonUtil;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -36,13 +37,14 @@ class BackendSessionModel implements Serializable {
         return !Objects.equals(DEFAULT_ID, id) && !Objects.equals(DEFAULT_NAME, name);
     }
 
+
     // 以下为静态方法
 
-    /*
-    static BackendSessionModel assemblyData(User user) {
+
+    /** 组装数据, 将用户对象跟存进 session 中的数据进行转换 */
+    static <T> BackendSessionModel assemblyData(T user) {
         return JsonUtil.convert(user, BackendSessionModel.class);
     }
-    */
 
     /** 未登录时的默认用户信息 */
     static BackendSessionModel defaultUser() {

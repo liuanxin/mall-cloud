@@ -44,20 +44,21 @@ public class BackendSessionUtil {
         return securityCode != null && code.equalsIgnoreCase(securityCode.toString());
     }
 
-    // /** 登录之后调用此方法, 主要就是将 用户信息 放入 session */
-    /*
-    public static String whenLogin(User user) {
-        BackendSessionModel sessionModel = BackendSessionModel.assemblyData(user) ;
-        if (U.isNotBlank(sessionModel)) {
-            if (LogUtil.ROOT_LOG.isDebugEnabled()) {
-                LogUtil.ROOT_LOG.debug("put ({}) in session({})",
-                        JsonUtil.toJson(sessionModel), RequestUtils.getSession().getId());
+    /** 登录之后调用此方法, 主要就是将 用户信息 放入 session, app 需要将返回的数据保存到本地 */
+    public static <T> String whenLogin(T user) {
+        if (U.isNotBlank(user)) {
+            BackendSessionModel sessionModel = BackendSessionModel.assemblyData(user);
+            if (U.isNotBlank(sessionModel)) {
+                if (LogUtil.ROOT_LOG.isDebugEnabled()) {
+                    LogUtil.ROOT_LOG.debug("put ({}) in session({})",
+                            JsonUtil.toJson(sessionModel), RequestUtils.getSession().getId());
+                }
+                RequestUtils.getSession().setAttribute(USER, sessionModel);
+                return AppTokenHandler.generateToken(sessionModel);
             }
-            RequestUtils.getSession().setAttribute(USER, sessionModel);
         }
-        return AppTokenHandler.generateToken(sessionModel);
+        return U.EMPTY;
     }
-    */
 
 
     /** 获取用户信息. 没有则使用默认信息 */
