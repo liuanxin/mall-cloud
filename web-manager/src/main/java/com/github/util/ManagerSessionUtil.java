@@ -2,11 +2,13 @@ package com.github.util;
 
 import com.github.common.exception.ForbiddenException;
 import com.github.common.exception.NotLoginException;
+import com.github.common.json.JsonUtil;
 import com.github.common.util.LogUtil;
 import com.github.common.util.RequestUtils;
 import com.github.common.util.U;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /** 操作 session 都基于此, 其他地方不允许操作! 避免 session 被滥用 */
 public class ManagerSessionUtil {
@@ -33,9 +35,8 @@ public class ManagerSessionUtil {
         }
     }
 
-    /* 用户在登录之后调用此方法, 主要就是将 用户信息、可访问的 url 等放入 session */
-    /*
-    public static void toSession(Account account, List<AccountPermission> permissions) {
+    /** 登录之后调用此方法, 将 用户信息、可访问的 url 等放入 session */
+    public static <T,P> void whenLogin(T account, List<P> permissions) {
         ManagerSessionModel sessionModel = ManagerSessionModel.assemblyData(account, permissions);
         if (U.isNotBlank(sessionModel)) {
             if (LogUtil.ROOT_LOG.isDebugEnabled()) {
@@ -45,7 +46,6 @@ public class ManagerSessionUtil {
             RequestUtils.getSession().setAttribute(USER, sessionModel);
         }
     }
-    */
 
     /** 获取用户信息, 从 token 中获取, 没有则从 session 中获取 */
     private static ManagerSessionModel getSessionInfo() {
@@ -65,19 +65,21 @@ public class ManagerSessionUtil {
 
     /** 验证登录, 未登录则抛出异常 */
     public static void checkLogin() {
-        if (!getSessionInfo().wasLogin()) {
+        if (getSessionInfo().notLogin()) {
             throw new NotLoginException();
         }
     }
 
     /** 检查权限, 无权限则抛出异常 */
     public static void checkPermission() {
+        ManagerSessionModel sessionModel = getSessionInfo();
         // 非超级管理员才验证权限
-        if (!getSessionInfo().wasSuper()) {
+        if (sessionModel.notSuper()) {
             HttpServletRequest request = RequestUtils.getRequest();
             String url = request.getRequestURI();
             String method = request.getMethod();
-            if (!getSessionInfo().wasPermission(url, method)) {
+
+            if (sessionModel.notPermission(url, method)) {
                 throw new ForbiddenException(String.format("您没有(%s)的 %s 访问权限", url, method));
             }
         }
