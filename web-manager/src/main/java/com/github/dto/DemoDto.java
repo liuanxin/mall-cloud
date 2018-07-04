@@ -1,6 +1,6 @@
 package com.github.dto;
 
-import com.github.global.enums.Gender;
+import com.github.common.enums.Gender;
 import com.github.liuanxin.api.annotation.ApiParam;
 import lombok.Getter;
 import lombok.Setter;

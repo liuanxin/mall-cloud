@@ -1,4 +1,4 @@
-package com.github.global.enums;
+package com.github.common.enums;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;

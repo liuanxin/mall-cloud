@@ -1,6 +1,6 @@
 package com.github.global.handler;
 
-import com.github.global.enums.Gender;
+import com.github.common.enums.Gender;
 import com.github.common.util.U;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;

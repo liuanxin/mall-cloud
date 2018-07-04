@@ -28,7 +28,7 @@ import java.util.List;
 public final class SpringMvc {
 
     public static void handlerFormatter(FormatterRegistry registry) {
-        registry.addConverter(new StringTrimAndEscapeConverter());
+        // registry.addConverter(new StringTrimAndEscapeConverter());
         registry.addConverterFactory(new StringToNumberConverter());
         registry.addConverterFactory(new StringToEnumConverter());
         registry.addConverter(new String2DateConverter());
