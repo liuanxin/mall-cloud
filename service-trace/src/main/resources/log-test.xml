@@ -24,7 +24,6 @@
     <logger name="io.undertow" level="warn"/>
     <logger name="freemarker" level="warn"/>
 
-    <logger name="com.github.user.repository" level="warn"/>
     <logger name="com.github.common.mvc" level="warn"/>
 
     <logger name="com.netflix" level="warn"/>
