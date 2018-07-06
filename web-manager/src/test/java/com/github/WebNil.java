@@ -186,7 +186,7 @@ public class WebNil {
                 "</pre>\n" +
                 "                            <p> 接口地址 <code>{{! url.method}} {{! url.url}}</code></p>\n" +
                 "\n" +
-                "                            {{? url.paramList && url.paramList.length}}\n" +
+                "                            {{? url.paramList && url.paramList.length > 0}}\n" +
                 "                            <p>参数说明如下</p>\n" +
                 "                            <table class=\"table table-striped table-bordered table-hover table-condensed\">\n" +
                 "                                <thead>\n" +
@@ -203,19 +203,19 @@ public class WebNil {
                 "                                {{~ url.paramList  :param:paramIndex}}\n" +
                 "                                <tr>\n" +
                 "                                    {{? param.must}}\n" +
-                "                                        <td class=\"text-left\"><b>{{! param.name}}</b></td>\n" +
-                "                                        <td class=\"text-left\"><b>{{! param.dataType}}</b></td>\n" +
-                "                                        <td class=\"text-left\"><b>Yes</b></td>\n" +
-                "                                        <td class=\"text-left\"><b>{{! param.desc}}</b></td>\n" +
-                "                                        {{? url.hasExample}}<td class=\"text-left\"><b>{{! param.example}}</b></td>{{?}}\n" +
-                "                                        {{? url.hasHeader}}<td class=\"text-left\"><b>{{! param.paramType}}</b></td>{{?}}\n" +
+                "                                    <td class=\"text-left\"><b>{{! param.name}}</b></td>\n" +
+                "                                    <td class=\"text-left\"><b>{{! param.dataType}}</b></td>\n" +
+                "                                    <td class=\"text-left\"><b>Yes</b></td>\n" +
+                "                                    <td class=\"text-left\" style=\"white-space:pre;\"><b>{{! param.desc}}</b></td>\n" +
+                "                                    {{? url.hasExample}}<td class=\"text-left\" style=\"white-space:pre;\"><b>{{! param.example}}</b></td>{{?}}\n" +
+                "                                    {{? url.hasHeader}}<td class=\"text-left\"><b>{{! param.paramType}}</b></td>{{?}}\n" +
                 "                                    {{??}}\n" +
-                "                                        <td class=\"text-left\">{{! param.name}}</td>\n" +
-                "                                        <td class=\"text-left\">{{! param.dataType}}</td>\n" +
-                "                                        <td class=\"text-left\">No</td>\n" +
-                "                                        <td class=\"text-left\">{{! param.desc}}</td>\n" +
-                "                                        {{? url.hasExample}}<td class=\"text-left\">{{! param.example}}</td>{{?}}\n" +
-                "                                        {{? url.hasHeader}}<td class=\"text-left\">{{! param.paramType}}</td>{{?}}\n" +
+                "                                    <td class=\"text-left\">{{! param.name}}</td>\n" +
+                "                                    <td class=\"text-left\">{{! param.dataType}}</td>\n" +
+                "                                    <td class=\"text-left\">No</td>\n" +
+                "                                    <td class=\"text-left\" style=\"white-space:pre;\">{{! param.desc}}</td>\n" +
+                "                                    {{? url.hasExample}}<td class=\"text-left\" style=\"white-space:pre;\">{{! param.example}}</td>{{?}}\n" +
+                "                                    {{? url.hasHeader}}<td class=\"text-left\">{{! param.paramType}}</td>{{?}}\n" +
                 "                                    {{?}}\n" +
                 "                                </tr>\n" +
                 "                                {{~}}\n" +
@@ -226,7 +226,7 @@ public class WebNil {
                 "                            <p>返回示例及说明如下</p>\n" +
                 "                            <div class=\"org-src-container\">\n" +
                 "                                <pre class=\"src src-json\">{{! url.commentJson}}</pre>\n" +
-                "                                {{? url.returnList && url.returnList.length}}\n" +
+                "                                {{? url.returnList && url.returnList.length > 0}}\n" +
                 "                                <table class=\"table table-striped table-bordered table-hover table-condensed\">\n" +
                 "                                    <thead>\n" +
                 "                                    <tr>\n" +
@@ -258,12 +258,21 @@ public class WebNil {
                 "                                </tr>\n" +
                 "                                </thead>\n" +
                 "                                <tbody>\n" +
-                "                                    {{~ (url.responseList || it.responseList)  :response}}\n" +
+                "                                {{? (url.responseList && url.responseList.length > 0)}}\n" +
+                "                                    {{~ url.responseList  :response}}\n" +
                 "                                    <tr>\n" +
                 "                                        <td class=\"text-left\">{{! response.code}}</td>\n" +
                 "                                        <td class=\"text-left\">{{! response.msg}}</td>\n" +
                 "                                    </tr>\n" +
                 "                                    {{~}}\n" +
+                "                                {{?? it.responseList && it.responseList.length > 0}}\n" +
+                "                                    {{~ it.responseList  :response}}\n" +
+                "                                    <tr>\n" +
+                "                                        <td class=\"text-left\">{{! response.code}}</td>\n" +
+                "                                        <td class=\"text-left\">{{! response.msg}}</td>\n" +
+                "                                    </tr>\n" +
+                "                                    {{~}}\n" +
+                "                                {{?}}\n" +
                 "                                </tbody>\n" +
                 "                            </table>\n" +
                 "                            {{?}}\n" +
@@ -311,74 +320,88 @@ public class WebNil {
                 "    </script>\n" +
                 "</footer>\n" +
                 "\n" +
+                "<script type=\"text/javascript\">\n" +
+                "/* var projectDomain = \"//api.example.net\"; */\n" +
+                "var projectDomain = \"\";\n" +
+                "</script>\n" +
                 "<script src=\"//cdn.bootcss.com/jquery/1.11.3/jquery.min.js\"></script>\n" +
                 "<script src=\"//cdn.bootcss.com/twitter-bootstrap/3.3.5/js/bootstrap.min.js\"></script>\n" +
                 "<script type=\"text/javascript\">\n" +
-                "    $(function () {\n" +
-                "        'use strict';\n" +
-                "        $(document.body).scrollspy({target: '.bs-docs-sidebar'});\n" +
-                "        $('.bs-docs-sidebar').affix();\n" +
-                "    });\n" +
+                "$(function () {\n" +
+                "    'use strict';\n" +
+                "    $(document.body).scrollspy({target: '.bs-docs-sidebar'});\n" +
+                "    $('.bs-docs-sidebar').affix();\n" +
+                "});\n" +
                 "</script>\n" +
                 "\n" +
                 "<script src=\"//cdn.bootcss.com/dot/1.1.2/doT.min.js\"></script>\n" +
                 "<script type=\"text/javascript\">\n" +
-                "    /* var projectDomain = \"//api.example.net\"; */\n" +
-                "    var projectDomain = \"\"; // 如果自定义使用上面的\n" +
-                "    $.get(projectDomain + \"/api/info\", function (module) {\n" +
-                "        if (module === null || module === \"\") {\n" +
-                "            $(\".col-md-9\").html(\"<span style='color:red;'>无接口信息</span>\");\n" +
+                "function addLine(html) {\n" +
+                "    if (html !== null && html !== \"\") {\n" +
+                "        var lineNum = html.split(/\\n/).length;\n" +
+                "        var lineHtml = '<span class=\"line-number\">';\n" +
+                "        for (var i = 0; i < lineNum; i++) {\n" +
+                "            lineHtml += '<span>' + i + '</span>';\n" +
+                "        }\n" +
+                "        lineHtml += '</span>';\n" +
+                "        return lineHtml + html;\n" +
+                "    } else {\n" +
+                "        return \"\";\n" +
+                "    }\n" +
+                "}\n" +
+                "\n" +
+                "$.ajaxSetup({\n" +
+                "    crossDomain: true,\n" +
+                "    xhrFields: { withCredentials: true }\n" +
+                "});\n" +
+                "$.get(projectDomain + \"/api/info\", function (module) {\n" +
+                "    if (module === null || module === \"\") {\n" +
+                "        $(\".col-md-9\").html(\"<span style='color:red;'>无接口信息</span>\");\n" +
+                "    } else {\n" +
+                "        var urlRender = $(\"#url-render\");\n" +
+                "        var urlRenderTemplate = doT.template(urlRender.html());\n" +
+                "        urlRender.parent().html(urlRenderTemplate(module));\n" +
+                "\n" +
+                "        var navRender = $(\"#url-nav-render\");\n" +
+                "        var navRenderTemplate = doT.template(navRender.html());\n" +
+                "        navRender.parent().html(navRenderTemplate(module));\n" +
+                "\n" +
+                "        $(\"pre[class='src src-json']\").each(function () {\n" +
+                "            var html = $(this).html();\n" +
+                "            if (html !== null && html !== \"\") {\n" +
+                "                html = html.replace(/(.*?)(\\/\\*.*?\\*\\/)/g, \"$1<span class=\\\"comment\\\">$2</span>\");\n" +
+                "                $(this).html(addLine(html));\n" +
+                "            }\n" +
+                "        });\n" +
+                "\n" +
+                "        var href = window.location.href;\n" +
+                "        if (href.includes(\"#\")) {\n" +
+                "            href = href.substring(href.indexOf(\"#\"), href.length);\n" +
+                "            var anchor = $(href);\n" +
+                "            if (anchor.length > 0) {\n" +
+                "                var li = $(\"a[href='\" + href + \"']\").parent();\n" +
+                "                li.addClass(\"active\");\n" +
+                "                li.parent().parent().addClass(\"active\");\n" +
+                "                $(\"html,body\").animate({scrollTop: anchor.offset().top}, 0);\n" +
+                "            }\n" +
                 "        } else {\n" +
-                "            var urlRender = $(\"#url-render\");\n" +
-                "            var urlRenderTemplate = doT.template(urlRender.html());\n" +
-                "            urlRender.parent().html(urlRenderTemplate(module));\n" +
-                "\n" +
-                "            var navRender = $(\"#url-nav-render\");\n" +
-                "            var navRenderTemplate = doT.template(navRender.html());\n" +
-                "            navRender.parent().html(navRenderTemplate(module));\n" +
-                "\n" +
-                "            $(\"pre[class='src src-json']\").each(function () {\n" +
-                "                var html = $(this).html();\n" +
-                "                if (html !== null && html !== \"\") {\n" +
-                "                    var lineNum = html.split(/\\n/).length;\n" +
-                "                    html = html.replace(/(.*?)(\\/\\*.*?\\*\\/)/g, \"$1<span class=\\\"comment\\\">$2</span>\");\n" +
-                "                    var lineHtml = '<span class=\"line-number\">';\n" +
-                "                    for (var i = 0; i < lineNum; i++) {\n" +
-                "                        lineHtml += '<span>' + (i) + '</span>';\n" +
-                "                    }\n" +
-                "                    lineHtml += '</span>';\n" +
-                "                    $(this).html(lineHtml + html);\n" +
-                "                }\n" +
-                "            });\n" +
-                "\n" +
-                "            var href = window.location.href;\n" +
-                "            if (href.includes(\"#\")) {\n" +
-                "                href = href.substring(href.indexOf(\"#\"), href.length);\n" +
-                "                var anchor = $(href);\n" +
-                "                if (anchor.length > 0) {\n" +
-                "                    var li = $(\"a[href='\" + href + \"']\").parent();\n" +
-                "                    li.addClass(\"active\");\n" +
-                "                    li.parent().parent().addClass(\"active\");\n" +
-                "                    $(\"html,body\").animate({scrollTop: anchor.offset().top}, 0);\n" +
-                "                }\n" +
-                "            } else {\n" +
-                "                $('.bs-docs-sidebar li').first().addClass('active');\n" +
-                "            }\n" +
+                "            $('.bs-docs-sidebar li').first().addClass('active');\n" +
                 "        }\n" +
-                "    }).error(function () {\n" +
-                "        $(\".col-md-9\").html(\"<span style='color:red;'>接口请求错误</span>\");\n" +
-                "    });\n" +
+                "    }\n" +
+                "}).error(function () {\n" +
+                "    $(\".col-md-9\").html(\"<span style='color:red;'>接口请求错误</span>\");\n" +
+                "});\n" +
                 "\n" +
-                "    $.get(projectDomain + \"/api/version\", function (urlCopyright) {\n" +
-                "        if (urlCopyright !== null && urlCopyright !== \"\") {\n" +
-                "            if (urlCopyright.title !== null && urlCopyright.title !== \"\") {\n" +
-                "                $(\"title\").html(urlCopyright.title);\n" +
-                "            }\n" +
-                "            var copyrightRender = $(\"#copyright\");\n" +
-                "            var template = doT.template(copyrightRender.html());\n" +
-                "            copyrightRender.parent().html(template(urlCopyright));\n" +
+                "$.get(projectDomain + \"/api/version\", function (urlCopyright) {\n" +
+                "    if (urlCopyright !== null && urlCopyright !== \"\") {\n" +
+                "        if (urlCopyright.title !== null && urlCopyright.title !== \"\") {\n" +
+                "            $(\"title\").html(urlCopyright.title);\n" +
                 "        }\n" +
-                "    });\n" +
+                "        var copyrightRender = $(\"#copyright\");\n" +
+                "        var template = doT.template(copyrightRender.html());\n" +
+                "        copyrightRender.parent().html(template(urlCopyright));\n" +
+                "    }\n" +
+                "});\n" +
                 "</script>\n" +
                 "</body>\n" +
                 "</html>\n";
