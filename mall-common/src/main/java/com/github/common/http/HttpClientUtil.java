@@ -254,7 +254,7 @@ public class HttpClientUtil {
         if (U.isNotBlank(params)) {
             sbd.append(" params(").append(params).append(")");
         }
-        if (U.isNotBlank(requestHeaders)) {
+        if (A.isNotEmpty(requestHeaders)) {
             sbd.append(" request headers(");
             for (Header header : requestHeaders) {
                 sbd.append("<").append(header.getName()).append(" : ").append(header.getValue()).append(">");
