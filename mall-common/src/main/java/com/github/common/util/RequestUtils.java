@@ -100,6 +100,23 @@ public final class RequestUtils {
         return getRequest().getHeader(REFERRER);
     }
 
+    public static String getDomain() {
+        StringBuilder domain = new StringBuilder();
+
+        HttpServletRequest request = getRequest();
+        String scheme = request.getScheme();
+        int port = request.getServerPort();
+        boolean http = ("http".equals(scheme) && port != 80);
+        boolean https = ("https".equals(scheme) && port != 443);
+
+        domain.append(scheme).append("://").append(request.getServerName());
+        if (http || https) {
+            domain.append(':');
+            domain.append(port);
+        }
+        return domain.toString();
+    }
+
     /**
      * 格式化参数, 如果是文件流(form 表单中有 type="multipart/form-data" 这种), 则不打印出参数
      *
