@@ -2,7 +2,6 @@ package com.github.common.mvc;
 
 import com.github.common.Const;
 import com.github.common.util.A;
-import com.github.common.util.RequestUtils;
 import com.github.common.util.U;
 
 import javax.servlet.*;
@@ -25,7 +24,7 @@ public class CorsFilter implements Filter {
 
     private void handlerCors(HttpServletRequest request, HttpServletResponse response) {
         String origin = request.getHeader(ORIGIN);
-        String domain = RequestUtils.getDomain();
+        String domain = getDomain(request);
 
         if (U.isNotBlank(origin) && !origin.equals(domain)) {
             if (U.isBlank(response.getHeader(ACCESS_CONTROL_ALLOW_ORIGIN))) {
@@ -50,6 +49,21 @@ public class CorsFilter implements Filter {
             }
             */
         }
+    }
+    private String getDomain(HttpServletRequest request) {
+        StringBuilder domain = new StringBuilder();
+
+        String scheme = request.getScheme();
+        int port = request.getServerPort();
+        boolean http = ("http".equals(scheme) && port != 80);
+        boolean https = ("https".equals(scheme) && port != 443);
+
+        domain.append(scheme).append("://").append(request.getServerName());
+        if (http || https) {
+            domain.append(':');
+            domain.append(port);
+        }
+        return domain.toString();
     }
 
     @Override
