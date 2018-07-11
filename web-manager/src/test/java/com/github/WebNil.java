@@ -12,6 +12,7 @@ public class WebNil {
                 "    <meta charset=\"utf-8\">\n" +
                 "    <meta name=\"viewport\" content=\"width=device-width,initial-scale=1,maximum-scale=1\">\n" +
                 "    <link rel=\"stylesheet\" href=\"//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css\">\n" +
+                "    <link rel=\"stylesheet\" href=\"//cdn.bootcss.com/jQuery-Validation-Engine/2.6.4/validationEngine.jquery.min.css\">\n" +
                 "    <style type=\"text/css\">\n" +
                 "        html {\n" +
                 "            position: relative;\n" +
@@ -40,6 +41,12 @@ public class WebNil {
                 "            margin-top: 20px;\n" +
                 "            margin-bottom: 20px;\n" +
                 "        }\n" +
+                "        input {\n" +
+                "            width: 180px;\n" +
+                "        }\n" +
+                "        textarea {\n" +
+                "            width: 180px;\n" +
+                "        }\n" +
                 "        blockquote p {\n" +
                 "            font-size: 18px;\n" +
                 "        }\n" +
@@ -64,6 +71,9 @@ public class WebNil {
                 "        pre .comment {\n" +
                 "            color: #998;\n" +
                 "            font-style: italic;\n" +
+                "        }\n" +
+                "        .response {\n" +
+                "            display: none;\n" +
                 "        }\n" +
                 "        figcaption {\n" +
                 "            font-size: 16px;\n" +
@@ -172,60 +182,24 @@ public class WebNil {
                 "            <script id=\"url-render\" type=\"text/x-dot-template\">\n" +
                 "                {{~ it.moduleList  :value:index}}\n" +
                 "                <div class=\"outline-2\">\n" +
-                "                    <h2 id=\"{{! value.name}}\"><span class=\"section-number-2\">{{! index + 1}}</span> {{! value.info}}</h2>\n" +
+                "                    <h2 id=\"{{= value.name}}\"><span class=\"section-number-2\">{{= index + 1}}</span> {{= value.info}}</h2>\n" +
                 "                    {{~ value.urlList  :url:urlIndex}}\n" +
                 "                    <div class=\"outline-3\">\n" +
-                "                        <h3 id=\"{{! value.name}}-{{! url.id}}\">\n" +
-                "                            <span class=\"section-number-3\">{{! index + 1}}.{{! urlIndex + 1}}</span> {{! url.title}}\n" +
+                "                        <h3 id=\"{{= value.name}}-{{= url.id}}\">\n" +
+                "                            <span class=\"section-number-3\">{{= index + 1}}.{{= urlIndex + 1}}</span> {{= url.title}}\n" +
                 "                        </h3>\n" +
                 "                        <div class=\"outline-text-3\">\n" +
                 "<pre class=\"example\">\n" +
-                "{{? url.develop && url.develop !== ''}}开发: {{! url.develop}}{{??}}未标明开发者{{?}}<br>\n" +
-                "{{? url.desc}}说明: {{! url.desc}}<br>{{?}}<br>\n" +
-                "<a target=\"_blank\" href=\"{{! url.exampleUrl}}\">返回结果示例地址</a>\n" +
+                "{{? url.develop && url.develop !== ''}}开发: {{= url.develop}}{{??}}未标明开发者{{?}}<br>\n" +
+                "{{? url.desc}}说明: {{= url.desc}}<br>{{?}}<br>\n" +
+                "<a target=\"_blank\" href=\"{{= url.exampleUrl}}\">返回结果示例地址</a>\n" +
                 "</pre>\n" +
-                "                            <p> 接口地址 <code>{{! url.method}} {{! url.url}}</code></p>\n" +
+                "                            <p> 接口地址 <code>{{= url.method}} {{= url.url}}</code></p>\n" +
                 "\n" +
-                "                            {{? url.paramList && url.paramList.length > 0}}\n" +
-                "                            <p>参数说明如下</p>\n" +
-                "                            <table class=\"table table-striped table-bordered table-hover table-condensed\">\n" +
-                "                                <thead>\n" +
-                "                                <tr>\n" +
-                "                                    <th scope=\"col\" class=\"text-left\">名称</th>\n" +
-                "                                    <th scope=\"col\" class=\"text-left\">数据类型</th>\n" +
-                "                                    <th scope=\"col\" class=\"text-left\">必须</th>\n" +
-                "                                    <th scope=\"col\" class=\"text-left\">说明</th>\n" +
-                "                                    {{? url.hasExample}} <th scope=\"col\" class=\"text-left\">示例</th> {{?}}\n" +
-                "                                    {{? url.hasHeader}} <th scope=\"col\" class=\"text-left\">参数类型</th> {{?}}\n" +
-                "                                </tr>\n" +
-                "                                </thead>\n" +
-                "                                <tbody>\n" +
-                "                                {{~ url.paramList  :param:paramIndex}}\n" +
-                "                                <tr>\n" +
-                "                                    {{? param.must}}\n" +
-                "                                    <td class=\"text-left\"><b>{{! param.name}}</b></td>\n" +
-                "                                    <td class=\"text-left\"><b>{{! param.dataType}}</b></td>\n" +
-                "                                    <td class=\"text-left\"><b>Yes</b></td>\n" +
-                "                                    <td class=\"text-left\" style=\"white-space:pre;\"><b>{{! param.desc}}</b></td>\n" +
-                "                                    {{? url.hasExample}}<td class=\"text-left\" style=\"white-space:pre;\"><b>{{! param.example}}</b></td>{{?}}\n" +
-                "                                    {{? url.hasHeader}}<td class=\"text-left\"><b>{{! param.paramType}}</b></td>{{?}}\n" +
-                "                                    {{??}}\n" +
-                "                                    <td class=\"text-left\">{{! param.name}}</td>\n" +
-                "                                    <td class=\"text-left\">{{! param.dataType}}</td>\n" +
-                "                                    <td class=\"text-left\">No</td>\n" +
-                "                                    <td class=\"text-left\" style=\"white-space:pre;\">{{! param.desc}}</td>\n" +
-                "                                    {{? url.hasExample}}<td class=\"text-left\" style=\"white-space:pre;\">{{! param.example}}</td>{{?}}\n" +
-                "                                    {{? url.hasHeader}}<td class=\"text-left\">{{! param.paramType}}</td>{{?}}\n" +
-                "                                    {{?}}\n" +
-                "                                </tr>\n" +
-                "                                {{~}}\n" +
-                "                                </tbody>\n" +
-                "                            </table>\n" +
-                "                            {{?}}\n" +
-                "\n" +
+                "                            {{? url.commentJson && url.commentJson !== '' }}\n" +
                 "                            <p>返回示例及说明如下</p>\n" +
                 "                            <div class=\"org-src-container\">\n" +
-                "                                <pre class=\"src src-json\">{{! url.commentJson}}</pre>\n" +
+                "                                <pre class=\"src src-json\">{{= url.commentJson}}</pre>\n" +
                 "                                {{? url.returnList && url.returnList.length > 0}}\n" +
                 "                                <table class=\"table table-striped table-bordered table-hover table-condensed\">\n" +
                 "                                    <thead>\n" +
@@ -238,15 +212,16 @@ public class WebNil {
                 "                                    <tbody>\n" +
                 "                                    {{~ url.returnList  :rtn}}\n" +
                 "                                    <tr>\n" +
-                "                                        <td class=\"text-left\">{{! rtn.name}}</td>\n" +
-                "                                        <td class=\"text-left\">{{! rtn.type}}</td>\n" +
-                "                                        <td class=\"text-left\">{{! rtn.desc}}</td>\n" +
+                "                                        <td class=\"text-left\">{{= rtn.name}}</td>\n" +
+                "                                        <td class=\"text-left\">{{= rtn.type}}</td>\n" +
+                "                                        <td class=\"text-left\"><pre>{{= rtn.desc}}</pre></td>\n" +
                 "                                    </tr>\n" +
                 "                                    {{~}}\n" +
                 "                                    </tbody>\n" +
                 "                                </table>\n" +
                 "                                {{?}}\n" +
                 "                            </div>\n" +
+                "                            {{?}}\n" +
                 "\n" +
                 "                            {{? (it.responseList && it.responseList.length > 0) || (url.responseList && url.responseList.length > 0)}}\n" +
                 "                            <p>返回码说明如下</p>\n" +
@@ -259,24 +234,86 @@ public class WebNil {
                 "                                </thead>\n" +
                 "                                <tbody>\n" +
                 "                                {{? (url.responseList && url.responseList.length > 0)}}\n" +
-                "                                    {{~ url.responseList  :response}}\n" +
-                "                                    <tr>\n" +
-                "                                        <td class=\"text-left\">{{! response.code}}</td>\n" +
-                "                                        <td class=\"text-left\">{{! response.msg}}</td>\n" +
-                "                                    </tr>\n" +
-                "                                    {{~}}\n" +
+                "                                {{~ url.responseList  :response}}\n" +
+                "                                <tr>\n" +
+                "                                    <td class=\"text-left\">{{= response.code}}</td>\n" +
+                "                                    <td class=\"text-left\">{{= response.msg}}</td>\n" +
+                "                                </tr>\n" +
+                "                                {{~}}\n" +
                 "                                {{?? it.responseList && it.responseList.length > 0}}\n" +
-                "                                    {{~ it.responseList  :response}}\n" +
-                "                                    <tr>\n" +
-                "                                        <td class=\"text-left\">{{! response.code}}</td>\n" +
-                "                                        <td class=\"text-left\">{{! response.msg}}</td>\n" +
-                "                                    </tr>\n" +
-                "                                    {{~}}\n" +
+                "                                {{~ it.responseList  :response}}\n" +
+                "                                <tr>\n" +
+                "                                    <td class=\"text-left\">{{= response.code}}</td>\n" +
+                "                                    <td class=\"text-left\">{{= response.msg}}</td>\n" +
+                "                                </tr>\n" +
+                "                                {{~}}\n" +
                 "                                {{?}}\n" +
                 "                                </tbody>\n" +
                 "                            </table>\n" +
                 "                            {{?}}\n" +
                 "\n" +
+                "                            <form method=\"{{= url.method}}\" action=\"{{= url.url}}\">\n" +
+                "                                {{? url.paramList && url.paramList.length > 0}}\n" +
+                "                                <p>参数说明如下</p>\n" +
+                "                                <table class=\"table table-striped table-bordered table-hover table-condensed\">\n" +
+                "                                    <thead>\n" +
+                "                                    <tr>\n" +
+                "                                        <th scope=\"col\" class=\"text-left\">名称</th>\n" +
+                "                                        <th scope=\"col\" class=\"text-left\">说明</th>\n" +
+                "                                        <th scope=\"col\" class=\"text-left\">必须</th>\n" +
+                "                                        <th scope=\"col\" class=\"text-left\">数据类型</th>\n" +
+                "                                        {{? url.hasHeader}} <th scope=\"col\" class=\"text-left\">参数类型</th> {{?}}\n" +
+                "                                        <th scope=\"col\" class=\"text-left\">示例</th>\n" +
+                "                                    </tr>\n" +
+                "                                    </thead>\n" +
+                "                                    <tbody>\n" +
+                "                                    {{~ url.paramList  :param:paramIndex}}\n" +
+                "                                    <tr>\n" +
+                "                                        {{? param.must}}\n" +
+                "                                        <td class=\"text-left\"><b>{{= param.name}}</b></td>\n" +
+                "                                        <td class=\"text-left\" style=\"white-space:pre;\"><b>{{= param.desc}}</b></td>\n" +
+                "                                        <td class=\"text-left\"><b>Yes</b></td>\n" +
+                "                                        <td class=\"text-left\"><b>{{= param.dataType}}</b></td>\n" +
+                "                                        {{? url.hasHeader}}<td class=\"text-left\"><b>{{= param.paramType}}</b></td>{{?}}\n" +
+                "                                        <td class=\"text-left\">\n" +
+                "                                            <b>\n" +
+                "                                                <label>\n" +
+                "                                                {{? param.dataType == 'file' }}\n" +
+                "                                                <input name=\"{{= param.name}}\" type=\"file\" class=\"validate[required]\"/>\n" +
+                "                                                {{?? param.hasTextarea}}\n" +
+                "                                                <textarea name=\"{{= param.name}}\" class=\"validate[required{{? param.dataType == 'int'}},custom[integer]{{?? param.dataType == 'double'}},custom[number]{{?}}]\">{{= param.example}}</textarea>\n" +
+                "                                                {{??}}\n" +
+                "                                                <input name=\"{{= param.name}}\" class=\"validate[required{{? param.dataType == 'int'}},custom[integer]{{?? param.dataType == 'double'}},custom[number]{{?}}]\" value=\"{{= param.example}}\"/>\n" +
+                "                                                {{?}}\n" +
+                "                                                </label>\n" +
+                "                                            </b>\n" +
+                "                                        </td>\n" +
+                "                                        {{??}}\n" +
+                "                                        <td class=\"text-left\">{{= param.name}}</td>\n" +
+                "                                        <td class=\"text-left\" style=\"white-space:pre;\">{{= param.desc}}</td>\n" +
+                "                                        <td class=\"text-left\">No</td>\n" +
+                "                                        <td class=\"text-left\">{{= param.dataType}}</td>\n" +
+                "                                        {{? url.hasHeader}}<td class=\"text-left\">{{= param.paramType}}</td>{{?}}\n" +
+                "                                        <td class=\"text-left\">\n" +
+                "                                            <label>\n" +
+                "                                            {{? param.dataType == 'file' }}\n" +
+                "                                            <input name=\"{{= param.name}}\" type=\"file\"/>\n" +
+                "                                            {{?? param.hasTextarea}}\n" +
+                "                                            <textarea name=\"{{= param.name}}\"{{? param.dataType == 'int'}} class=\"validate[custom[integer]]\"{{?? param.dataType == 'double'}} class=\"validate[custom[number]]\"{{?}}>{{= param.example}}</textarea>\n" +
+                "                                            {{??}}\n" +
+                "                                            <input name=\"{{= param.name}}\"{{? param.dataType == 'int'}} class=\"validate[custom[integer]]\"{{?? param.dataType == 'double'}} class=\"validate[custom[number]]\"{{?}} value=\"{{= param.example}}\"/>\n" +
+                "                                            {{?}}\n" +
+                "                                            </label>\n" +
+                "                                        </td>\n" +
+                "                                        {{?}}\n" +
+                "                                    </tr>\n" +
+                "                                    {{~}}\n" +
+                "                                    </tbody>\n" +
+                "                                </table>\n" +
+                "                                {{?}}\n" +
+                "                                <p><input type=\"button\" value=\"Try it now!\" onclick=\"request(this);\"/></p>\n" +
+                "                                <div class=\"response\"><pre class=\"src src-json\"></pre></div>\n" +
+                "                            </form>\n" +
                 "                            <hr/>\n" +
                 "                        </div>\n" +
                 "                    </div>\n" +
@@ -292,11 +329,11 @@ public class WebNil {
                 "                        <script id=\"url-nav-render\" type=\"text/x-dot-template\">\n" +
                 "                            {{~ it.moduleList  :value:index}}\n" +
                 "                            <li>\n" +
-                "                                <a href=\"#{{! value.name}}\">{{! index + 1}} {{! value.info}}</a>\n" +
+                "                                <a href=\"#{{= value.name}}\">{{= index + 1}} {{= value.info}}</a>\n" +
                 "                                <ul class=\"nav\">\n" +
                 "                                    {{~ value.urlList  :url:urlIndex}}\n" +
                 "                                    <li>\n" +
-                "                                        <a href=\"#{{! value.name}}-{{! url.id}}\">{{! index + 1}}.{{! urlIndex + 1}} {{! url.title}}</a>\n" +
+                "                                        <a href=\"#{{= value.name}}-{{= url.id}}\">{{= index + 1}}.{{= urlIndex + 1}} {{= url.title}}</a>\n" +
                 "                                    </li>\n" +
                 "                                    {{~}}\n" +
                 "                                </ul>\n" +
@@ -312,22 +349,23 @@ public class WebNil {
                 "<footer class=\"postamble\">\n" +
                 "    <script id=\"copyright\" type=\"text/x-dot-template\">\n" +
                 "        <div>\n" +
-                "            <p class=\"version\">Version: {{! it.version}}</p>\n" +
-                "            <p class=\"copyright\">Copyright: {{! it.copyright}}</p>\n" +
-                "            <p class=\"team\">Team: {{! it.team}}</p>\n" +
-                "            <p class=\"statistics\">共 {{! it.groupCount}} 个模块, {{! it.apiCount}} 个接口</p>\n" +
+                "            <p class=\"version\">Version: {{= it.version}}</p>\n" +
+                "            <p class=\"copyright\">Copyright: {{= it.copyright}}</p>\n" +
+                "            <p class=\"team\">Team: {{= it.team}}</p>\n" +
+                "            <p class=\"statistics\">共 {{= it.groupCount}} 个模块, {{= it.apiCount}} 个接口</p>\n" +
                 "        </div>\n" +
                 "    </script>\n" +
                 "</footer>\n" +
                 "\n" +
-                "<script type=\"text/javascript\">\n" +
+                "<script>\n" +
                 "/* var projectDomain = \"//api.example.net\"; */\n" +
-                "var projectDomain = \"\";\n" +
+                "var projectDomain = \"\"; // 如果自定义使用上面的\n" +
                 "</script>\n" +
+                "\n" +
                 "<script src=\"//cdn.bootcss.com/jquery/1.11.3/jquery.min.js\"></script>\n" +
                 "<script src=\"//cdn.bootcss.com/twitter-bootstrap/3.3.5/js/bootstrap.min.js\"></script>\n" +
                 "<script type=\"text/javascript\">\n" +
-                "$(function () {\n" +
+                "$(function() {\n" +
                 "    'use strict';\n" +
                 "    $(document.body).scrollspy({target: '.bs-docs-sidebar'});\n" +
                 "    $('.bs-docs-sidebar').affix();\n" +
@@ -402,6 +440,76 @@ public class WebNil {
                 "        copyrightRender.parent().html(template(urlCopyright));\n" +
                 "    }\n" +
                 "});\n" +
+                "</script>\n" +
+                "\n" +
+                "<script src=\"//cdn.bootcss.com/jQuery-Validation-Engine/2.6.4/languages/jquery.validationEngine-zh_CN.min.js\"></script>\n" +
+                "<script src=\"//cdn.bootcss.com/jQuery-Validation-Engine/2.6.4/jquery.validationEngine.min.js\"></script>\n" +
+                "<script type=\"text/javascript\">\n" +
+                "$.validationEngine.defaults.scroll = false;\n" +
+                "function request(obj) {\n" +
+                "    var form = $(obj).parent().parent();\n" +
+                "    var response = form.find(\".response\");\n" +
+                "    response.hide();\n" +
+                "\n" +
+                "    var flag = form.validationEngine(\"validate\");\n" +
+                "    if (!flag) {\n" +
+                "        return;\n" +
+                "    }\n" +
+                "\n" +
+                "    var responseData = response.find(\"pre\");\n" +
+                "\n" +
+                "    var map = objectifyForm(form);\n" +
+                "    var data = form.serialize();\n" +
+                "    var method = form.attr('method');\n" +
+                "    var url = form.attr('action');\n" +
+                "    if (!url.startsWith(\"/\")) {\n" +
+                "        url = \"/\" + url;\n" +
+                "    }\n" +
+                "    url = projectDomain + url;\n" +
+                "    while (/\\{(.*?)\\}/.test(url)) {\n" +
+                "        var group = RegExp.$1;\n" +
+                "        var value = map[group];\n" +
+                "        url = url.replace(/(\\{.*?\\})/, value);\n" +
+                "    }\n" +
+                "    var start = new Date().getTime();\n" +
+                "    // 构建异步的文件上传还有问题\n" +
+                "    $.ajax({\n" +
+                "        method: method,\n" +
+                "        url: url,\n" +
+                "        data: data\n" +
+                "    }).done(function(msg) {\n" +
+                "        var html = \"use time: \" + (new Date().getTime() - start) + \"ms\\n\\n\";\n" +
+                "        if (msg !== null && msg !== \"\") {\n" +
+                "            html += addLine(JSON.stringify(msg, null, 2));\n" +
+                "        } else {\n" +
+                "            html += \"<span style='color:green;'>\" + method + \" 请求(\" + url + \")成功, 但是返回为空</span>\";\n" +
+                "        }\n" +
+                "        responseData.html(html);\n" +
+                "        response.show();\n" +
+                "    }).fail(function(msg) {\n" +
+                "        var html = \"use time: \" + (new Date().getTime() - start) + \"ms\\n\\n\";\n" +
+                "        if (msg !== null && msg !== \"\") {\n" +
+                "            var message = \"Status Code: \" + msg.status;\n" +
+                "            var json = msg.responseJSON;\n" +
+                "            if (json !== null && json !== \"\") {\n" +
+                "                message += \"\\n\\n\";\n" +
+                "                message += JSON.stringify(json, null, 2);\n" +
+                "            }\n" +
+                "            html += addLine(message);\n" +
+                "        } else {\n" +
+                "            html += \"<span style='color:red;'>\" + method + \" 请求(\" + url + \")时失败</span>\";\n" +
+                "        }\n" +
+                "        responseData.html(html);\n" +
+                "        response.show();\n" +
+                "    });\n" +
+                "}\n" +
+                "function objectifyForm(form) {\n" +
+                "    var map = {};\n" +
+                "    form.serializeArray().map(function(x) {\n" +
+                "        map[x.name] = x.value;\n" +
+                "    });\n" +
+                "    return map;\n" +
+                "}\n" +
                 "</script>\n" +
                 "</body>\n" +
                 "</html>\n";
