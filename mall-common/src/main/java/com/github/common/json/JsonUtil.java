@@ -1,10 +1,16 @@
 package com.github.common.json;
 
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.github.common.util.LogUtil;
 
+import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.List;
 
 public class JsonUtil {
@@ -29,6 +35,17 @@ public class JsonUtil {
             // 允许字符串中包含 未加引号的控制字符(值小于 32 的 ASCII 字符, 包括制表符和换行字符)的功能.
             // 如果功能设置为 false, 则遇到此类字符时会引发异常. 由于 json 规范要求引用所有控制字符, 因此这是非标准功能, 默认情况下是禁用的.
             configure(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true);
+
+            // 如果用 BigDecimal 表示金额时的处理: 保留两位小数的精度返回
+            registerModule(new SimpleModule().addSerializer(BigDecimal.class, new JsonSerializer<BigDecimal>() {
+                @Override
+                public void serialize(BigDecimal value, JsonGenerator gen, SerializerProvider ser) throws IOException {
+                    if (value == null) {
+                        value = BigDecimal.ZERO;
+                    }
+                    gen.writeObject(value.setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+                }
+            }));
         }
     }
 
