@@ -1,7 +1,7 @@
 package com.github.common.client;
 
-import com.github.common.service.CommonInterface;
 import com.github.common.constant.CommonConst;
+import com.github.common.service.CommonInterface;
 import org.springframework.cloud.netflix.feign.FeignClient;
 
 /**

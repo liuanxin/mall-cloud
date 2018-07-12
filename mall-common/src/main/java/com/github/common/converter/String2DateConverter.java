@@ -1,7 +1,7 @@
 package com.github.common.converter;
 
-import com.github.common.date.DateUtil;
 import com.github.common.date.DateFormatType;
+import com.github.common.date.DateUtil;
 import org.springframework.core.convert.converter.Converter;
 
 import java.util.Date;

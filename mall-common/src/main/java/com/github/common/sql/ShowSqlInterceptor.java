@@ -1,11 +1,11 @@
 package com.github.common.sql;
 
+import com.github.common.util.LogUtil;
+import com.github.common.util.U;
 import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.ResultSetInternalMethods;
 import com.mysql.jdbc.Statement;
 import com.mysql.jdbc.StatementInterceptor;
-import com.github.common.util.LogUtil;
-import com.github.common.util.U;
 
 import java.sql.SQLException;
 import java.util.Properties;

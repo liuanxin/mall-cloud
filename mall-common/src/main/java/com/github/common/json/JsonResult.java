@@ -1,7 +1,6 @@
 package com.github.common.json;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.github.common.Const;
 import com.github.liuanxin.api.annotation.ApiReturn;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

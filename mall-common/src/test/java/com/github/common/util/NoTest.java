@@ -1,7 +1,7 @@
 package com.github.common.util;
 
-import com.github.common.date.DateUtil;
 import com.github.common.date.DateFormatType;
+import com.github.common.date.DateUtil;
 import org.junit.Test;
 
 import java.util.*;

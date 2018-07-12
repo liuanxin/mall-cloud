@@ -1,7 +1,7 @@
 package com.github.user.config;
 
-import com.github.liuanxin.page.PageInterceptor;
 import com.github.common.Const;
+import com.github.liuanxin.page.PageInterceptor;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
