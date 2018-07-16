@@ -22,7 +22,7 @@ public class DateUtil {
         return now(DateFormatType.YYYY_MM_DD_HH_MM_SS);
     }
     /** 返回 yyyy-MM-dd HH:mm:ss SSS 格式的当前时间 */
-    public static String detailNowTime() {
+    public static String nowTimeMs() {
         return now(DateFormatType.YYYY_MM_DD_HH_MM_SS_SSS);
     }
     /** 获取当前时间日期的字符串 */
@@ -32,6 +32,10 @@ public class DateUtil {
     /** 格式化日期 yyyy-MM-dd */
     public static String formatDate(Date date) {
         return format(date, DateFormatType.YYYY_MM_DD);
+    }
+    /** 格式化日期 yyyy/MM/dd */
+    public static String formatUsaDate(Date date) {
+        return format(date, DateFormatType.USA_YYYY_MM_DD);
     }
     /** 格式化时间 HH:mm:ss */
     public static String formatTime(Date date) {
@@ -44,11 +48,7 @@ public class DateUtil {
 
     /** 格式化日期对象成字符串 */
     public static String format(Date date, DateFormatType type) {
-        if (U.isBlank(date) || U.isBlank(type)) {
-            return U.EMPTY;
-        }
-
-        return format(date, type.getValue());
+        return (U.isBlank(date) || U.isBlank(type)) ? U.EMPTY : format(date, type.getValue());
     }
 
     public static String format(Date date, String type) {
@@ -61,24 +61,22 @@ public class DateUtil {
      * @see DateFormatType
      */
     public static Date parse(String source) {
-        if (U.isBlank(source)) {
-            return null;
-        }
-
-        source = source.trim();
-        for (DateFormatType type : DateFormatType.values()) {
-            try {
-                if (type.isCst()) {
-                    // cst 单独处理
-                    return new SimpleDateFormat(type.getValue(), Locale.ENGLISH).parse(source);
-                } else {
-                    Date date = DateTimeFormat.forPattern(type.getValue()).parseDateTime(source).toDate();
-                    if (date != null) {
-                        return date;
+        if (U.isNotBlank(source)) {
+            source = source.trim();
+            for (DateFormatType type : DateFormatType.values()) {
+                try {
+                    if (type.isCst()) {
+                        // cst 单独处理
+                        return new SimpleDateFormat(type.getValue(), Locale.ENGLISH).parse(source);
+                    } else {
+                        Date date = DateTimeFormat.forPattern(type.getValue()).parseDateTime(source).toDate();
+                        if (date != null) {
+                            return date;
+                        }
                     }
+                } catch (ParseException | IllegalArgumentException e) {
+                    // ignore
                 }
-            } catch (ParseException | IllegalArgumentException e) {
-                // ignore
             }
         }
         return null;
@@ -86,10 +84,7 @@ public class DateUtil {
 
     /** 获取一个日期所在天的最开始的时间(00:00:00 000), 对日期查询尤其有用 */
     public static Date getDayStart(Date date) {
-        if (U.isBlank(date)) {
-            return null;
-        }
-        return getDateTimeStart(date).toDate();
+        return U.isBlank(date) ? null : getDateTimeStart(date).toDate();
     }
     private static DateTime getDateTimeStart(Date date) {
         return new DateTime(date)
@@ -100,10 +95,7 @@ public class DateUtil {
     }
     /** 获取一个日期所在天的最晚的时间(23:59:59 999), 对日期查询尤其有用 */
     public static Date getDayEnd(Date date) {
-        if (U.isBlank(date)) {
-            return null;
-        }
-        return getDateTimeEnd(date).toDate();
+        return U.isBlank(date) ? null : getDateTimeEnd(date).toDate();
     }
     private static DateTime getDateTimeEnd(Date date) {
         return new DateTime(date)
@@ -116,10 +108,10 @@ public class DateUtil {
     /**
      * 取得指定日期 N 天后的日期
      *
-     * @param day 正数表示多少天后, 负数表示多少天前
+     * @param year 正数表示多少年后, 负数表示多少年前
      */
-    public static Date addDays(Date date, int day) {
-        return new DateTime(date).plusDays(day).toDate();
+    public static Date addYears(Date date, int year) {
+        return new DateTime(date).plusYears(year).toDate();
     }
     /**
      * 取得指定日期 N 个月后的日期
@@ -132,18 +124,18 @@ public class DateUtil {
     /**
      * 取得指定日期 N 天后的日期
      *
-     * @param year 正数表示多少年后, 负数表示多少年前
+     * @param day 正数表示多少天后, 负数表示多少天前
      */
-    public static Date addYears(Date date, int year) {
-        return new DateTime(date).plusYears(year).toDate();
+    public static Date addDays(Date date, int day) {
+        return new DateTime(date).plusDays(day).toDate();
     }
     /**
-     * 取得指定日期 N 分钟后的日期
+     * 取得指定日期 N 周后的日期
      *
-     * @param minute 正数表示多少分钟后, 负数表示多少分钟前
+     * @param week 正数表示多少周后, 负数表示多少周前
      */
-    public static Date addMinute(Date date, int minute) {
-        return new DateTime(date).plusMinutes(minute).toDate();
+    public static Date addWeeks(Date date, int week) {
+        return new DateTime(date).plusWeeks(week).toDate();
     }
     /**
      * 取得指定日期 N 小时后的日期
@@ -154,20 +146,20 @@ public class DateUtil {
         return new DateTime(date).plusHours(hour).toDate();
     }
     /**
+     * 取得指定日期 N 分钟后的日期
+     *
+     * @param minute 正数表示多少分钟后, 负数表示多少分钟前
+     */
+    public static Date addMinute(Date date, int minute) {
+        return new DateTime(date).plusMinutes(minute).toDate();
+    }
+    /**
      * 取得指定日期 N 秒后的日期
      *
      * @param second 正数表示多少秒后, 负数表示多少秒前
      */
     public static Date addSeconds(Date date, int second) {
         return new DateTime(date).plusSeconds(second).toDate();
-    }
-    /**
-     * 取得指定日期 N 周后的日期
-     *
-     * @param week 正数表示多少周后, 负数表示多少周前
-     */
-    public static Date addWeeks(Date date, int week) {
-        return new DateTime(date).plusWeeks(week).toDate();
     }
 
     /** 传入的时间是不是当月当日. 用来验证生日 */
