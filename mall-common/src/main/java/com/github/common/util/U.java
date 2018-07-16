@@ -55,7 +55,7 @@ public final class U {
     /** 是否是本地 ip */
     private static final String LOCAL = "(?i)127.0.0.1|localhost|::1|0:0:0:0:0:0:0:1";
 
-    /** 生成指定位数的随机数 */
+    /** 生成指定位数的随机数: 纯数字 */
     public static String random(int length) {
         if (length <= 0) {
             return EMPTY;
@@ -69,6 +69,7 @@ public final class U {
     }
 
     private static final String TMP = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    /** 生成指定位数的随机数: 数字和字母 */
     public static String randomLetterAndNumber(int length) {
         if (length <= 0) {
             return EMPTY;
