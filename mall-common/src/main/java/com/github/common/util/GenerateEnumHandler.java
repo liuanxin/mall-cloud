@@ -84,16 +84,23 @@ public class GenerateEnumHandler {
                         if (!parent.contains(generate.replace(".", "/"))) {
                             parent += generate.replace(".", "/");
                         }
-                        File writeFile = new File(parent, clazzName + "Handler.java");
-                        if (!writeFile.exists()) {
-                            Files.write(templateInfo.replaceAll(PLACEHOLDER, clazzName).getBytes(StandardCharsets.UTF_8), writeFile);
-                            System.out.println("生成文件: " + writeFile.getPath());
-                            count += 1;
+                        boolean dir = new File(parent).mkdirs();
+                        if (dir) {
+                            File writeFile = new File(parent, clazzName + "Handler.java");
+                            if (!writeFile.exists()) {
+                                Files.write(templateInfo.replaceAll(PLACEHOLDER, clazzName).getBytes(StandardCharsets.UTF_8), writeFile);
+                                System.out.println("生成文件: " + writeFile.getPath());
+                                count += 1;
+                            }
+                        } else {
+                            System.out.println("目录(" + parent + ")生成失败");
                         }
                     }
                 } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
                     System.out.println("找不到类(" + className + ")");
                 } catch (IOException e) {
+                    e.printStackTrace();
                     System.out.println("写文件时出了问题");
                 }
             }
