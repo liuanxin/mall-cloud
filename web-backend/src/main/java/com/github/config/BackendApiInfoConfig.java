@@ -1,4 +1,4 @@
-package com.github.global.config;
+package com.github.config;
 
 import com.github.common.json.JsonCode;
 import com.github.global.constant.Develop;
@@ -12,14 +12,13 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.servlet.Servlet;
 import java.util.List;
 import java.util.Set;
 
 @Configuration
 @EnableApiInfo
-@ConditionalOnClass({ Servlet.class, DocumentCopyright.class })
-public class ApiInfoConfig {
+@ConditionalOnClass(DocumentCopyright.class)
+public class BackendApiInfoConfig {
 
     @Value("${online:false}")
     private boolean online;
