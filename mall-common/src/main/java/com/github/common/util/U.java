@@ -657,7 +657,7 @@ public final class U {
                             if (i > 0) {
                                 sbd.append("&");
                             }
-                            sbd.append(entry.getKey()).append("=").append(obj.toString());
+                            sbd.append(entry.getKey()).append("=").append(urlEncode(obj.toString()));
                             i++;
                         }
                     }
@@ -665,7 +665,7 @@ public final class U {
                     if (i > 0) {
                         sbd.append("&");
                     }
-                    sbd.append(entry.getKey()).append("=").append(value);
+                    sbd.append(entry.getKey()).append("=").append(urlEncode(value.toString()));
                     i++;
                 }
             }
