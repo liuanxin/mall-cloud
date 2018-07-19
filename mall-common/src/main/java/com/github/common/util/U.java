@@ -124,10 +124,10 @@ public final class U {
     private static final String ENUM_VALUE = "value";
     /**
      * <pre>
-     * 序列化枚举, 属性是枚举时, 返回给前端时, 可以将 传递 和 显示的都返回, 如以下示例
+     * 序列化枚举: 属性如果是枚举, 返回给前端时, 可以将 传递 和 显示的都返回, 如以下示例
      *
      * public enum Gender {
-     *   Male(0, "男"), Female(1, "女");
+     *   Nil(0, "未知"), Male(1, "男"), Female(2, "女");
      *   int code;
      *   String value;
      *
@@ -139,11 +139,11 @@ public final class U {
      *
      *   &#064;JsonValue
      *   public Map<String, String> serializer() {
-     *     return <span style="color:red">U.serializerEnum(code, value);</span>
+     *     return <span style="color:red">serializerEnum(code, value);</span>
      *   }
      *   &#064;JsonCreator
      *   public static Gender deserializer(Object obj) {
-     *     return U.enumDeserializer(obj, Gender.class);
+     *     return enumDeserializer(obj, Gender.class);
      *   }
      * }
      * </pre>
@@ -156,7 +156,7 @@ public final class U {
      * 枚举反序列化, 如以下示例
      *
      * public enum Gender {
-     *   Male(0, "男"), Female(1, "女");
+     *   Nil(0, "未知"), Male(1, "男"), Female(2, "女");
      *   int code;
      *   String value;
      *
@@ -168,11 +168,11 @@ public final class U {
      *
      *   &#064;JsonValue
      *   public Map<String, String> serializer() {
-     *     return U.serializerEnum(code, value);
+     *     return serializerEnum(code, value);
      *   }
      *   &#064;JsonCreator
      *   public static Gender deserializer(Object obj) {
-     *     return <span style="color:red">U.enumDeserializer(obj, Gender.class);</span>
+     *     return <span style="color:red">enumDeserializer(obj, Gender.class);</span>
      *   }
      * }
      * </pre>
