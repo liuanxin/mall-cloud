@@ -44,10 +44,10 @@ public class PageInfo<T> implements Serializable {
     @ApiReturn("当前页的数据")
     private List<T> list;
 
-    static <T> PageInfo<T> emptyReturn() {
+    public static <T> PageInfo<T> emptyReturn() {
         return new PageInfo<T>(0, Collections.emptyList());
     }
-    static <T> PageInfo<T> returnPage(int total, List<T> list) {
+    public static <T> PageInfo<T> returnPage(int total, List<T> list) {
         return new PageInfo<T>(total, list);
     }
 
