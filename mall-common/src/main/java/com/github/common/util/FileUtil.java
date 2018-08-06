@@ -16,7 +16,7 @@ public final class FileUtil {
         // 保存目录以 / 开头, 结尾不带 /
         directoryPrefix = U.addPrefix(directoryPrefix).trim();
         if (directoryPrefix.endsWith("/")) {
-            directoryPrefix = directoryPrefix.substring(directoryPrefix.length() - 1, directoryPrefix.length());
+            directoryPrefix = directoryPrefix.substring(0, directoryPrefix.length() - 1);
         }
         // 访问地址前缀以 // 开头, 结尾不带 /
         if (!urlPrefix.startsWith("http://") && !urlPrefix.startsWith("https://")) {
@@ -26,7 +26,7 @@ public final class FileUtil {
         }
         urlPrefix = urlPrefix.trim();
         if (urlPrefix.endsWith("/")) {
-            urlPrefix = urlPrefix.substring(urlPrefix.length() - 1, urlPrefix.length());
+            urlPrefix = urlPrefix.substring(0, urlPrefix.length() - 1);
         }
 
         // 保存及访问地址中拼上 /年/月/日/ 按日来保存文件, 前后都要有 /
