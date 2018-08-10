@@ -16,11 +16,10 @@ public class ModuleTest {
     /** true 生成断路器 */
     static boolean fallback = true;
 
-    /** 包名 */
-    static String PACKAGE = "com.github";
+    static final String PROJECT = "mall-cloud";
+    static final String PACKAGE = "com.github";
     /** 注册中心的端口 */
     static String REGISTER_CENTER_PORT = "8761";
-    // static String PARENT = "/home/tony/project/mall-cloud/";
     private static final String PARENT = ModuleTest.class.getClassLoader().getResource("").getFile() + "../../../";
     static String PACKAGE_PATH = PACKAGE.replaceAll("\\.", "/");
     static String AUTHOR = " *\n * @author https://github.com/liuanxin\n";
@@ -127,7 +126,7 @@ class Parent {
                 "         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
                 "         xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\">\n" +
                 "    <parent>\n" +
-                "        <artifactId>mall-cloud</artifactId>\n" +
+                "        <artifactId>" + PROJECT + "</artifactId>\n" +
                 "        <groupId>" + PACKAGE + "</groupId>\n" +
                 "        <version>1.0-SNAPSHOT</version>\n" +
                 "    </parent>\n" +
@@ -392,6 +391,56 @@ class Server {
             "                LogUtil.ROOT_LOG.debug(\"current profile : ({})\", A.toStr(activeProfiles));\n" +
             "            }\n" +
             "        }\n" +
+            "    }\n" +
+            "}\n";
+
+    private static final String API_INFO_DATA = "package " + PACKAGE + ".%s.config;\n" +
+            "\n" +
+            "import " + PACKAGE + ".common.json.JsonCode;\n" +
+            "import " + PACKAGE + ".global.constant.Develop;\n" +
+            "import com.github.liuanxin.api.annotation.EnableApiInfo;\n" +
+            "import com.github.liuanxin.api.model.DocumentCopyright;\n" +
+            "import com.github.liuanxin.api.model.DocumentResponse;\n" +
+            "import com.google.common.collect.Lists;\n" +
+            "import com.google.common.collect.Sets;\n" +
+            "import org.springframework.beans.factory.annotation.Value;\n" +
+            "import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;\n" +
+            "import org.springframework.context.annotation.Bean;\n" +
+            "import org.springframework.context.annotation.Configuration;\n" +
+            "\n" +
+            "import java.util.List;\n" +
+            "import java.util.Set;\n" +
+            "\n" +
+            "@Configuration\n" +
+            "@EnableApiInfo\n" +
+            "@ConditionalOnClass(DocumentCopyright.class)\n" +
+            "public class %sApiInfoConfig {\n" +
+            "\n" +
+            "    @Value(\"${online:false}\")\n" +
+            "    private boolean online;\n" +
+            "\n" +
+            "    @Bean\n" +
+            "    public DocumentCopyright urlCopyright() {\n" +
+            "        return new DocumentCopyright()\n" +
+            "                .setTitle(Develop.TITLE + \" - %s\")\n" +
+            "                .setTeam(Develop.TEAM)\n" +
+            "                .setCopyright(Develop.COPYRIGHT)\n" +
+            "                .setVersion(Develop.VERSION)\n" +
+            "                .setOnline(online)\n" +
+            "                .setIgnoreUrlSet(ignoreUrl())\n" +
+            "                .setGlobalResponse(globalResponse());\n" +
+            "    }\n" +
+            "\n" +
+            "    private Set<String> ignoreUrl() {\n" +
+            "        return Sets.newHashSet(\"/error\");\n" +
+            "    }\n" +
+            "\n" +
+            "    private List<DocumentResponse> globalResponse() {\n" +
+            "        List<DocumentResponse> responseList = Lists.newArrayList();\n" +
+            "        for (JsonCode code : JsonCode.values()) {\n" +
+            "            responseList.add(new DocumentResponse(code.getFlag(), code.getMsg()));\n" +
+            "        }\n" +
+            "        return responseList;\n" +
             "    }\n" +
             "}\n";
 
@@ -1135,6 +1184,9 @@ class Server {
 
         String application = String.format(APPLICATION, clazzName, clazzName, clazzName);
         writeFile(new File(packagePath, clazzName + "Application.java"), application);
+
+        String apiInfo = String.format(API_INFO_DATA, parentPackageName, clazzName, comment);
+        writeFile(new File(configPath, clazzName + "ApiInfoConfig.java"), apiInfo);
 
         String configData = String.format(CONFIG_DATA, parentPackageName, parentPackageName, clazzName, comment,
                 clazzName, clazzName, clazzName, clazzName, clazzName, clazzName);
