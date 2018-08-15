@@ -18,6 +18,8 @@ public class ModuleTest {
 
     static final String PROJECT = "mall-cloud";
     static final String PACKAGE = "com.github";
+    static final String COMMON = "mall-common";
+    static final String GLOBAL = "mall-global";
     /** 注册中心的端口 */
     static String REGISTER_CENTER_PORT = "8761";
     private static final String PARENT = ModuleTest.class.getClassLoader().getResource("").getFile() + "../../../";
@@ -169,7 +171,7 @@ class Client {
             "import " + PACKAGE + ".common.page.PageInfo;\n" +
             "import " + PACKAGE + ".common.page.Pages;\n" +
             "import " + PACKAGE + ".common.util.LogUtil;\n" +
-            "import " + PACKAGE + ".%s.client.%sClient;\n" +
+            "import " + PACKAGE + ".%s.client.%sService;\n" +
             "import org.springframework.stereotype.Component;\n" +
             "\n" +
             "/**\n" +
@@ -205,7 +207,7 @@ class Client {
             "    <dependencies>\n" +
             "        <dependency>\n" +
             "            <groupId>${project.groupId}</groupId>\n" +
-            "            <artifactId>mall-common</artifactId>\n" +
+            "            <artifactId>" + COMMON + "</artifactId>\n" +
             "        </dependency>\n" +
             "\n" +
             "        <dependency>\n" +
@@ -320,7 +322,7 @@ class Model {
             "    <dependencies>\n" +
             "        <dependency>\n" +
             "            <groupId>${project.groupId}</groupId>\n" +
-            "            <artifactId>mall-common</artifactId>\n" +
+            "            <artifactId>" + COMMON + "</artifactId>\n" +
             "            <scope>provided</scope>\n" +
             "        </dependency>\n" +
             "\n" +
@@ -798,7 +800,7 @@ class Server {
             "logging.config: classpath:log-dev.xml\n" +
             "\n" +
             "spring.datasource:\n" +
-            "  url: jdbc:mysql://127.0.0.1:3306/cloud?useSSL=false&useUnicode=true&characterEncoding=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&statementInterceptors=" + PACKAGE + ".common.sql.ShowSqlInterceptor\n" +
+            "  url: jdbc:mysql://127.0.0.1:3306/%s?useSSL=false&useUnicode=true&characterEncoding=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&statementInterceptors=" + PACKAGE + ".common.sql.ShowSqlInterceptor\n" +
             "  username: root\n" +
             "  password: root\n" +
             "  hikari:\n" +
@@ -862,11 +864,7 @@ class Server {
             "    serviceUrl.defaultZone: ${register.center}\n" +
             "  instance:\n" +
             "    lease-renewal-interval-in-seconds: 10\n" +
-            "    lease-expiration-duration-in-seconds: 30\n" +
-            "\n" +
-            "#spring:\n" +
-            "#  zipkin.base-url: http://127.0.0.1:9411\n" +
-            "#  sleuth.sampler.percentage: 0.1\n";
+            "    lease-expiration-duration-in-seconds: 30\n";
 
     private static final String APPLICATION_PROD_YML = "\n" +
             "online: true\n" +
@@ -903,11 +901,7 @@ class Server {
             "    serviceUrl.defaultZone: ${register.center}\n" +
             "  instance:\n" +
             "    lease-renewal-interval-in-seconds: 5\n" +
-            "    lease-expiration-duration-in-seconds: 15\n" +
-            "\n" +
-            "#spring:\n" +
-            "#  zipkin.base-url: http://127.0.0.1:9411\n" +
-            "#  sleuth.sampler.percentage: 0.1\n";
+            "    lease-expiration-duration-in-seconds: 15\n";
 
     private static final String CONFIG = "\n"+
             "# 当前文件是主要为了抑制 <No URLs will be polled as dynamic configuration sources> 这个警告. 无其他用处\n"+
@@ -1064,11 +1058,11 @@ class Server {
             "    <dependencies>\n" +
             "        <dependency>\n" +
             "            <groupId>${project.groupId}</groupId>\n" +
-            "            <artifactId>mall-common</artifactId>\n" +
+            "            <artifactId>" + COMMON + "</artifactId>\n" +
             "        </dependency>\n" +
             "        <dependency>\n" +
             "            <groupId>${project.groupId}</groupId>\n" +
-            "            <artifactId>mall-global</artifactId>\n" +
+            "            <artifactId>" + GLOBAL + "</artifactId>\n" +
             "        </dependency>\n" +
             "\n" +
             "        <dependency>\n" +
@@ -1214,7 +1208,7 @@ class Server {
         new File(resourcePath, parentPackageName).mkdir();
         new File(resourcePath, parentPackageName + "-custom").mkdir();
 
-        String applicationYml = String.format(APPLICATION_YML, port, packageName);
+        String applicationYml = String.format(APPLICATION_YML, port, packageName, packageName);
         writeFile(new File(resourcePath, "application.yml"), applicationYml);
         String applicationTestYml = String.format(APPLICATION_TEST_YML, port,
                 packageName, packageName, packageName, packageName);
