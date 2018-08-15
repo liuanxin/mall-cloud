@@ -328,8 +328,8 @@ public class HttpClientUtil {
                 return result;
             }
         } catch (Exception e) {
-            if (LogUtil.ROOT_LOG.isInfoEnabled()) {
-                LogUtil.ROOT_LOG.info(String.format("(%s %s) exception", method, url), e);
+            if (LogUtil.ERROR_LOG.isInfoEnabled()) {
+                LogUtil.ERROR_LOG.info(String.format("(%s %s) exception", method, url), e);
             }
         }
         return null;
@@ -353,8 +353,8 @@ public class HttpClientUtil {
                 }
             }
         } catch (IOException e) {
-            if (LogUtil.ROOT_LOG.isInfoEnabled()) {
-                LogUtil.ROOT_LOG.info(String.format("download (%s) to file(%s) exception", url, file), e);
+            if (LogUtil.ERROR_LOG.isInfoEnabled()) {
+                LogUtil.ERROR_LOG.info(String.format("download (%s) to file(%s) exception", url, file), e);
             }
         }
     }

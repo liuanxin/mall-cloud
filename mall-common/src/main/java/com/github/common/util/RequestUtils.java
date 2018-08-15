@@ -173,8 +173,8 @@ public final class RequestUtils {
             response.getWriter().write(result);
         } catch (IllegalStateException e) {
             // 基于 response 调用了 getOutputStream(), 又再调用 getWriter() 会被 web 容器拒绝
-            if (LogUtil.ROOT_LOG.isDebugEnabled()) {
-                LogUtil.ROOT_LOG.debug("response state exception", e);
+            if (LogUtil.ERROR_LOG.isDebugEnabled()) {
+                LogUtil.ERROR_LOG.debug("response state exception", e);
             }
         }
     }

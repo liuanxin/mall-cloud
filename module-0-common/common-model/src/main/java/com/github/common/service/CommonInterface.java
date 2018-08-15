@@ -1,7 +1,7 @@
 package com.github.common.service;
 
-import com.github.common.constant.CommonConst;
 import com.github.common.page.PageInfo;
+import com.github.common.constant.CommonConst;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 

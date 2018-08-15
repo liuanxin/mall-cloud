@@ -42,12 +42,12 @@ public class ModuleTest {
     }
 
     public static void main(String[] args) throws Exception {
-//        generate("0-common",  "8070", "公共");
+        generate("0-common",  "8070", "公共");
 //        generate("0-queue",   "8071", "消息队列");
 //        generate("0-search",  "8072", "搜索");
-//        generate("1-user",    "8091", "用户");
-//        generate("2-product", "8092", "商品");
-//        generate("3-order",   "8093", "订单");
+        generate("1-user",    "8091", "用户");
+        generate("2-product", "8092", "商品");
+        generate("3-order",   "8093", "订单");
 
         soutInfo();
     }
@@ -578,8 +578,8 @@ class Server {
             "    @ExceptionHandler(ServiceException.class)\n" +
             "    public ResponseEntity<JsonResult> service(ServiceException e) {\n" +
             "        String msg = e.getMessage();\n" +
-            "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
-            "            LogUtil.ROOT_LOG.debug(msg);\n" +
+            "        if (LogUtil.ERROR_LOG.isDebugEnabled()) {\n" +
+            "            LogUtil.ERROR_LOG.debug(msg);\n" +
             "        }\n" +
             "        return fail(msg);\n" +
             "    }\n" +
@@ -587,8 +587,8 @@ class Server {
             "    @ExceptionHandler(NotLoginException.class)\n" +
             "    public ResponseEntity<JsonResult> notLogin(NotLoginException e) {\n" +
             "        String msg = e.getMessage();\n" +
-            "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
-            "            LogUtil.ROOT_LOG.debug(msg);\n" +
+            "        if (LogUtil.ERROR_LOG.isDebugEnabled()) {\n" +
+            "            LogUtil.ERROR_LOG.debug(msg);\n" +
             "        }\n" +
             "        return new ResponseEntity<>(JsonResult.notLogin(msg), HttpStatus.UNAUTHORIZED);\n" +
             "    }\n" +
@@ -596,8 +596,8 @@ class Server {
             "    @ExceptionHandler(ForbiddenException.class)\n" +
             "    public ResponseEntity<JsonResult> forbidden(ForbiddenException e) {\n" +
             "        String msg = e.getMessage();\n" +
-            "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
-            "            LogUtil.ROOT_LOG.debug(msg);\n" +
+            "        if (LogUtil.ERROR_LOG.isDebugEnabled()) {\n" +
+            "            LogUtil.ERROR_LOG.debug(msg);\n" +
             "        }\n" +
             "        return new ResponseEntity<>(JsonResult.notPermission(msg), HttpStatus.FORBIDDEN);\n" +
             "    }\n" +
@@ -638,8 +638,8 @@ class Server {
             "    /** 未知的所有其他异常 */\n" +
             "    @ExceptionHandler(Throwable.class)\n" +
             "    public ResponseEntity<JsonResult> other(Throwable e) {\n" +
-            "        if (LogUtil.ROOT_LOG.isErrorEnabled()) {\n" +
-            "            LogUtil.ROOT_LOG.error(\"有错误\", e);\n" +
+            "        if (LogUtil.ERROR_LOG.isErrorEnabled()) {\n" +
+            "            LogUtil.ERROR_LOG.error(\"有错误\", e);\n" +
             "        }\n" +
             "        return fail(U.returnMsg(e, online));\n" +
             "    }\n" +
@@ -647,11 +647,11 @@ class Server {
             "    // ==================================================\n" +
             "\n" +
             "    private void bindAndPrintLog(Exception e) {\n" +
-            "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
+            "        if (LogUtil.ERROR_LOG.isDebugEnabled()) {\n" +
             "            // 当没有进到全局拦截器就抛出的异常, 需要这么处理才能在日志中输出整个上下文信息\n" +
             "            LogUtil.bind(RequestUtils.logContextInfo());\n" +
             "            try {\n" +
-            "                LogUtil.ROOT_LOG.debug(e.getMessage(), e);\n" +
+            "                LogUtil.ERROR_LOG.debug(e.getMessage(), e);\n" +
             "            } finally {\n" +
             "                LogUtil.unbind();\n" +
             "            }\n" +
@@ -694,8 +694,9 @@ class Server {
             "    public void afterCompletion(HttpServletRequest request, HttpServletResponse response,\n" +
             "                                Object handler, Exception ex) throws Exception {\n" +
             "        if (ex != null) {\n" +
-            "            if (LogUtil.ROOT_LOG.isDebugEnabled())\n" +
-            "                LogUtil.ROOT_LOG.debug(\"request was over, but have exception: \" + ex.getMessage());\n" +
+            "            if (LogUtil.ERROR_LOG.isErrorEnabled()) {\n" +
+            "                LogUtil.ERROR_LOG.error(\"request was over, but have exception\", ex);\n" +
+            "            }\n" +
             "        }\n" +
             "        LogUtil.unbind();\n" +
             "    }\n" +
@@ -957,7 +958,21 @@ class Server {
             "            <pattern>${LOG_PATTERN}</pattern>\n" +
             "        </encoder>\n" +
             "    </appender>\n" +
-            "\n" +
+            "\n\n" +
+            "    <appender name=\"ERROR\" class=\"ch.qos.logback.core.rolling.RollingFileAppender\">\n" +
+            "        <file>${FILE_PATH}-error.log</file>\n" +
+            "        <rollingPolicy class=\"ch.qos.logback.core.rolling.TimeBasedRollingPolicy\">\n" +
+            "            <fileNamePattern>${FILE_PATH}-error-%d{yyyy-MM-dd}.log</fileNamePattern>\n" +
+            "            <maxHistory>15</maxHistory>\n" +
+            "        </rollingPolicy>\n" +
+            "        <encoder>\n" +
+            "            <pattern>${LOG_PATTERN}</pattern>\n" +
+            "        </encoder>\n" +
+            "    </appender>\n" +
+            "    <logger name=\"errorLog\" level=\"debug\" additivity=\"false\">\n" +
+            "        <appender-ref ref=\"ERROR\" />\n" +
+            "    </logger>\n" +
+            "\n\n" +
             "    <appender name=\"SQL\" class=\"ch.qos.logback.core.rolling.RollingFileAppender\">\n" +
             "        <file>${FILE_PATH}-sql.log</file>\n" +
             "        <rollingPolicy class=\"ch.qos.logback.core.rolling.TimeBasedRollingPolicy\">\n" +
@@ -1010,12 +1025,30 @@ class Server {
             "            <pattern>${LOG_PATTERN}</pattern>\n" +
             "        </encoder>\n" +
             "    </appender>\n" +
-            "\n" +
             "    <appender name=\"ASYNC\" class=\"ch.qos.logback.classic.AsyncAppender\">\n" +
             "        <discardingThreshold>0</discardingThreshold>\n" +
             "        <includeCallerData>true</includeCallerData>\n" +
             "        <appender-ref ref =\"PROJECT\"/>\n" +
             "    </appender>\n" +
+            "\n\n" +
+            "    <appender name=\"ERROR\" class=\"ch.qos.logback.core.rolling.RollingFileAppender\">\n" +
+            "        <file>${FILE_PATH}-error.log</file>\n" +
+            "        <rollingPolicy class=\"ch.qos.logback.core.rolling.TimeBasedRollingPolicy\">\n" +
+            "            <fileNamePattern>${FILE_PATH}-error-%d{yyyy-MM-dd}.log</fileNamePattern>\n" +
+            "            <maxHistory>15</maxHistory>\n" +
+            "        </rollingPolicy>\n" +
+            "        <encoder>\n" +
+            "            <pattern>${LOG_PATTERN}</pattern>\n" +
+            "        </encoder>\n" +
+            "    </appender>\n" +
+            "    <appender name=\"ASYNC_ERROR\" class=\"ch.qos.logback.classic.AsyncAppender\">\n" +
+            "        <discardingThreshold>0</discardingThreshold>\n" +
+            "        <includeCallerData>true</includeCallerData>\n" +
+            "        <appender-ref ref =\"ERROR\"/>\n" +
+            "    </appender>\n" +
+            "    <logger name=\"errorLog\" level=\"info\" additivity=\"false\">\n" +
+            "        <appender-ref ref=\"ASYNC_ERROR\" />\n" +
+            "    </logger>\n" +
             "\n\n" +
             "    <logger name=\"zipkin.autoconfigure\" level=\"error\"/>\n" +
             "    <logger name=\"io.undertow\" level=\"error\"/>\n" +

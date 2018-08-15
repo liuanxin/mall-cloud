@@ -83,8 +83,8 @@ public class JsonUtil {
         try {
             return RENDER.readValue(json, clazz);
         } catch (Exception e) {
-            if (LogUtil.ROOT_LOG.isInfoEnabled()) {
-                LogUtil.ROOT_LOG.info(String.format("json(%s) to Object(%s) exception", json, clazz.getName()), e);
+            if (LogUtil.ERROR_LOG.isInfoEnabled()) {
+                LogUtil.ERROR_LOG.info(String.format("json(%s) to Object(%s) exception", json, clazz.getName()), e);
             }
             return null;
         }
@@ -94,8 +94,8 @@ public class JsonUtil {
         try {
             return RENDER.readValue(json, type);
         } catch (IOException e) {
-            if (LogUtil.ROOT_LOG.isInfoEnabled()) {
-                LogUtil.ROOT_LOG.info(String.format("json(%s) to Object(%s) exception", json, type.getClass().getName()), e);
+            if (LogUtil.ERROR_LOG.isInfoEnabled()) {
+                LogUtil.ERROR_LOG.info(String.format("json(%s) to Object(%s) exception", json, type.getClass().getName()), e);
             }
             return null;
         }
@@ -114,8 +114,8 @@ public class JsonUtil {
         try {
             return RENDER.readValue(json, RENDER.getTypeFactory().constructCollectionType(List.class, clazz));
         } catch (Exception e) {
-            if (LogUtil.ROOT_LOG.isErrorEnabled()) {
-                LogUtil.ROOT_LOG.error(String.format("json(%s) to List<%s> exception", json, clazz.getName()), e);
+            if (LogUtil.ERROR_LOG.isErrorEnabled()) {
+                LogUtil.ERROR_LOG.error(String.format("json(%s) to List<%s> exception", json, clazz.getName()), e);
             }
             return null;
         }

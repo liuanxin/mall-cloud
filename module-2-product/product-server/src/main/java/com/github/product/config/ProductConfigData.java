@@ -1,7 +1,7 @@
 package com.github.product.config;
 
-import com.github.common.resource.CollectResourceUtil;
 import com.github.common.resource.CollectTypeHandlerUtil;
+import com.github.common.resource.CollectResourceUtil;
 import com.github.common.util.A;
 import com.github.global.constant.GlobalConst;
 import com.github.product.constant.ProductConst;
