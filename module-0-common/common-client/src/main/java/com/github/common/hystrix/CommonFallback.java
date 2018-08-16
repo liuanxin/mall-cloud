@@ -1,9 +1,9 @@
 package com.github.common.hystrix;
 
-import com.github.common.client.CommonService;
 import com.github.common.page.PageInfo;
 import com.github.common.page.Pages;
 import com.github.common.util.LogUtil;
+import com.github.common.client.CommonService;
 import org.springframework.stereotype.Component;
 
 /**

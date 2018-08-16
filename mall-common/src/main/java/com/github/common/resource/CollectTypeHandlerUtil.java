@@ -72,8 +72,8 @@ public final class CollectTypeHandlerUtil {
                         }
                     }
                 } catch (IOException e) {
-                    if (LogUtil.ROOT_LOG.isErrorEnabled()) {
-                        LogUtil.ROOT_LOG.error("can't load jar file", e);
+                    if (LogUtil.ERROR_LOG.isErrorEnabled()) {
+                        LogUtil.ERROR_LOG.error("can't load jar file", e);
                     }
                 }
             }
@@ -89,8 +89,8 @@ public final class CollectTypeHandlerUtil {
                     return (TypeHandler) clazz.newInstance();
                 }
             } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-                if (LogUtil.ROOT_LOG.isErrorEnabled()) {
-                    LogUtil.ROOT_LOG.error(String.format("TypeHandler clazz (%s) exception: ", className), e);
+                if (LogUtil.ERROR_LOG.isErrorEnabled()) {
+                    LogUtil.ERROR_LOG.error(String.format("TypeHandler clazz (%s) exception: ", className), e);
                 }
             }
         }

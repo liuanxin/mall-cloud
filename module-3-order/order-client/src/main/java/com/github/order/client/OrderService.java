@@ -1,8 +1,8 @@
 package com.github.order.client;
 
+import com.github.order.service.OrderInterface;
 import com.github.order.constant.OrderConst;
 import com.github.order.hystrix.OrderFallback;
-import com.github.order.service.OrderInterface;
 import org.springframework.cloud.netflix.feign.FeignClient;
 
 /**

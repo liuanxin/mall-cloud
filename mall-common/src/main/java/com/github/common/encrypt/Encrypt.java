@@ -60,8 +60,8 @@ public final class Encrypt {
             }
             return sbd.toString();
         } catch (Exception e) {
-            if (LogUtil.ROOT_LOG.isWarnEnabled()) {
-                LogUtil.ROOT_LOG.warn("使用 " + AES + "(" + data + ")加密失败", e);
+            if (LogUtil.ERROR_LOG.isWarnEnabled()) {
+                LogUtil.ERROR_LOG.warn("使用 " + AES + "(" + data + ")加密失败", e);
             }
             throw new RuntimeException(AES + "(" + data + ")加密失败");
         }
@@ -93,8 +93,8 @@ public final class Encrypt {
             cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(AES_SECRET.getBytes(UTF8), AES));
             return new String(cipher.doFinal(bytes), UTF8);
         } catch (Exception e) {
-            if (LogUtil.ROOT_LOG.isWarnEnabled()) {
-                LogUtil.ROOT_LOG.warn(AES + "(" + data + ")解密异常", e);
+            if (LogUtil.ERROR_LOG.isWarnEnabled()) {
+                LogUtil.ERROR_LOG.warn(AES + "(" + data + ")解密异常", e);
             }
             throw new RuntimeException(AES + "(" + data + ")解密时异常");
         }
@@ -120,8 +120,8 @@ public final class Encrypt {
             pair.setPrivateKey(new String(Base64.getEncoder().encode(keyPair.getPrivate().getEncoded()), UTF8));
             return pair;
         } catch (NoSuchAlgorithmException e) {
-            if (LogUtil.ROOT_LOG.isWarnEnabled()) {
-                LogUtil.ROOT_LOG.warn("RSA(" + keyLength + ")生成密钥对时异常", e);
+            if (LogUtil.ERROR_LOG.isWarnEnabled()) {
+                LogUtil.ERROR_LOG.warn("RSA(" + keyLength + ")生成密钥对时异常", e);
             }
             throw new RuntimeException("RSA(" + keyLength + ")生成密钥对时异常");
         }
@@ -141,8 +141,8 @@ public final class Encrypt {
 
             return new String(Base64.getEncoder().encode(encodeBytes), UTF8);
         } catch (Exception e) {
-            if (LogUtil.ROOT_LOG.isWarnEnabled()) {
-                LogUtil.ROOT_LOG.warn("RSA(" + data + ")加密失败", e);
+            if (LogUtil.ERROR_LOG.isWarnEnabled()) {
+                LogUtil.ERROR_LOG.warn("RSA(" + data + ")加密失败", e);
             }
             throw new RuntimeException("RSA(" + data + ")加密失败");
         }
@@ -162,8 +162,8 @@ public final class Encrypt {
 
             return new String(decodeBytes, UTF8);
         } catch (Exception e) {
-            if (LogUtil.ROOT_LOG.isWarnEnabled()) {
-                LogUtil.ROOT_LOG.warn("RSA(" + data + ")解密失败", e);
+            if (LogUtil.ERROR_LOG.isWarnEnabled()) {
+                LogUtil.ERROR_LOG.warn("RSA(" + data + ")解密失败", e);
             }
             throw new RuntimeException("RSA(" + data + ")解密失败");
         }
@@ -186,17 +186,17 @@ public final class Encrypt {
         try {
             return JWT_VERIFIER.verify(data);
         } catch (JWTExpiredException e) {
-            if (LogUtil.ROOT_LOG.isWarnEnabled()) {
-                LogUtil.ROOT_LOG.warn("使用 jwt 解密(" + data + ")时, 数据已过期", e);
+            if (LogUtil.ERROR_LOG.isWarnEnabled()) {
+                LogUtil.ERROR_LOG.warn("使用 jwt 解密(" + data + ")时, 数据已过期", e);
             }
         } catch (NoSuchAlgorithmException | InvalidKeyException | IOException |
                 SignatureException | JWTVerifyException e) {
-            if (LogUtil.ROOT_LOG.isWarnEnabled()) {
-                LogUtil.ROOT_LOG.warn("使用 jwt 解密(" + data + ")失败", e);
+            if (LogUtil.ERROR_LOG.isWarnEnabled()) {
+                LogUtil.ERROR_LOG.warn("使用 jwt 解密(" + data + ")失败", e);
             }
         } catch (Exception e) {
-            if (LogUtil.ROOT_LOG.isWarnEnabled()) {
-                LogUtil.ROOT_LOG.warn("使用 jwt 解密(" + data + ")异常", e);
+            if (LogUtil.ERROR_LOG.isWarnEnabled()) {
+                LogUtil.ERROR_LOG.warn("使用 jwt 解密(" + data + ")异常", e);
             }
         }
         return Collections.emptyMap();
@@ -300,8 +300,8 @@ public final class Encrypt {
             }
             return sbd.toString();
         } catch (Exception e) {
-            if (LogUtil.ROOT_LOG.isWarnEnabled()) {
-                LogUtil.ROOT_LOG.warn("无法给(" + src + ")生成(" + method + ")摘要", e);
+            if (LogUtil.ERROR_LOG.isWarnEnabled()) {
+                LogUtil.ERROR_LOG.warn("无法给(" + src + ")生成(" + method + ")摘要", e);
             }
             throw new RuntimeException("无法给(" + src + ")生成(" + method + ")摘要");
         }
@@ -322,8 +322,8 @@ public final class Encrypt {
             }
             return sbd.toString();
         } catch (Exception e) {
-            if (LogUtil.ROOT_LOG.isWarnEnabled()) {
-                LogUtil.ROOT_LOG.warn("无法生成 md5", e);
+            if (LogUtil.ERROR_LOG.isWarnEnabled()) {
+                LogUtil.ERROR_LOG.warn("无法生成 md5", e);
             }
             throw new RuntimeException("无法生成 md5");
         }
