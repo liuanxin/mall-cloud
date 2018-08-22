@@ -1,0 +1,12 @@
+
+server.port: 8001
+
+spring:
+  application.name: service-config
+#  cloud.config.server.git:
+#    uri: https://git.xxx.com/orign/project
+#    username: xxx
+#    password: yyy
+#    defaultLabel: develop
+  profiles.active: native
+  cloud.config.server.native.searchLocations: classpath:config/
