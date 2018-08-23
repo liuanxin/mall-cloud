@@ -21,5 +21,7 @@ eureka:
 spring.cloud.config:
   discovery.enabled: true
   discovery.serviceId: service-config
-  name: all,queue
+  name: all,${spring.application.name}
   profile: ${spring.profiles.active}
+
+management.security.enabled: false

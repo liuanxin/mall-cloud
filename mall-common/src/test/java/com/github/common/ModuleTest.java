@@ -848,7 +848,9 @@ class Server {
             "  discovery.enabled: true\n" +
             "  discovery.serviceId: service-config\n" +
             "  name: all,${spring.application.name}\n" +
-            "  profile: ${spring.profiles.active}\n";
+            "  profile: ${spring.profiles.active}\n" +
+            "\n" +
+            "management.security.enabled: false\n";
 
     private static final String APPLICATION_PROD_YML = "\n" +
             "server.port: %s\n" +
@@ -874,7 +876,9 @@ class Server {
             "  discovery.enabled: true\n" +
             "  discovery.serviceId: service-config\n" +
             "  name: all,${spring.application.name}\n" +
-            "  profile: ${spring.profiles.active}\n";
+            "  profile: ${spring.profiles.active}\n" +
+            "\n" +
+            "management.security.enabled: false\n";
 
     private static final String CONFIG = "\n"+
             "# 当前文件是主要为了抑制 <No URLs will be polled as dynamic configuration sources> 这个警告. 无其他用处\n"+
