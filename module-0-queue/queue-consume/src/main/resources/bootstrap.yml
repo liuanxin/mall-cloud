@@ -1,5 +1,5 @@
 
-server.port: 8070
+server.port: 9071
 
 
 spring:
@@ -30,5 +30,6 @@ spring.cloud.config:
   discovery.serviceId: service-config
   name: all,queue
   profile: ${spring.profiles.active}
+
 
 management.security.enabled: false

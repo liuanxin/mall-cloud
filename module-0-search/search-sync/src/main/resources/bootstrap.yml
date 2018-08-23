@@ -1,7 +1,7 @@
 
 # https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
 
-server.port: 8071
+server.port: 9072
 
 
 spring:
@@ -32,5 +32,6 @@ spring.cloud.config:
   discovery.serviceId: service-config
   name: all,search
   profile: ${spring.profiles.active}
+
 
 management.security.enabled: false

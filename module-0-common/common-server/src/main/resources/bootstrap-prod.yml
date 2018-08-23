@@ -1,6 +1,7 @@
 
 server.port: 8070
 
+
 spring:
   application.name: common
   profiles.active: prod
@@ -22,5 +23,6 @@ spring.cloud.config:
   discovery.serviceId: service-config
   name: all,${spring.application.name}
   profile: ${spring.profiles.active}
+
 
 management.security.enabled: false

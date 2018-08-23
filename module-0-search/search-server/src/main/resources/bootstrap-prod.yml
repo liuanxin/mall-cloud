@@ -1,6 +1,7 @@
 
 server.port: 8072
 
+
 spring:
   application.name: search
   profiles.active: prod

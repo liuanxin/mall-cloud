@@ -855,6 +855,7 @@ class Server {
     private static final String APPLICATION_PROD_YML = "\n" +
             "server.port: %s\n" +
             "\n" +
+            "\n" +
             "spring:\n" +
             "  application.name: %s\n" +
             "  profiles.active: prod\n" +
