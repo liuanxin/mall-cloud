@@ -1031,6 +1031,10 @@ class Server {
             "\n" +
             "        <dependency>\n" +
             "            <groupId>org.springframework.cloud</groupId>\n" +
+            "            <artifactId>spring-cloud-starter-config</artifactId>\n" +
+            "        </dependency>\n" +
+            "        <dependency>\n" +
+            "            <groupId>org.springframework.cloud</groupId>\n" +
             "            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>\n" +
             "        </dependency>\n" +
 //            "        <dependency>\n" +

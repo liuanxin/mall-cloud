@@ -15,6 +15,7 @@
     <logger name="com.github.common.repository" level="warn"/>
     <logger name="com.github.common.mvc" level="warn"/>
 
+    <logger name="com.netflix" level="warn"/>
     <logger name="com.alibaba" level="warn"/>
     <logger name="com.github" level="warn"/>
     <logger name="com.sun" level="warn"/>
