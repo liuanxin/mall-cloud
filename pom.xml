@@ -23,6 +23,8 @@
 
         <!-- 注册中心模块 -->
         <module>register-center</module>
+        <!-- 服务配置模块 -->
+        <module>service-config</module>
 
         <!-- 公共模块 -->
         <module>module-0-common</module>
@@ -44,8 +46,6 @@
         <!-- 定时任务服务 -->
         <module>timing-task</module>
 
-        <!-- 服务配置模块 -->
-        <module>service-config</module>
         <!-- 服务跟踪模块 -->
         <module>service-trace</module>
     </modules>
