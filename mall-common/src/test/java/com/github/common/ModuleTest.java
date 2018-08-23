@@ -901,7 +901,9 @@ class Server {
             "    <logger name=\"" + ModuleTest.PACKAGE + ".~MODULE_NAME~.repository\" level=\"warn\"/>\n" +
             "    <logger name=\"" + ModuleTest.PACKAGE + ".common.mvc\" level=\"warn\"/>\n" +
             "\n" +
+            "    \n" +
             "    <logger name=\"com.alibaba\" level=\"warn\"/>\n" +
+            "    <logger name=\"com.zaxxer\" level=\"warn\"/>\n" +
             "    <logger name=\"com.github\" level=\"warn\"/>\n" +
             "    <logger name=\"com.sun\" level=\"warn\"/>\n" +
             "\n" +
