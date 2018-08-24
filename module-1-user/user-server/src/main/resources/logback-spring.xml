@@ -45,20 +45,20 @@
     <!-- 测试时用到的日志配置 -->
     <springProfile name="test">
         <appender name="PROJECT" class="ch.qos.logback.core.rolling.RollingFileAppender">
-            <file>${FILE_PATH}.log</file>
+            <file>${FILE_PATH_TEST}.log</file>
             <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-                <fileNamePattern>${FILE_PATH}-%d{yyyy-MM-dd}.log</fileNamePattern>
+                <fileNamePattern>${FILE_PATH_TEST}-%d{yyyy-MM-dd}.log</fileNamePattern>
                 <maxHistory>${SAVE_FILE_TEST}</maxHistory>
             </rollingPolicy>
             <encoder>
-                <pattern>${LOG_PATTERN}</pattern>
+                <pattern>${LOG_PATTERN_TEST}</pattern>
             </encoder>
         </appender>
 
         <appender name="SQL" class="ch.qos.logback.core.rolling.RollingFileAppender">
-            <file>${FILE_PATH}-sql.log</file>
+            <file>${FILE_PATH_TEST}-sql.log</file>
             <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-                <fileNamePattern>${FILE_PATH}-sql-%d{yyyy-MM-dd}.log</fileNamePattern>
+                <fileNamePattern>${FILE_PATH_TEST}-sql-%d{yyyy-MM-dd}.log</fileNamePattern>
                 <maxHistory>${SAVE_FILE_TEST}</maxHistory>
             </rollingPolicy>
             <encoder>
