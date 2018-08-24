@@ -1,9 +1,8 @@
 
 server.port: 9071
+logging.config: classpath:log-test.xml
 
-spring:
-  application.name: queue-consume
-  profiles.active: test
+spring.application.name: queue-consume
 
 register.center: http://test1:8761/eureka/,http://test2:8761/eureka/,http://test3:8761/eureka/
 eureka:
@@ -19,7 +18,6 @@ spring.cloud.config:
   discovery.enabled: true
   discovery.serviceId: service-config
   name: all,queue
-  profile: ${spring.profiles.active}
-
+  profile: test
 
 management.security.enabled: false

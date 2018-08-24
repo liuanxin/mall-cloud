@@ -1,13 +1,8 @@
 
-online: false
-
 server.port: 8686
+logging.config: classpath:log-dev.xml
 
 spring.application.name: web-backend
-
-spring:
-  mvc.throw-exception-if-no-handler-found: true
-  resources.add-mappings: false
 
 register.center: http://127.0.0.1:8761/eureka/
 eureka:
@@ -23,28 +18,11 @@ eureka:
     # 服务端在收到最后一个心跳后的等待时间. 超出将摘除该实例, 默认 90 秒, 此值至少要大于 lease-renewal-interval-in-seconds
     lease-expiration-duration-in-seconds: 60
 
-# feign.hystrix.enabled: true
+spring.cloud.config:
+#  uri: http://127.0.0.1:8001/
+  discovery.enabled: true
+  discovery.serviceId: service-config
+  name: all,search
+  profile: dev
 
-#zuul:
-#  ignored-services: web-manager
-#  routes:
-#    common:
-#      path: /common/**
-#      serviceId: common
-#      stripPrefix: false
-#    user:
-#      path: /user/**
-#      serviceId: user
-#      stripPrefix: false
-#    product:
-#      path: /product/**
-#      serviceId: product
-#      stripPrefix: false
-#    trade:
-#      path: /trade/**
-#      serviceId: trade
-#      stripPrefix: false
-
-#spring:
-#  zipkin.base-url: http://127.0.0.1:9411
-#  sleuth.sampler.percentage: 0.1
+management.security.enabled: false

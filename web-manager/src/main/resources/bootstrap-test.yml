@@ -1,13 +1,8 @@
 
-online: false
-
 server.port: 8787
+logging.config: classpath:log-test.xml
 
 spring.application.name: web-manager
-
-spring:
-  mvc.throw-exception-if-no-handler-found: true
-  resources.add-mappings: false
 
 register.center: http://test1:8761/eureka/,http://test2:8761/eureka/,http://test3:8761/eureka/
 eureka:
@@ -19,8 +14,10 @@ eureka:
     lease-renewal-interval-in-seconds: 10
     lease-expiration-duration-in-seconds: 30
 
-# feign.hystrix.enabled: true
+spring.cloud.config:
+  discovery.enabled: true
+  discovery.serviceId: service-config
+  name: all,search
+  profile: test
 
-#spring:
-#  zipkin.base-url: http://127.0.0.1:9411
-#  sleuth.sampler.percentage: 0.1
+management.security.enabled: false

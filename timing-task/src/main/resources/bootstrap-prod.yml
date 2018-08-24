@@ -1,5 +1,6 @@
 
-online: true
+server.port: 8585
+logging.config: classpath:log-prod.xml
 
 spring.application.name: task
 
@@ -12,3 +13,11 @@ eureka:
   instance:
     lease-renewal-interval-in-seconds: 5
     lease-expiration-duration-in-seconds: 15
+
+spring.cloud.config:
+  discovery.enabled: true
+  discovery.serviceId: service-config
+  name: all,search
+  profile: prod
+
+management.security.enabled: false
