@@ -18,6 +18,6 @@ spring.cloud.config:
   discovery.enabled: true
   discovery.serviceId: service-config
   name: all,${spring.application.name}
-  profile: dev
+  profile: prod
 
 management.security.enabled: false
