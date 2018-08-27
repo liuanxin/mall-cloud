@@ -353,7 +353,7 @@ public final class U {
     public static BigDecimal divide(BigDecimal num1, Integer num2, int scale) {
         if (isNotBlank(num1)) {
             if (greater0(num2)) {
-                return num1.divide(new BigDecimal(num2), scale, BigDecimal.ROUND_UP);
+                return num1.divide(new BigDecimal(num2), scale, RoundingMode.UP);
             } else {
                 return num1;
             }
