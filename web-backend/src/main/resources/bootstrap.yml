@@ -22,7 +22,7 @@ spring.cloud.config:
 #  uri: http://127.0.0.1:8001/
   discovery.enabled: true
   discovery.serviceId: service-config
-  name: all,search
+  name: all,${spring.application.name}
   profile: dev
 
 management.security.enabled: false
