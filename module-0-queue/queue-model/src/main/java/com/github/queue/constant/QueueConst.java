@@ -14,6 +14,11 @@ public final class QueueConst {
     public static final String MODULE_INFO = MODULE_NAME + "-消息队列";
 
 
+    // ========== 用到的消息队列名 ==========
+
+    public static final String SIMPLE_MQ_NAME = "simple-mq";
+
+
     // ========== url 说明 ==========
 
     /** 测试地址 */
