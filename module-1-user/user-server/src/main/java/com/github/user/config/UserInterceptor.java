@@ -31,8 +31,8 @@ public class UserInterceptor implements HandlerInterceptor {
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response,
                                 Object handler, Exception ex) throws Exception {
         if (ex != null) {
-            if (LogUtil.ERROR_LOG.isErrorEnabled()) {
-                LogUtil.ERROR_LOG.error("request was over, but have exception", ex);
+            if (LogUtil.ROOT_LOG.isErrorEnabled()) {
+                LogUtil.ROOT_LOG.error("request was over, but have exception", ex);
             }
         }
         LogUtil.unbind();

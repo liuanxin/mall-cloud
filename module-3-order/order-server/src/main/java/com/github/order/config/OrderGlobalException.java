@@ -37,8 +37,8 @@ public class OrderGlobalException {
     @ExceptionHandler(ServiceException.class)
     public ResponseEntity<JsonResult> service(ServiceException e) {
         String msg = e.getMessage();
-        if (LogUtil.ERROR_LOG.isDebugEnabled()) {
-            LogUtil.ERROR_LOG.debug(msg);
+        if (LogUtil.ROOT_LOG.isDebugEnabled()) {
+            LogUtil.ROOT_LOG.debug(msg);
         }
         return fail(msg);
     }
@@ -46,8 +46,8 @@ public class OrderGlobalException {
     @ExceptionHandler(NotLoginException.class)
     public ResponseEntity<JsonResult> notLogin(NotLoginException e) {
         String msg = e.getMessage();
-        if (LogUtil.ERROR_LOG.isDebugEnabled()) {
-            LogUtil.ERROR_LOG.debug(msg);
+        if (LogUtil.ROOT_LOG.isDebugEnabled()) {
+            LogUtil.ROOT_LOG.debug(msg);
         }
         return new ResponseEntity<>(JsonResult.notLogin(msg), HttpStatus.UNAUTHORIZED);
     }
@@ -55,8 +55,8 @@ public class OrderGlobalException {
     @ExceptionHandler(ForbiddenException.class)
     public ResponseEntity<JsonResult> forbidden(ForbiddenException e) {
         String msg = e.getMessage();
-        if (LogUtil.ERROR_LOG.isDebugEnabled()) {
-            LogUtil.ERROR_LOG.debug(msg);
+        if (LogUtil.ROOT_LOG.isDebugEnabled()) {
+            LogUtil.ROOT_LOG.debug(msg);
         }
         return new ResponseEntity<>(JsonResult.notPermission(msg), HttpStatus.FORBIDDEN);
     }
@@ -97,8 +97,8 @@ public class OrderGlobalException {
     /** 未知的所有其他异常 */
     @ExceptionHandler(Throwable.class)
     public ResponseEntity<JsonResult> other(Throwable e) {
-        if (LogUtil.ERROR_LOG.isErrorEnabled()) {
-            LogUtil.ERROR_LOG.error("有错误", e);
+        if (LogUtil.ROOT_LOG.isErrorEnabled()) {
+            LogUtil.ROOT_LOG.error("有错误", e);
         }
         return fail(U.returnMsg(e, online));
     }
@@ -106,11 +106,11 @@ public class OrderGlobalException {
     // ==================================================
 
     private void bindAndPrintLog(Exception e) {
-        if (LogUtil.ERROR_LOG.isDebugEnabled()) {
+        if (LogUtil.ROOT_LOG.isDebugEnabled()) {
             // 当没有进到全局拦截器就抛出的异常, 需要这么处理才能在日志中输出整个上下文信息
             LogUtil.bind(RequestUtils.logContextInfo());
             try {
-                LogUtil.ERROR_LOG.debug(e.getMessage(), e);
+                LogUtil.ROOT_LOG.debug(e.getMessage(), e);
             } finally {
                 LogUtil.unbind();
             }

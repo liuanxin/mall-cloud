@@ -47,8 +47,8 @@ public final class Render {
                     path = path.substring(0, path.indexOf("?"));
                 }
             } catch (Exception e) {
-                if (LogUtil.ERROR_LOG.isDebugEnabled()) {
-                    LogUtil.ERROR_LOG.debug("no path({}) in spring mvc", path);
+                if (LogUtil.ROOT_LOG.isDebugEnabled()) {
+                    LogUtil.ROOT_LOG.debug("no path({}) in spring mvc", path);
                 }
             }
         }

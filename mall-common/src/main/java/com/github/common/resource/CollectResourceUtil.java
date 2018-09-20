@@ -47,8 +47,8 @@ public final class CollectResourceUtil {
                     Collections.addAll(resourceList, resources);
                 }
             } catch (IOException e) {
-                if (LogUtil.ERROR_LOG.isErrorEnabled()) {
-                    LogUtil.ERROR_LOG.error(String.format("load file(%s) exception: %s", path, e.getMessage()));
+                if (LogUtil.ROOT_LOG.isErrorEnabled()) {
+                    LogUtil.ROOT_LOG.error(String.format("load file(%s) exception: %s", path, e.getMessage()));
                 }
             }
         }

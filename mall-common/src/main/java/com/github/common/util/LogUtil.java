@@ -15,9 +15,6 @@ public final class LogUtil {
     /** 根日志: 在类里面使用 LoggerFactory.getLogger(XXX.class) 跟这种方式一样! */
     public static final Logger ROOT_LOG = LoggerFactory.getLogger("root");
 
-    /** 错误日志 */
-    public static final Logger ERROR_LOG = LoggerFactory.getLogger("errorLog");
-
     /** SQL 相关的日志 */
     public static final Logger SQL_LOG = LoggerFactory.getLogger("sqlLog");
 

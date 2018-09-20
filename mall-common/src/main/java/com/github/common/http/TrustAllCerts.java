@@ -34,8 +34,8 @@ class TrustAllCerts implements X509TrustManager {
             sc.init(null, new TrustManager[] { INSTANCE }, null);
             return sc;
         } catch (NoSuchAlgorithmException | KeyManagementException e) {
-            if (LogUtil.ERROR_LOG.isErrorEnabled()) {
-                LogUtil.ERROR_LOG.error("设置忽略 ssl 证书异常", e);
+            if (LogUtil.ROOT_LOG.isErrorEnabled()) {
+                LogUtil.ROOT_LOG.error("设置忽略 ssl 证书异常", e);
             }
             return null;
         }

@@ -54,8 +54,8 @@ public class RenderViewResolver extends FreeMarkerViewResolver {
                 try {
                     context.put(clazz.getSimpleName(), STATIC_HASH_MODEL.get(clazzName));
                 } catch (TemplateModelException e) {
-                    if (LogUtil.ERROR_LOG.isErrorEnabled()) {
-                        LogUtil.ERROR_LOG.error("add class(" + clazzName + ") in Render context exception", e);
+                    if (LogUtil.ROOT_LOG.isErrorEnabled()) {
+                        LogUtil.ROOT_LOG.error("add class(" + clazzName + ") in Render context exception", e);
                     }
                 }
             }
@@ -85,8 +85,8 @@ public class RenderViewResolver extends FreeMarkerViewResolver {
                     try {
                         context.put(clazz.getSimpleName() + "Enum", ENUM_HASH_MODEL.get(clazz.getName()));
                     } catch (TemplateModelException e) {
-                        if (LogUtil.ERROR_LOG.isErrorEnabled()) {
-                            LogUtil.ERROR_LOG.error("add enum(" + clazzName + ") in Render context exception", e);
+                        if (LogUtil.ROOT_LOG.isErrorEnabled()) {
+                            LogUtil.ROOT_LOG.error("add enum(" + clazzName + ") in Render context exception", e);
                         }
                     }
                 }

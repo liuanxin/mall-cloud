@@ -583,8 +583,8 @@ class Server {
             "    @ExceptionHandler(ServiceException.class)\n" +
             "    public ResponseEntity<JsonResult> service(ServiceException e) {\n" +
             "        String msg = e.getMessage();\n" +
-            "        if (LogUtil.ERROR_LOG.isDebugEnabled()) {\n" +
-            "            LogUtil.ERROR_LOG.debug(msg);\n" +
+            "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
+            "            LogUtil.ROOT_LOG.debug(msg);\n" +
             "        }\n" +
             "        return fail(msg);\n" +
             "    }\n" +
@@ -592,8 +592,8 @@ class Server {
             "    @ExceptionHandler(NotLoginException.class)\n" +
             "    public ResponseEntity<JsonResult> notLogin(NotLoginException e) {\n" +
             "        String msg = e.getMessage();\n" +
-            "        if (LogUtil.ERROR_LOG.isDebugEnabled()) {\n" +
-            "            LogUtil.ERROR_LOG.debug(msg);\n" +
+            "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
+            "            LogUtil.ROOT_LOG.debug(msg);\n" +
             "        }\n" +
             "        return new ResponseEntity<>(JsonResult.notLogin(msg), HttpStatus.UNAUTHORIZED);\n" +
             "    }\n" +
@@ -601,8 +601,8 @@ class Server {
             "    @ExceptionHandler(ForbiddenException.class)\n" +
             "    public ResponseEntity<JsonResult> forbidden(ForbiddenException e) {\n" +
             "        String msg = e.getMessage();\n" +
-            "        if (LogUtil.ERROR_LOG.isDebugEnabled()) {\n" +
-            "            LogUtil.ERROR_LOG.debug(msg);\n" +
+            "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
+            "            LogUtil.ROOT_LOG.debug(msg);\n" +
             "        }\n" +
             "        return new ResponseEntity<>(JsonResult.notPermission(msg), HttpStatus.FORBIDDEN);\n" +
             "    }\n" +
@@ -643,8 +643,8 @@ class Server {
             "    /** 未知的所有其他异常 */\n" +
             "    @ExceptionHandler(Throwable.class)\n" +
             "    public ResponseEntity<JsonResult> other(Throwable e) {\n" +
-            "        if (LogUtil.ERROR_LOG.isErrorEnabled()) {\n" +
-            "            LogUtil.ERROR_LOG.error(\"有错误\", e);\n" +
+            "        if (LogUtil.ROOT_LOG.isErrorEnabled()) {\n" +
+            "            LogUtil.ROOT_LOG.error(\"有错误\", e);\n" +
             "        }\n" +
             "        return fail(U.returnMsg(e, online));\n" +
             "    }\n" +
@@ -652,11 +652,11 @@ class Server {
             "    // ==================================================\n" +
             "\n" +
             "    private void bindAndPrintLog(Exception e) {\n" +
-            "        if (LogUtil.ERROR_LOG.isDebugEnabled()) {\n" +
+            "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
             "            // 当没有进到全局拦截器就抛出的异常, 需要这么处理才能在日志中输出整个上下文信息\n" +
             "            LogUtil.bind(RequestUtils.logContextInfo());\n" +
             "            try {\n" +
-            "                LogUtil.ERROR_LOG.debug(e.getMessage(), e);\n" +
+            "                LogUtil.ROOT_LOG.debug(e.getMessage(), e);\n" +
             "            } finally {\n" +
             "                LogUtil.unbind();\n" +
             "            }\n" +
@@ -699,8 +699,8 @@ class Server {
             "    public void afterCompletion(HttpServletRequest request, HttpServletResponse response,\n" +
             "                                Object handler, Exception ex) throws Exception {\n" +
             "        if (ex != null) {\n" +
-            "            if (LogUtil.ERROR_LOG.isErrorEnabled()) {\n" +
-            "                LogUtil.ERROR_LOG.error(\"request was over, but have exception\", ex);\n" +
+            "            if (LogUtil.ROOT_LOG.isErrorEnabled()) {\n" +
+            "                LogUtil.ROOT_LOG.error(\"request was over, but have exception\", ex);\n" +
             "            }\n" +
             "        }\n" +
             "        LogUtil.unbind();\n" +

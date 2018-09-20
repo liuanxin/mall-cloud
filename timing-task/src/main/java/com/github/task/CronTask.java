@@ -25,8 +25,8 @@ public class CronTask {
         try {
             handlerBusiness();
         } catch (Exception e) {
-            if (LogUtil.ERROR_LOG.isErrorEnabled()) {
-                LogUtil.ERROR_LOG.error(String.format("%s时异常", BUSINESS_DESC), e);
+            if (LogUtil.ROOT_LOG.isErrorEnabled()) {
+                LogUtil.ROOT_LOG.error(String.format("%s时异常", BUSINESS_DESC), e);
             }
         } finally {
             LogUtil.unbind();

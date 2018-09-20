@@ -34,8 +34,8 @@ public class DynamicCronTask implements SchedulingConfigurer {
                 try {
                     handlerBusiness();
                 } catch (Exception e) {
-                    if (LogUtil.ERROR_LOG.isErrorEnabled()) {
-                        LogUtil.ERROR_LOG.error(BUSINESS_DESC + "异常", e);
+                    if (LogUtil.ROOT_LOG.isErrorEnabled()) {
+                        LogUtil.ROOT_LOG.error(BUSINESS_DESC + "异常", e);
                     }
                 } finally {
                     if (LogUtil.ROOT_LOG.isInfoEnabled()) {
@@ -61,8 +61,8 @@ public class DynamicCronTask implements SchedulingConfigurer {
                 try {
                     cronTrigger = new CronTrigger(cron);
                 } catch (Exception e) {
-                    if (LogUtil.ERROR_LOG.isErrorEnabled()) {
-                        LogUtil.ERROR_LOG.error(String.format("%s的表达式有误, 使用默认值(%s)", BUSINESS_DESC, CRON), e);
+                    if (LogUtil.ROOT_LOG.isErrorEnabled()) {
+                        LogUtil.ROOT_LOG.error(String.format("%s的表达式有误, 使用默认值(%s)", BUSINESS_DESC, CRON), e);
                     }
                     cronTrigger = new CronTrigger(CRON);
                 }

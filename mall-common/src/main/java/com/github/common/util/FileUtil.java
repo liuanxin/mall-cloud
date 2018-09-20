@@ -45,8 +45,8 @@ public final class FileUtil {
         try {
             file.transferTo(new File(directory, newName));
         } catch (IOException e) {
-            if (LogUtil.ERROR_LOG.isErrorEnabled()) {
-                LogUtil.ERROR_LOG.error("upload file exception", e);
+            if (LogUtil.ROOT_LOG.isErrorEnabled()) {
+                LogUtil.ROOT_LOG.error("upload file exception", e);
             }
             U.assertException("文件上传时异常");
         }

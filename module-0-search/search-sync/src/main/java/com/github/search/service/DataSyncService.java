@@ -24,8 +24,8 @@ public class DataSyncService implements SchedulingConfigurer {
                 try {
                     handlerBusiness();
                 } catch (Exception e) {
-                    if (LogUtil.ERROR_LOG.isErrorEnabled()) {
-                        LogUtil.ERROR_LOG.error("同步数据到搜索时异常", e);
+                    if (LogUtil.ROOT_LOG.isErrorEnabled()) {
+                        LogUtil.ROOT_LOG.error("同步数据到搜索时异常", e);
                     }
                 } finally {
                     if (LogUtil.ROOT_LOG.isInfoEnabled()) {
@@ -45,8 +45,8 @@ public class DataSyncService implements SchedulingConfigurer {
                 try {
                     cronTrigger = new CronTrigger(cron);
                 } catch (Exception e) {
-                    if (LogUtil.ERROR_LOG.isErrorEnabled()) {
-                        LogUtil.ERROR_LOG.error(String.format("配置的表达式(%s)有误, 使用默认", cron), e);
+                    if (LogUtil.ROOT_LOG.isErrorEnabled()) {
+                        LogUtil.ROOT_LOG.error(String.format("配置的表达式(%s)有误, 使用默认", cron), e);
                     }
                     cronTrigger = new CronTrigger(CRON);
                 }
