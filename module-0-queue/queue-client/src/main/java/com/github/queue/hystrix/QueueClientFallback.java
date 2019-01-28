@@ -3,7 +3,7 @@ package com.github.queue.hystrix;
 import com.github.common.page.PageInfo;
 import com.github.common.page.Pages;
 import com.github.common.util.LogUtil;
-import com.github.queue.client.QueueService;
+import com.github.queue.client.QueueClient;
 import org.springframework.stereotype.Component;
 
 /**
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
  * @author https://github.com/liuanxin
  */
 @Component
-public class QueueFallback implements QueueService {
+public class QueueClientFallback implements QueueClient {
 
     @Override
     public PageInfo demo(String xx, Integer page, Integer limit) {

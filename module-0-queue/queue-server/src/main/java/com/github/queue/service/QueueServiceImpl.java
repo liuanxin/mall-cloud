@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author https://github.com/liuanxin
  */
 @RestController
-public class QueueServiceImpl implements QueueInterface {
+public class QueueServiceImpl implements QueueService {
     
     @Override
     public PageInfo demo(String xx, Integer page, Integer limit) {
