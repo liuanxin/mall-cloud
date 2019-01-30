@@ -25,7 +25,7 @@ public class ModuleTest {
     @SuppressWarnings("ConstantConditions")
     private static final String PARENT = ModuleTest.class.getClassLoader().getResource("").getFile() + "../../../";
     static String PACKAGE_PATH = PACKAGE.replaceAll("\\.", "/");
-    static String AUTHOR = " *\n * @author https://github.com/liuanxin\n";
+    static String AUTHOR = "";// " *\n * @author https://github.com/liuanxin\n";
 
     static String capitalize(String name) {
         StringBuilder sbd = new StringBuilder();
@@ -613,7 +613,7 @@ class Server {
             "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
             "            LogUtil.ROOT_LOG.debug(msg);\n" +
             "        }\n" +
-            "        return new ResponseEntity<>(JsonResult.notFound(msg), HttpStatus.NOT_FOUND);\n" +
+            "        return notFound(msg);\n" +
             "    }\n" +
             "\n" +
             "\n" +
@@ -623,8 +623,7 @@ class Server {
             "    public ResponseEntity<JsonResult> noHandler(NoHandlerFoundException e) {\n" +
             "        bindAndPrintLog(e);\n" +
             "\n" +
-            "        String msg = String.format(\"没找到(%%s %%s)\", e.getHttpMethod(), e.getRequestURL());\n" +
-            "        return new ResponseEntity<>(JsonResult.notFound(msg), HttpStatus.NOT_FOUND);\n" +
+            "        return notFound(String.format(\"没找到(%%s %%s)\", e.getHttpMethod(), e.getRequestURL()));\n" +
             "    }\n" +
             "    @ExceptionHandler(MissingServletRequestParameterException.class)\n" +
             "    public ResponseEntity<JsonResult> missParam(MissingServletRequestParameterException e) {\n" +
@@ -678,6 +677,9 @@ class Server {
             "    }\n" +
             "    private ResponseEntity<JsonResult> fail(String msg) {\n" +
             "        return new ResponseEntity<>(JsonResult.fail(msg), HttpStatus.INTERNAL_SERVER_ERROR);\n" +
+            "    }\n" +
+            "    private ResponseEntity<JsonResult> notFound(String msg) {\n" +
+            "        return new ResponseEntity<>(JsonResult.notFound(msg), HttpStatus.NOT_FOUND);\n" +
             "    }\n" +
             "}\n";
 
