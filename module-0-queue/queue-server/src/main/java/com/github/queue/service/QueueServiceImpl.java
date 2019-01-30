@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 消息队列模块的接口实现类
- *
- * @author https://github.com/liuanxin
  */
 @RestController
 public class QueueServiceImpl implements QueueService {
