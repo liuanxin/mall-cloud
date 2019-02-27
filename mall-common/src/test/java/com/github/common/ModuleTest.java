@@ -567,7 +567,7 @@ class Server {
             "import org.springframework.web.servlet.NoHandlerFoundException;\n" +
             "\n" +
             "/**\n" +
-            " * 处理全局异常的控制类. 如果要自定义错误处理类\n" +
+            " * 处理全局异常的控制类\n" +
             " *\n" +
             " * @see org.springframework.boot.autoconfigure.web.ErrorController\n" +
             " * @see org.springframework.boot.autoconfigure.web.ErrorProperties\n" +
