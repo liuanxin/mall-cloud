@@ -1,7 +1,7 @@
 package com.github.global.config;
 
 import com.github.common.exception.*;
-import com.github.common.json.JsonResult;
+import com.github.common.json.JsonCode;
 import com.github.common.util.A;
 import com.github.common.util.LogUtil;
 import com.github.common.util.RequestUtils;
@@ -40,8 +40,7 @@ public class GlobalException {
             LogUtil.ROOT_LOG.debug(msg);
         }
 
-        JsonResult result = JsonResult.serviceFail(msg);
-        return ResponseEntity.status(result.getCode()).body(result.getMsg());
+        return ResponseEntity.status(JsonCode.FAIL.getFlag()).body(msg);
     }
     /** 未登录 */
     @ExceptionHandler(NotLoginException.class)
@@ -51,8 +50,7 @@ public class GlobalException {
             LogUtil.ROOT_LOG.debug(msg);
         }
 
-        JsonResult result = JsonResult.notLogin(msg);
-        return ResponseEntity.status(result.getCode()).body(result.getMsg());
+        return ResponseEntity.status(JsonCode.NOT_LOGIN.getFlag()).body(msg);
     }
     /** 无权限 */
     @ExceptionHandler(ForbiddenException.class)
@@ -62,8 +60,7 @@ public class GlobalException {
             LogUtil.ROOT_LOG.debug(msg);
         }
 
-        JsonResult result = JsonResult.notPermission(msg);
-        return ResponseEntity.status(result.getCode()).body(result.getMsg());
+        return ResponseEntity.status(JsonCode.NOT_PERMISSION.getFlag()).body(msg);
     }
     /** 404 */
     @ExceptionHandler(NotFoundException.class)
@@ -73,8 +70,7 @@ public class GlobalException {
             LogUtil.ROOT_LOG.debug(msg);
         }
 
-        JsonResult result = JsonResult.notFound(msg);
-        return ResponseEntity.status(result.getCode()).body(result.getMsg());
+        return ResponseEntity.status(JsonCode.NOT_FOUND.getFlag()).body(msg);
     }
     /** 错误的请求 */
     @ExceptionHandler(BadRequestException.class)
@@ -84,8 +80,7 @@ public class GlobalException {
             LogUtil.ROOT_LOG.debug(msg);
         }
 
-        JsonResult result = JsonResult.badRequest(msg);
-        return ResponseEntity.status(result.getCode()).body(result.getMsg());
+        return ResponseEntity.status(JsonCode.BAD_REQUEST.getFlag()).body(msg);
     }
 
 
@@ -96,16 +91,14 @@ public class GlobalException {
         bindAndPrintLog(e);
 
         String msg = String.format("没找到(%s %s)", e.getHttpMethod(), e.getRequestURL());
-        JsonResult result = JsonResult.notFound(msg);
-        return ResponseEntity.status(result.getCode()).body(result.getMsg());
+        return ResponseEntity.status(JsonCode.NOT_FOUND.getFlag()).body(msg);
     }
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<String> missParam(MissingServletRequestParameterException e) {
         bindAndPrintLog(e);
 
         String msg = String.format("缺少必须的参数(%s), 类型(%s)", e.getParameterName(), e.getParameterType());
-        JsonResult result = JsonResult.badRequest(msg);
-        return ResponseEntity.status(result.getCode()).body(result.getMsg());
+        return ResponseEntity.status(JsonCode.BAD_REQUEST.getFlag()).body(msg);
     }
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<String> notSupported(HttpRequestMethodNotSupportedException e) {
@@ -115,8 +108,7 @@ public class GlobalException {
         if (!online) {
             msg += String.format(" 当前(%s), 支持(%s)", e.getMethod(), A.toStr(e.getSupportedMethods()));
         }
-        JsonResult result = JsonResult.serviceFail(msg);
-        return ResponseEntity.status(result.getCode()).body(result.getMsg());
+        return ResponseEntity.status(JsonCode.FAIL.getFlag()).body(msg);
     }
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<String> uploadSizeExceeded(MaxUploadSizeExceededException e) {
@@ -124,8 +116,7 @@ public class GlobalException {
 
         // 右移 20 位相当于除以两次 1024, 正好表示从字节到 Mb
         String msg = String.format("上传文件太大! 请保持在 %sM 以内", (e.getMaxUploadSize() >> 20));
-        JsonResult result = JsonResult.serviceFail(msg);
-        return ResponseEntity.status(result.getCode()).body(result.getMsg());
+        return ResponseEntity.status(JsonCode.FAIL.getFlag()).body(msg);
     }
 
     // 以上是 spring 的内部异常
@@ -139,8 +130,7 @@ public class GlobalException {
         }
 
         String msg = U.returnMsg(e, online);
-        JsonResult<Object> result = JsonResult.fail(msg);
-        return ResponseEntity.status(result.getCode()).body(result.getMsg());
+        return ResponseEntity.status(JsonCode.FAIL.getFlag()).body(msg);
     }
 
     // ==================================================
