@@ -88,34 +88,30 @@ public class GlobalException {
 
     @ExceptionHandler(NoHandlerFoundException.class)
     public ResponseEntity<String> noHandler(NoHandlerFoundException e) {
-        bindAndPrintLog(e);
-
         String msg = String.format("没找到(%s %s)", e.getHttpMethod(), e.getRequestURL());
+        bindAndPrintLog(msg, e);
         return ResponseEntity.status(JsonCode.NOT_FOUND.getFlag()).body(msg);
     }
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<String> missParam(MissingServletRequestParameterException e) {
-        bindAndPrintLog(e);
-
         String msg = String.format("缺少必须的参数(%s), 类型(%s)", e.getParameterName(), e.getParameterType());
+        bindAndPrintLog(msg, e);
         return ResponseEntity.status(JsonCode.BAD_REQUEST.getFlag()).body(msg);
     }
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<String> notSupported(HttpRequestMethodNotSupportedException e) {
-        bindAndPrintLog(e);
-
         String msg = "不支持此种请求方式.";
         if (!online) {
             msg += String.format(" 当前(%s), 支持(%s)", e.getMethod(), A.toStr(e.getSupportedMethods()));
         }
+        bindAndPrintLog(msg, e);
         return ResponseEntity.status(JsonCode.FAIL.getFlag()).body(msg);
     }
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<String> uploadSizeExceeded(MaxUploadSizeExceededException e) {
-        bindAndPrintLog(e);
-
         // 右移 20 位相当于除以两次 1024, 正好表示从字节到 Mb
         String msg = String.format("上传文件太大! 请保持在 %sM 以内", (e.getMaxUploadSize() >> 20));
+        bindAndPrintLog(msg, e);
         return ResponseEntity.status(JsonCode.FAIL.getFlag()).body(msg);
     }
 
@@ -135,12 +131,12 @@ public class GlobalException {
 
     // ==================================================
 
-    private void bindAndPrintLog(Exception e) {
+    private void bindAndPrintLog(String msg, Exception e) {
         if (LogUtil.ROOT_LOG.isDebugEnabled()) {
             // 当没有进到全局拦截器就抛出的异常, 需要这么处理才能在日志中输出整个上下文信息
             LogUtil.bind(RequestUtils.logContextInfo());
             try {
-                LogUtil.ROOT_LOG.debug(e.getMessage(), e);
+                LogUtil.ROOT_LOG.debug(msg, e);
             } finally {
                 LogUtil.unbind();
             }
