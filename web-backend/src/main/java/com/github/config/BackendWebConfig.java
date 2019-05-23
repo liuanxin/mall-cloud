@@ -2,6 +2,7 @@ package com.github.config;
 
 import com.github.common.mvc.SpringMvc;
 import com.github.common.mvc.VersionRequestMappingHandlerMapping;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -21,6 +22,9 @@ import java.util.List;
 @Configuration
 public class BackendWebConfig extends WebMvcConfigurationSupport {
 
+    @Value("${online:false}")
+    private boolean online;
+
     @Override
     protected RequestMappingHandlerMapping createRequestMappingHandlerMapping() {
         return new VersionRequestMappingHandlerMapping();
@@ -33,7 +37,7 @@ public class BackendWebConfig extends WebMvcConfigurationSupport {
 
     @Override
     public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
-        SpringMvc.handlerConvert(converters);
+        SpringMvc.handlerConvert(online, converters);
     }
 
     @Override
@@ -54,6 +58,6 @@ public class BackendWebConfig extends WebMvcConfigurationSupport {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new BackendInterceptor()).addPathPatterns("/**");
+        registry.addInterceptor(new BackendInterceptor(online)).addPathPatterns("/**");
     }
 }
