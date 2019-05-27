@@ -37,7 +37,7 @@ public class BackendWebConfig extends WebMvcConfigurationSupport {
 
     @Override
     public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
-        SpringMvc.handlerConvert(online, converters);
+        SpringMvc.handlerConvert(converters);
     }
 
     @Override
@@ -58,6 +58,6 @@ public class BackendWebConfig extends WebMvcConfigurationSupport {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new BackendInterceptor(online)).addPathPatterns("/**");
+        registry.addInterceptor(new BackendInterceptor()).addPathPatterns("/**");
     }
 }
