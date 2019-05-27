@@ -274,15 +274,19 @@ public class HttpClientUtil {
         sbd.append("HttpClient4.5 => [")
                 .append(DateUtil.formatMs(start)).append(" -> ").append(DateUtil.nowTimeMs())
                 .append("] (").append(method).append(" ").append(url).append(")");
+
+        // 参数 及 头 的长度如果超过 1100 就只输出前后 500 个字符
+        int maxLen = 1100, headTail = 500;
+
         if (U.isNotBlank(params)) {
-            // 请求参数长度大于 500 就只输出前后 200 个字符
+            sbd.append(" param(");
             int len = params.length();
-            if (len > 500) {
-                sbd.append(params, 0, 200).append(" ... ").append(params, len - 200, len);
+            if (len > maxLen) {
+                sbd.append(params, 0, headTail).append(" <.> ").append(params, len - headTail, len);
             } else {
                 sbd.append(params);
             }
-            sbd.append(")");
+            sbd.append(") ");
         }
         if (A.isNotEmpty(requestHeaders)) {
             sbd.append(" request headers(");
@@ -291,16 +295,24 @@ public class HttpClientUtil {
             }
             sbd.append(")");
         }
+
+        sbd.append(",");
+
         if (A.isNotEmpty(responseHeaders)) {
-            sbd.append(", response headers(");
+            sbd.append(" response headers(");
             for (Header header : responseHeaders) {
                 sbd.append("<").append(header.getName()).append(" : ").append(header.getValue()).append(">");
             }
             sbd.append(")");
         }
-        sbd.append(", return(");
+        sbd.append(" return(");
         if (U.isNotBlank(result)) {
-            sbd.append(result);
+            int len = result.length();
+            if (len > maxLen) {
+                sbd.append(result, 0, headTail).append(" ... ").append(result, len - headTail, len);
+            } else {
+                sbd.append(result);
+            }
         }
         sbd.append(")");
         return sbd.toString();
