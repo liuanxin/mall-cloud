@@ -15,19 +15,21 @@ import java.util.Set;
 /** 如果想要将数据导成文件保持, 使用 {@link FileExport} 类, 如果要导出文件在 web 端下载, 使用 {@link WebExport} 类 */
 final class ExportExcel {
 
-    // excel 2003 的最大行数是 65536 行, 2007 开始的版本是 1048576 行.
-    // excel 2003 的最大列数是 256 列, 2007 及以上版本是 16384 列.
-    /** excel 单个 sheet 能处理的最大行数 (2 << 15) - 1 */
-    private static final int EXCEL_TOTAL = 65535;
-
     /** 标题行的字体大小 */
     private static final short HEAD_FONT_SIZE = 11;
-
     /** 其他内容的字体大小 */
     private static final short FONT_SIZE = 10;
-
     /** 行高. 要比上面的字体大一点! */
     private static final short ROW_HEIGHT = 15;
+
+    static int getMaxColumn(boolean excel07) {
+        return excel07 ? 16384 : 256;
+    }
+    // 2003(xls)  单个 sheet 最多只能有   65536 行   256 列
+    // 2007(xlsx) 及以上的版本最多只能有 1048576 行 16384 列
+    static int getMaxRow(boolean excel07) {
+        return excel07 ? 1048576 : 65535;
+    }
 
     /**
      * 返回一个 excel 工作簿
@@ -38,6 +40,19 @@ final class ExportExcel {
      */
     static Workbook handle(boolean excel07, LinkedHashMap<String, String> titleMap,
                            LinkedHashMap<String, List<?>> dataMap) {
+        return handle(excel07, titleMap, dataMap, false);
+    }
+
+    /**
+     * 返回一个 excel 工作簿
+     *
+     * @param excel07  是否返回 microsoft excel 2007 的版本
+     * @param titleMap 属性名为 key, 对应的标题为 value, 为了处理显示时的顺序, 因此使用 linkedHashMap
+     * @param dataMap  以「sheet 名」为 key, 对应的数据为 value(每一行的数据为一个 Object)
+     * @param rightChineseFont  是否能正确中文字体的大小
+     */
+    static Workbook handle(boolean excel07, LinkedHashMap<String, String> titleMap,
+                           LinkedHashMap<String, List<?>> dataMap, boolean rightChineseFont) {
         // 声明一个工作薄. HSSFWorkbook 是 Office 2003 的版本, XSSFWorkbook 是 2007
         Workbook workbook = excel07 ? new XSSFWorkbook() : new HSSFWorkbook();
         // 没有标题直接返回
@@ -47,6 +62,11 @@ final class ExportExcel {
         // 如果数据为空, 构建一个空字典(确保导出的文件有标题头)
         if (dataMap == null) {
             dataMap = new LinkedHashMap<>();
+        }
+        int maxColumn = getMaxColumn(excel07);
+        int columnSize = titleMap.size();
+        if (columnSize > maxColumn) {
+            throw new RuntimeException("Invalid column number " + columnSize + ", max " + maxColumn);
         }
 
         // 头样式
@@ -74,8 +94,6 @@ final class ExportExcel {
 
         // 标题头, 这里跟数据中的属性相对应
         Set<Map.Entry<String, String>> titleEntry = titleMap.entrySet();
-        // 是否能正确中文字体的大小
-        boolean rightChineseFont = false;
 
         // 单个列的数据
         String cellData;
@@ -84,12 +102,13 @@ final class ExportExcel {
         // 数字格式
         DataFormat dataFormat = workbook.createDataFormat();
 
+        int maxRow = getMaxRow(excel07);
         for (Map.Entry<String, List<?>> entry : dataMap.entrySet()) {
             // 当前 sheet 的数据
             dataList = entry.getValue();
             size = A.isEmpty(dataList) ? 0 : dataList.size();
             // 一个 sheet 数据过多 excel 处理会出错, 分多个 sheet
-            sheetCount = ((size % EXCEL_TOTAL == 0) ? (size / EXCEL_TOTAL) : (size / EXCEL_TOTAL + 1));
+            sheetCount = ((size % maxRow == 0) ? (size / maxRow) : (size / maxRow + 1));
             if (sheetCount == 0) {
                 // 如果没有记录时也至少构建一个(确保导出的文件有标题头)
                 sheetCount = 1;
@@ -116,8 +135,8 @@ final class ExportExcel {
                 if (size > 0) {
                     if (sheetCount > 1) {
                         // 每个 sheet 除标题行以外的数据
-                        fromIndex = EXCEL_TOTAL * i;
-                        toIndex = (i + 1 == sheetCount) ? size : EXCEL_TOTAL;
+                        fromIndex = maxRow * i;
+                        toIndex = (i + 1 == sheetCount) ? size : maxRow;
                         sheetList = dataList.subList(fromIndex, toIndex);
                     } else {
                         sheetList = dataList;
@@ -136,7 +155,7 @@ final class ExportExcel {
 
                                 cellData = U.getField(data, titleMapEntry.getKey());
                                 if (NumberUtils.isCreatable(cellData)) {
-                                    cell.setCellType(CellType.NUMERIC);
+                                    //cell.setCellType(CellType.NUMERIC);
                                     cell.setCellValue(NumberUtils.toDouble(cellData));
 
                                     titleValues = titleMapEntry.getValue().split("\\|");
@@ -148,7 +167,7 @@ final class ExportExcel {
                                         cellTmpStyle = numberStyle;
                                     }
                                 } else {
-                                    cell.setCellType(CellType.STRING);
+                                    //cell.setCellType(CellType.STRING);
                                     cell.setCellValue(cellData);
                                     // 给字符串设置样式意义并不大, 忽略样式. 此处并不每次都生成一个
                                     cellTmpStyle = contentStyle;
