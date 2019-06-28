@@ -1,6 +1,5 @@
 package com.github.search.repository;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -8,9 +7,12 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class DataProductRepository {
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
-    @Autowired
-    private NamedParameterJdbcTemplate parameterJdbcTemplate;
+    private final NamedParameterJdbcTemplate parameterJdbcTemplate;
+
+    public DataProductRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate parameterJdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+        this.parameterJdbcTemplate = parameterJdbcTemplate;
+    }
 }

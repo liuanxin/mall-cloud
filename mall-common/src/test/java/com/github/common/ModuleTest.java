@@ -492,7 +492,6 @@ class Server {
             "import org.mybatis.spring.SqlSessionFactoryBean;\n" +
             "import org.mybatis.spring.SqlSessionTemplate;\n" +
             "import org.mybatis.spring.annotation.MapperScan;\n" +
-            "import org.springframework.beans.factory.annotation.Autowired;\n" +
             "import org.springframework.context.annotation.Bean;\n" +
             "import org.springframework.context.annotation.Configuration;\n" +
             "\n" +
@@ -510,8 +509,11 @@ class Server {
             "@MapperScan(basePackages = Const.BASE_PACKAGE)\n" +
             "public class %sDataSourceInit {\n" +
             "\n" +
-            "    @Autowired\n" +
             "    private DataSource dataSource;\n" +
+            "\n" +
+            "    public %sDataSourceInit(DataSource dataSource) {\n" +
+            "        this.dataSource = dataSource;\n" +
+            "    }\n" +
             "\n" +
             "    @Bean\n" +
             "    public SqlSessionFactory sqlSessionFactory() throws Exception {\n" +
@@ -1198,7 +1200,7 @@ class Server {
                 clazzName, clazzName, clazzName, clazzName, clazzName, clazzName);
         writeFile(new File(configPath, clazzName + "ConfigData.java"), configData);
 
-        String dataSource = String.format(DATA_SOURCE, parentPackageName, clazzName, clazzName, clazzName);
+        String dataSource = String.format(DATA_SOURCE, parentPackageName, clazzName, clazzName, clazzName, clazzName);
         writeFile(new File(configPath, clazzName + "DataSourceInit.java"), dataSource);
 
         // 全局异常处理用 GlobalException 替代, 不用再生成了

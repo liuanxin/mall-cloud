@@ -1,12 +1,14 @@
 package com.github.search.repository;
 
 import org.elasticsearch.client.RestHighLevelClient;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
-@Repository
+@Component
 public class EsRepository {
 
-    @Autowired
-    private RestHighLevelClient client;
+    private final RestHighLevelClient client;
+
+    public EsRepository(RestHighLevelClient client) {
+        this.client = client;
+    }
 }

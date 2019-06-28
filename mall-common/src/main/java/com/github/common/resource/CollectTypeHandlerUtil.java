@@ -1,10 +1,10 @@
 package com.github.common.resource;
 
 import com.github.common.Const;
-import com.google.common.collect.Lists;
 import com.github.common.util.A;
 import com.github.common.util.LogUtil;
 import com.github.common.util.U;
+import com.google.common.collect.Lists;
 import org.apache.ibatis.type.TypeHandler;
 
 import java.io.File;
@@ -34,14 +34,11 @@ public final class CollectTypeHandlerUtil {
         if (LogUtil.ROOT_LOG.isDebugEnabled()) {
             LogUtil.ROOT_LOG.debug("mybatis load type handle:({})", A.toStr(handlerList));
         }
-        return handlerList.toArray(new TypeHandler[handlerList.size()]);
+        return handlerList.toArray(new TypeHandler[0]);
     }
 
     /** 基于指定的类(用来获取 ClassLoader), 在指定的包名下获取 mybatis 的类型处理器 */
     private static List<TypeHandler> getHandleArray(Class clazz, String classPackage) {
-        if (LogUtil.ROOT_LOG.isTraceEnabled()) {
-            LogUtil.ROOT_LOG.trace("{} in ({})", clazz, U.getClassInFile(clazz));
-        }
         List<TypeHandler> handlerList = Lists.newArrayList();
         String packageName = classPackage.replace(".", "/");
         URL url = clazz.getClassLoader().getResource(packageName);
