@@ -24,7 +24,7 @@ public class ManagerUserController {
         this.userService = userService;
     }
 
-    @ApiMethod(title = "示例", develop = "张三 - abc@xyz.com")
+    @ApiMethod(value = "示例", develop = "张三 - abc@xyz.com")
     @GetMapping("/demo")
     public JsonResult<PageInfo<DemoVo>> demo(@ApiParam("用户名") String name, DemoDto dto, Page page) {
         userService.demo(name, page.getPage(), page.getLimit());

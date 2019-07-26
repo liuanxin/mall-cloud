@@ -55,8 +55,8 @@ public class BackendApiInfoConfig {
 
     private List<DocumentParam> tokens() {
         return Arrays.asList(
-                DocumentParam.buildToken(Const.VERSION, "认证数据", "abc-xyz", ParamType.Header).setHasTextarea(true),
-                DocumentParam.buildToken(Const.VERSION, "接口版本", AppVersion.currentVersion(), ParamType.Query).setMust(true)
+                DocumentParam.buildToken(Const.VERSION, "认证数据", "abc-xyz", true),
+                DocumentParam.buildToken(Const.VERSION, "接口版本", AppVersion.currentVersion(), false).setParamType(ParamType.Query.name())
         );
     }
 }

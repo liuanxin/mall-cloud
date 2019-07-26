@@ -94,7 +94,9 @@ public class GlobalException {
     }
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<String> missParam(MissingServletRequestParameterException e) {
-        String msg = online ? "无法响应此请求" : String.format("缺少必须的参数(%s), 类型(%s)", e.getParameterName(), e.getParameterType());
+        String msg = online
+                ? "无法响应此请求"
+                : String.format("缺少必须的参数(%s), 类型(%s)", e.getParameterName(), e.getParameterType());
 
         bindAndPrintLog(msg, e);
         return ResponseEntity.status(JsonCode.FAIL.getCode()).body(msg);
@@ -102,7 +104,9 @@ public class GlobalException {
     }
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<String> notSupported(HttpRequestMethodNotSupportedException e) {
-        String msg = online  ? "无法处理此请求" : String.format("不支持此请求方式: 当前(%s), 支持(%s)", e.getMethod(), A.toStr(e.getSupportedMethods()));
+        String msg = online
+                ? "无法处理此请求"
+                : String.format("不支持此请求方式: 当前(%s), 支持(%s)", e.getMethod(), A.toStr(e.getSupportedMethods()));
 
         bindAndPrintLog(msg, e);
         return ResponseEntity.status(JsonCode.FAIL.getCode()).body(msg);
