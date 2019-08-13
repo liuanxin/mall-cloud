@@ -3,6 +3,7 @@ package com.github.web;
 import com.github.common.json.JsonResult;
 import com.github.common.util.SecurityCodeUtil;
 import com.github.common.util.U;
+import com.github.liuanxin.api.annotation.ApiParam;
 import com.github.util.BackendDataCollectUtil;
 import com.github.util.BackendSessionUtil;
 import org.springframework.stereotype.Controller;
@@ -23,7 +24,7 @@ public class BackendIndexController {
 
     @GetMapping("/enum")
     @ResponseBody
-    public JsonResult enumList(String type) {
+    public JsonResult enumList(@ApiParam("枚举类型. 不传则返回所有列表, 多个以逗号分隔") String type) {
         return U.isBlank(type) ?
                 JsonResult.success("枚举列表", BackendDataCollectUtil.ALL_ENUM_INFO) :
                 JsonResult.success("枚举信息", BackendDataCollectUtil.singleEnumInfo(type));
