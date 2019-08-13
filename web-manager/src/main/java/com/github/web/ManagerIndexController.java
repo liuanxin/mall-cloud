@@ -6,6 +6,7 @@ import com.github.common.util.SecurityCodeUtil;
 import com.github.common.util.U;
 import com.github.liuanxin.api.annotation.ApiIgnore;
 import com.github.liuanxin.api.annotation.ApiParam;
+import com.github.liuanxin.api.annotation.ApiTokens;
 import com.github.util.ManagerDataCollectUtil;
 import com.github.util.ManagerSessionUtil;
 import org.springframework.stereotype.Controller;
@@ -31,6 +32,7 @@ public class ManagerIndexController {
     }
 
     @ApiIgnore(false)
+    @ApiTokens(false)
     @GetMapping("/enum")
     @ResponseBody
     public JsonResult enumList(@ApiParam("枚举类型. 不传则返回所有列表, 多个以逗号分隔") String type) {
