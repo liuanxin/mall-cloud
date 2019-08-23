@@ -69,19 +69,33 @@ public class DateUtil {
         if (U.isNotBlank(source)) {
             source = source.trim();
             for (DateFormatType type : DateFormatType.values()) {
-                try {
-                    if (type.isCst()) {
+                if (type.isCst()) {
+                    try {
                         // cst 单独处理
                         return new SimpleDateFormat(type.getValue(), Locale.ENGLISH).parse(source);
-                    } else {
-                        Date date = DateTimeFormat.forPattern(type.getValue()).parseDateTime(source).toDate();
-                        if (date != null) {
-                            return date;
-                        }
+                    } catch (ParseException | IllegalArgumentException e) {
+                        // ignore
                     }
-                } catch (ParseException | IllegalArgumentException e) {
-                    // ignore
+                } else {
+                    Date date = parse(type.getValue(), source);
+                    if (date != null) {
+                        return date;
+                    }
                 }
+            }
+        }
+        return null;
+    }
+    public static Date parse(String source, String type) {
+        if (U.isNotBlank(source)) {
+            source = source.trim();
+            try {
+                Date date = DateTimeFormat.forPattern(type).parseDateTime(source).toDate();
+                if (date != null) {
+                    return date;
+                }
+            } catch (IllegalArgumentException e) {
+                // ignore
             }
         }
         return null;
