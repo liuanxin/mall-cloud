@@ -38,10 +38,6 @@ public class DateUtil {
     public static String formatUsaDate(Date date) {
         return format(date, DateFormatType.USA_YYYY_MM_DD);
     }
-    /** 格式化日期 yyyy-MM-dd HH:mm:ss SSS */
-    public static String formatMs(Date date) {
-        return format(date, DateFormatType.YYYY_MM_DD_HH_MM_SS_SSS);
-    }
     /** 格式化时间 HH:mm:ss */
     public static String formatTime(Date date) {
         return format(date, DateFormatType.HH_MM_SS);
@@ -49,6 +45,10 @@ public class DateUtil {
     /** 格式化日期和时间 yyyy-MM-dd HH:mm:ss */
     public static String formatFull(Date date) {
         return format(date, DateFormatType.YYYY_MM_DD_HH_MM_SS);
+    }
+    /** 格式化日期 yyyy-MM-dd HH:mm:ss SSS */
+    public static String formatMs(Date date) {
+        return format(date, DateFormatType.YYYY_MM_DD_HH_MM_SS_SSS);
     }
 
     /** 格式化日期对象成字符串 */
@@ -67,45 +67,21 @@ public class DateUtil {
      */
     public static Date parse(String source) {
         if (U.isNotBlank(source)) {
+            source = source.trim();
             for (DateFormatType type : DateFormatType.values()) {
-                Date date = parse(source, type);
-                if (U.isNotBlank(date)) {
-                    return date;
+                try {
+                    if (type.isCst()) {
+                        // cst 单独处理
+                        return new SimpleDateFormat(type.getValue(), Locale.ENGLISH).parse(source);
+                    } else {
+                        Date date = DateTimeFormat.forPattern(type.getValue()).parseDateTime(source).toDate();
+                        if (date != null) {
+                            return date;
+                        }
+                    }
+                } catch (ParseException | IllegalArgumentException e) {
+                    // ignore
                 }
-            }
-        }
-        return null;
-    }
-    public static Date parse(String source, DateFormatType type) {
-        if (U.isNotBlank(source)) {
-            source = source.trim();
-            try {
-                Date date;
-                if (type.isCst()) {
-                    // cst 单独处理
-                    date = new SimpleDateFormat(type.getValue(), Locale.ENGLISH).parse(source);
-                } else {
-                    date = parse(source, type.getValue());
-                }
-                if (date != null) {
-                    return date;
-                }
-            } catch (ParseException | IllegalArgumentException e) {
-                // ignore
-            }
-        }
-        return null;
-    }
-    public static Date parse(String source, String type) {
-        if (U.isNotBlank(source)) {
-            source = source.trim();
-            try {
-                Date date = DateTimeFormat.forPattern(type).parseDateTime(source).toDate();
-                if (date != null) {
-                    return date;
-                }
-            } catch (IllegalArgumentException e) {
-                // ignore
             }
         }
         return null;
