@@ -31,7 +31,9 @@ public class SearchDataSourceInit {
         String[] ipPortArray = ipAndPort.split(",");
         List<HttpHost> hostList = Lists.newArrayListWithCapacity(ipPortArray.length);
         for (String ipAndPort : ipPortArray) {
-            hostList.add(HttpHost.create(ipAndPort));
+            if (U.isNotBlank(ipAndPort)) {
+                hostList.add(HttpHost.create(ipAndPort.trim()));
+            }
         }
 
         RestClientBuilder builder = RestClient.builder(hostList.toArray(new HttpHost[0]))
