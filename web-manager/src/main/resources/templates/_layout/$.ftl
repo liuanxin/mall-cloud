@@ -7,7 +7,7 @@
 <meta name="keywords" content="xxx<#if key != ""> ${key!}</#if>"/>
 <meta name="description" content="<#if desc != "">${desc!} </#if>xxx"/>
 
-<#-- <link rel="shortcut icon" href="${Render.url(domain.getStill(), "favicon.ico")}"/> -->
+<#-- <link rel="shortcut icon" href="//xxx.yyy.com/favicon.ico"/> -->
 <#--<@style ["common/global.css"]/>-->
 </#macro>
 
