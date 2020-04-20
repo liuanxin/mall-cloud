@@ -23,7 +23,6 @@ import javax.sql.DataSource;
 public class CommonDataSourceInit {
 
     private final DataSource dataSource;
-
     public CommonDataSourceInit(DataSource dataSource) {
         this.dataSource = dataSource;
     }

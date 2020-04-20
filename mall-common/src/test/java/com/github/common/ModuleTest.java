@@ -510,7 +510,6 @@ class Server {
             "public class %sDataSourceInit {\n" +
             "\n" +
             "    private DataSource dataSource;\n" +
-            "\n" +
             "    public %sDataSourceInit(DataSource dataSource) {\n" +
             "        this.dataSource = dataSource;\n" +
             "    }\n" +
