@@ -8,9 +8,8 @@ import com.github.global.constant.GlobalConst;
 import org.apache.ibatis.type.TypeHandler;
 import org.springframework.core.io.Resource;
 
-/**
- * 公共模块的配置数据. 主要是 mybatis 的多配置目录和类型处理器
- */
+/** 公共模块的配置数据. 主要是 mybatis 的多配置目录和类型处理器 */
+@SuppressWarnings("rawtypes")
 final class CommonConfigData {
 
     private static final String[] RESOURCE_PATH = new String[] {
@@ -21,7 +20,7 @@ final class CommonConfigData {
     static final Resource[] RESOURCE_ARRAY = CollectResourceUtil.resource(A.maps(
             CommonConfigData.class, RESOURCE_PATH
     ));
-    
+
     /** 要加载的 mybatis 类型处理器的目录 */
     static final TypeHandler[] HANDLER_ARRAY = CollectTypeHandlerUtil.typeHandler(A.maps(
             GlobalConst.MODULE_NAME, GlobalConst.class,
