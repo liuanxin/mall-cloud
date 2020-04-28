@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+@SuppressWarnings("rawtypes")
 public final class LoaderClass {
 
     /** 基于指定的类(会基于此类来获取类加载器), 在指定的包名下获取所有的枚举 */
@@ -84,7 +85,7 @@ public final class LoaderClass {
             String className = classPackage + "." + name.replace(".class", "");
             try {
                 Class<?> clazz = Class.forName(className);
-                if (clazz != null && clazz.isEnum()) {
+                if (clazz.isEnum()) {
                     return clazz;
                 }
             } catch (ClassNotFoundException e) {
@@ -100,7 +101,7 @@ public final class LoaderClass {
             String className = classPackage + "." + name.replace(".class", "");
             try {
                 Class<?> clazz = Class.forName(className);
-                if (clazz != null && Serializable.class.isAssignableFrom(clazz)) {
+                if (Serializable.class.isAssignableFrom(clazz)) {
                     return clazz;
                 }
             } catch (ClassNotFoundException e) {
