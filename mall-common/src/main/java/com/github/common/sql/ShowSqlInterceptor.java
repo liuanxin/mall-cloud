@@ -2,10 +2,7 @@ package com.github.common.sql;
 
 import com.github.common.util.LogUtil;
 import com.github.common.util.U;
-import com.mysql.jdbc.Connection;
-import com.mysql.jdbc.ResultSetInternalMethods;
-import com.mysql.jdbc.Statement;
-import com.mysql.jdbc.StatementInterceptor;
+import com.mysql.jdbc.*;
 
 import java.sql.SQLException;
 import java.util.Properties;
@@ -30,16 +27,6 @@ public class ShowSqlInterceptor implements StatementInterceptor {
                                                 ResultSetInternalMethods resultSetInternalMethods,
                                                 Connection connection) throws SQLException {
         if (U.isBlank(sql) && U.isNotBlank(statement)) {
-            sql = statement.toString();
-            if (U.isNotBlank(sql)) {
-                int i = sql.indexOf(':');
-                if (i > 0 ) {
-                    sql = sql.substring(i + 1).trim();
-                }
-            }
-        }
-        /*
-        if (statement != null) {
             if (statement instanceof PreparedStatement) {
                 try {
                     sql = ((PreparedStatement) statement).asSql();
@@ -48,19 +35,25 @@ public class ShowSqlInterceptor implements StatementInterceptor {
                         LogUtil.SQL_LOG.debug("show sql exception", sqlEx);
                     }
                 }
+            } else {
+                sql = statement.toString();
+                String colon = ":";
+                if (U.isNotBlank(sql) && sql.contains(colon)) {
+                    sql = sql.substring(sql.indexOf(colon) + colon.length()).trim();
+                }
             }
         }
-        */
+
         if (U.isNotBlank(sql)) {
             if (LogUtil.SQL_LOG.isDebugEnabled()) {
                 // druid -> SQLUtils.formatMySql
-                String formatSql = SqlFormat.format(sql);
+                String printSql = SqlFormat.format(sql);
 
                 Long start = TIME.get();
                 if (start != null) {
-                    LogUtil.SQL_LOG.debug("time: {} ms, sql:\n{}", (System.currentTimeMillis() - start), formatSql);
+                    LogUtil.SQL_LOG.debug("time: {} ms, sql:\n{}", (System.currentTimeMillis() - start), printSql);
                 } else {
-                    LogUtil.SQL_LOG.debug("sql:\n{}", formatSql);
+                    LogUtil.SQL_LOG.debug("sql:\n{}", printSql);
                 }
             }
         }
