@@ -52,7 +52,7 @@ public class ShowSqlInterceptor implements StatementInterceptor {
                 Long start = TIME.get();
                 if (start != null) {
                     long time = System.currentTimeMillis() - start;
-                    LogUtil.SQL_LOG.debug("time: {} ms, sql:\n{}", time, printSql.replaceFirst("( *?)\n", ""));
+                    LogUtil.SQL_LOG.debug("time: {} ms, sql:\n{}", time, printSql);
                 } else {
                     LogUtil.SQL_LOG.debug("sql:\n{}", printSql);
                 }
