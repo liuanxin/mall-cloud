@@ -1,7 +1,6 @@
 package com.github.common.resource;
 
 import com.github.common.Const;
-import com.github.common.util.LogUtil;
 import com.github.common.util.U;
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.Maps;
@@ -68,10 +67,7 @@ public final class CollectEnumUtil {
                     return (Map<String, Object>) result;
                 }
             }
-        } catch (Exception e) {
-            if (LogUtil.ROOT_LOG.isErrorEnabled()) {
-                LogUtil.ROOT_LOG.error(String.format("enum(%s.%s) exception", enumClass.getName(), METHOD), e);
-            }
+        } catch (Exception ignore) {
         }
 
         Map<String, Object> returnMap = Maps.newHashMap();
