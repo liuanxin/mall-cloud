@@ -759,6 +759,11 @@ class Server {
             "    @Value(\"${online:false}\")\n" +
             "    private boolean online;\n" +
             "\n" +
+            "    private final ObjectMapper objectMapper;\n" +
+            "    public %sWebConfig(ObjectMapper objectMapper) {\n" +
+            "        this.objectMapper = objectMapper;\n" +
+            "    }\n" +
+            "\n" +
             "    @Override\n" +
             "    protected RequestMappingHandlerMapping createRequestMappingHandlerMapping() {\n" +
             "        return new VersionRequestMappingHandlerMapping();\n" +
@@ -777,7 +782,7 @@ class Server {
             "\n" +
             "    @Override\n" +
             "    public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {\n" +
-            "        SpringMvc.handlerConvert(converters, online);\n" +
+            "        SpringMvc.handlerConvert(converters, online, objectMapper);\n" +
             "    }\n" +
             "\n" +
             "    @Override\n" +
@@ -1212,7 +1217,7 @@ class Server {
         String interceptor = String.format(INTERCEPTOR, parentPackageName, comment, clazzName, clazzName, clazzName);
         writeFile(new File(configPath, clazzName + "Interceptor.java"), interceptor);
 
-        String war = String.format(WEB_CONFIG, parentPackageName, comment, clazzName, clazzName);
+        String war = String.format(WEB_CONFIG, parentPackageName, comment, clazzName, clazzName, clazzName);
         writeFile(new File(configPath, clazzName + "WebConfig.java"), war);
 
         String service = String.format(SERVICE, parentPackageName, comment, clazzName, clazzName,
