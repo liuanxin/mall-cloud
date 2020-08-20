@@ -44,7 +44,7 @@ public final class LogUtil {
         if (U.isNotBlank(requestBody)) {
             String requestInfo = MDC.get(REQUEST_INFO);
             if (U.isNotBlank(requestInfo)) {
-                MDC.put(REQUEST_INFO, requestInfo.replace("params()", "requestBody(" + requestBody + ")"));
+                MDC.put(REQUEST_INFO, requestInfo.replace("]", " requestBody(" + requestBody + ")]"));
             }
         }
     }
@@ -85,7 +85,7 @@ public final class LogUtil {
             this.heads = heads;
         }
 
-        /** 输出 " [ip (id/name) (method url) params(...) headers(...)]" */
+        /** 输出 " [ip (user) (method url) params(...) headers(...)]" */
         private String requestInfo() {
             // 参数 及 头 的长度如果超过 1100 就只输出前后 500 个字符
             int maxLen = 1100, headTail = 500;
