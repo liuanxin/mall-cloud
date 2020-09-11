@@ -583,7 +583,6 @@ class Server {
             "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
             "            LogUtil.ROOT_LOG.debug(msg);\n" +
             "        }\n" +
-            "\n" +
             "        return ResponseEntity.status(JsonCode.FAIL.getFlag()).body(msg);\n" +
             "    }\n" +
             "    /** 未登录 */\n" +
@@ -593,7 +592,6 @@ class Server {
             "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
             "            LogUtil.ROOT_LOG.debug(msg);\n" +
             "        }\n" +
-            "\n" +
             "        return ResponseEntity.status(JsonCode.NOT_LOGIN.getFlag()).body(msg);\n" +
             "    }\n" +
             "    /** 无权限 */\n" +
@@ -603,7 +601,6 @@ class Server {
             "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
             "            LogUtil.ROOT_LOG.debug(msg);\n" +
             "        }\n" +
-            "\n" +
             "        return ResponseEntity.status(JsonCode.NOT_PERMISSION.getFlag()).body(msg);\n" +
             "    }\n" +
             "    /** 404 */\n" +
@@ -613,7 +610,6 @@ class Server {
             "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
             "            LogUtil.ROOT_LOG.debug(msg);\n" +
             "        }\n" +
-            "\n" +
             "        return ResponseEntity.status(JsonCode.NOT_FOUND.getFlag()).body(msg);\n" +
             "    }\n" +
             "    /** 错误的请求 */\n" +
@@ -623,7 +619,6 @@ class Server {
             "        if (LogUtil.ROOT_LOG.isDebugEnabled()) {\n" +
             "            LogUtil.ROOT_LOG.debug(msg);\n" +
             "        }\n" +
-            "\n" +
             "        return ResponseEntity.status(JsonCode.BAD_REQUEST.getFlag()).body(msg);\n" +
             "    }\n" +
             "\n" +
